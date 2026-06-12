@@ -6,15 +6,37 @@ const { authenticate } = require('../../middlewares/auth.middleware');
 const { requireActiveRole } = require('../../middlewares/role.middleware');
 const { success } = require('../../utils/responseFormatter');
 
-router.get('/buyer/summary', authenticate, requireActiveRole('BUYER'), (req, res) => {
-    return success(res, 200, 'Buyer dashboard summary', {
-        walletBalance: 0,
-        activeOrders: 0,
-        note: 'Wallet & order data will be available starting Level 3',
-    });
+// Diupdate: sekarang membaca wallet balance, riwayat top-up/pembayaran, dan jumlah order aktif
+router.get('/buyer/summary', authenticate, requireActiveRole('BUYER'), async (req, res, next) => {
+    try {
+        const wallet = await prisma.wallet.findUnique({ where: { userId: req.user.userId } });
+
+        const recentTransactions = wallet
+            ? await prisma.walletTransaction.findMany({
+                where: { walletId: wallet.id },
+                orderBy: { createdAt: 'desc' },
+                take: 5,
+            })
+            : [];
+
+        const activeOrders = await prisma.order.count({
+            where: { buyerId: req.user.userId, status: { not: 'PESANAN_SELESAI' } },
+        });
+
+        return success(res, 200, 'Buyer dashboard summary', {
+            walletBalance: wallet ? Number(wallet.balance) : 0,
+            activeOrders,
+            recentTransactions: recentTransactions.map((t) => ({
+                ...t,
+                amount: Number(t.amount),
+                balanceAfter: Number(t.balanceAfter),
+            })),
+        });
+    } catch (err) {
+        return next(err);
+    }
 });
 
-// Diupdate: sekarang membaca data toko & jumlah produk yang sesungguhnya
 router.get('/seller/summary', authenticate, requireActiveRole('SELLER'), async (req, res, next) => {
     try {
         const store = await prisma.store.findUnique({
@@ -29,7 +51,7 @@ router.get('/seller/summary', authenticate, requireActiveRole('SELLER'), async (
             totalProducts: store ? store.products.length : 0,
             totalIncome: 0,
             pendingOrders: 0,
-            note: 'Income & order data will be available starting Level 4',
+            note: 'Income data will be available starting Level 4',
         });
     } catch (err) {
         return next(err);

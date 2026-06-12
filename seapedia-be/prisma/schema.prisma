@@ -14,12 +14,36 @@ enum Role {
   DRIVER
 }
 
+enum DeliveryMethod {
+  INSTANT
+  NEXT_DAY
+  REGULAR
+}
+
+enum OrderStatus {
+  SEDANG_DIKEMAS
+  MENUNGGU_PENGIRIM
+  SEDANG_DIKIRIM
+  PESANAN_SELESAI
+  DIKEMBALIKAN
+}
+
+enum WalletTransactionType {
+  TOPUP
+  PAYMENT
+  REFUND
+}
+
 model User {
-  id       String @id @default(uuid())
-  username String @unique
-  email    String @unique
-  password String
-  name     String
+  id        String    @id @default(uuid())
+  username  String    @unique
+  email     String    @unique
+  password  String
+  name      String
+  wallet    Wallet?
+  addresses Address[]
+  cart      Cart?
+  orders    Order[]
 
   roles   UserRole[]
   reviews ApplicationReview[]
@@ -68,9 +92,11 @@ model Store {
   seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   products Product[]
+  orders   Order[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  carts     Cart[]
 
   @@map("stores")
 }
@@ -82,11 +108,145 @@ model Product {
   price       Decimal @db.Decimal(12, 2)
   stock       Int     @default(0)
 
-  storeId String
-  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  storeId    String
+  store      Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  cartItems  CartItem[]
+  orderItems OrderItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("products")
+}
+
+model Wallet {
+  id      String  @id @default(uuid())
+  userId  String  @unique
+  balance Decimal @default(0) @db.Decimal(12, 2)
+
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions WalletTransaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id           String                @id @default(uuid())
+  walletId     String
+  type         WalletTransactionType
+  amount       Decimal               @db.Decimal(12, 2)
+  balanceAfter Decimal               @db.Decimal(12, 2)
+  description  String?
+  orderId      String?
+
+  wallet Wallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("wallet_transactions")
+}
+
+model Address {
+  id            String  @id @default(uuid())
+  userId        String
+  label         String
+  recipientName String
+  phoneNumber   String
+  fullAddress   String
+  city          String
+  postalCode    String
+  isDefault     Boolean @default(false)
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("addresses")
+}
+
+model Cart {
+  id      String  @id @default(uuid())
+  buyerId String  @unique
+  storeId String?
+
+  buyer User       @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  store Store?     @relation(fields: [storeId], references: [id], onDelete: SetNull)
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Int
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId])
+  @@map("cart_items")
+}
+
+model Order {
+  id        String @id @default(uuid())
+  buyerId   String
+  storeId   String
+  addressId String
+
+  deliveryMethod DeliveryMethod
+  subtotal       Decimal        @db.Decimal(12, 2)
+  deliveryFee    Decimal        @db.Decimal(12, 2)
+  ppn            Decimal        @db.Decimal(12, 2)
+  total          Decimal        @db.Decimal(12, 2)
+  status         OrderStatus    @default(SEDANG_DIKEMAS)
+
+  buyer   User    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+  store   Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  address Address @relation(fields: [addressId], references: [id])
+
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  productId   String
+  productName String
+  price       Decimal @db.Decimal(12, 2)
+  quantity    Int
+  subtotal    Decimal @db.Decimal(12, 2)
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model OrderStatusHistory {
+  id      String      @id @default(uuid())
+  orderId String
+  status  OrderStatus
+  note    String?
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@map("order_status_history")
 }
