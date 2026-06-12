@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  // url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -24,6 +23,7 @@ model User {
 
   roles   UserRole[]
   reviews ApplicationReview[]
+  store   Store?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,4 +56,37 @@ model ApplicationReview {
   createdAt DateTime @default(now())
 
   @@map("application_reviews")
+}
+
+// Toko milik Seller. Relasi 1-1 dengan User (1 user SELLER = 1 toko)
+model Store {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  sellerId String @unique
+  seller   User   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("stores")
+}
+
+model Product {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal @db.Decimal(12, 2)
+  stock       Int     @default(0)
+
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
 }
