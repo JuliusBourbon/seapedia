@@ -1,13 +1,59 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
+  // url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  SELLER
+  BUYER
+  DRIVER
+}
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  email    String @unique
+  password String
+  name     String
+
+  roles   UserRole[]
+  reviews ApplicationReview[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// Junction table: satu username non-admin bisa punya beberapa role sekaligus
+model UserRole {
+  id     String @id @default(uuid())
+  userId String
+  role   Role
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role])
+  @@map("user_roles")
+}
+
+// Review tentang aplikasi/website (bukan review produk)
+model ApplicationReview {
+  id           String  @id @default(uuid())
+  userId       String?
+  reviewerName String
+  rating       Int
+  comment      String
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@map("application_reviews")
 }
