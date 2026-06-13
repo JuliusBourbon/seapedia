@@ -25,6 +25,8 @@ const reportSellerRoutes = require('../modules/report/report.seller.routes');
 
 const deliveryRoutes = require('../modules/delivery/delivery.routes');
 
+const adminRoutes = require('../modules/admin/admin.routes');
+
 // Public-facing endpoints
 router.use('/auth', authRoutes);
 router.use('/reviews', reviewRoutes);
@@ -35,6 +37,8 @@ router.use('/', discountPublicRoutes);
 
 // Admin-only endpoints
 router.use('/admin', discountAdminRoutes);
+// monitoring + overdue trigger + simulate next day
+router.use('/admin', adminRoutes);
 
 // Seller-only endpoints
 router.use('/seller/store', sellerStoreRoutes);

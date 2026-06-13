@@ -274,6 +274,7 @@ const processOrder = async (sellerId, orderId) => {
 };
 
 module.exports = {
+    formatOrder,
     previewCheckout,
     checkout,
     getBuyerOrders,

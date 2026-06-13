@@ -48,6 +48,7 @@ enum DeliveryStatus {
   AVAILABLE // Menunggu Pengirim
   TAKEN // Sedang Dikirim
   COMPLETED // Pesanan Selesai
+  CANCELLED
 }
 
 model User {
@@ -322,4 +323,13 @@ model Delivery {
   updatedAt DateTime @updatedAt
 
   @@map("deliveries")
+}
+
+model SystemSetting {
+  id           String @id @default("singleton")
+  timeOffsetMs Float  @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  @@map("system_settings")
 }

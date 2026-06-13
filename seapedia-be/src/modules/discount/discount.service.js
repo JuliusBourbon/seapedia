@@ -117,12 +117,42 @@ const getPromoByCode = async (code) => {
     return formatPromo(promo);
 };
 
+const toggleVoucherStatus = async (code) => {
+    const voucher = await prisma.voucher.findUnique({ where: { code } });
+    if (!voucher) {
+        throw { statusCode: 404, message: 'Voucher not found' };
+    }
+
+    const updated = await prisma.voucher.update({
+        where: { code },
+        data: { isActive: !voucher.isActive },
+    });
+
+    return formatVoucher(updated);
+};
+
+const togglePromoStatus = async (code) => {
+    const promo = await prisma.promo.findUnique({ where: { code } });
+    if (!promo) {
+        throw { statusCode: 404, message: 'Promo not found' };
+    }
+
+    const updated = await prisma.promo.update({
+        where: { code },
+        data: { isActive: !promo.isActive },
+    });
+
+    return formatPromo(updated);
+};
+
 module.exports = {
     validateDiscountCode,
     createVoucher,
     listVouchers,
     getVoucherByCode,
+    toggleVoucherStatus,
     createPromo,
     listPromos,
     getPromoByCode,
+    togglePromoStatus,
 };

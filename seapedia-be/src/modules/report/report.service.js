@@ -8,6 +8,9 @@ const getBuyerReport = async (buyerId) => {
     const totalPpn = orders.reduce((acc, o) => acc + Number(o.ppn), 0);
     const totalDeliveryFee = orders.reduce((acc, o) => acc + Number(o.deliveryFee), 0);
 
+    const returnedOrders = orders.filter((o) => o.status === 'DIKEMBALIKAN');
+    const totalRefunded = returnedOrders.reduce((acc, o) => acc + Number(o.total), 0);
+
     const statusBreakdown = orders.reduce((acc, o) => {
         acc[o.status] = (acc[o.status] || 0) + 1;
         return acc;
@@ -19,6 +22,8 @@ const getBuyerReport = async (buyerId) => {
         totalDiscount,
         totalPpn,
         totalDeliveryFee,
+        totalRefunded,
+        refundedOrdersCount: returnedOrders.length,
         statusBreakdown,
     };
 };
@@ -31,8 +36,17 @@ const getSellerReport = async (sellerId) => {
 
     const orders = await prisma.order.findMany({ where: { storeId: store.id } });
 
-    // Income seller = subtotal - discount (PPN & delivery fee bukan bagian dari pendapatan toko)
-    const totalIncome = orders.reduce((acc, o) => acc + (Number(o.subtotal) - Number(o.discountAmount)), 0);
+    const validOrders = orders.filter((o) => o.status !== 'DIKEMBALIKAN');
+    const returnedOrders = orders.filter((o) => o.status === 'DIKEMBALIKAN');
+
+    // Income = subtotal - discount, hanya dari order yang TIDAK dikembalikan
+    const totalIncome = validOrders.reduce((acc, o) => acc + (Number(o.subtotal) - Number(o.discountAmount)), 0);
+
+    // Untuk transparansi: berapa income yang "dibatalkan" karena order overdue/dikembalikan
+    const totalReversedIncome = returnedOrders.reduce(
+        (acc, o) => acc + (Number(o.subtotal) - Number(o.discountAmount)),
+        0
+    );
 
     const statusBreakdown = orders.reduce((acc, o) => {
         acc[o.status] = (acc[o.status] || 0) + 1;
@@ -43,6 +57,8 @@ const getSellerReport = async (sellerId) => {
         storeName: store.name,
         totalOrders: orders.length,
         totalIncome,
+        totalReversedIncome,
+        returnedOrdersCount: returnedOrders.length,
         statusBreakdown,
     };
 };

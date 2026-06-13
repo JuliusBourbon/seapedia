@@ -55,6 +55,24 @@ const getPromoByCode = async (req, res, next) => {
     }
 };
 
+const toggleVoucherStatus = async (req, res, next) => {
+    try {
+        const voucher = await discountService.toggleVoucherStatus(req.params.code);
+        return success(res, 200, 'Voucher status updated', voucher);
+    } catch (err) {
+        return next(err);
+    }
+};
+
+const togglePromoStatus = async (req, res, next) => {
+    try {
+        const promo = await discountService.togglePromoStatus(req.params.code);
+        return success(res, 200, 'Promo status updated', promo);
+    } catch (err) {
+        return next(err);
+    }
+};
+
 module.exports = {
     createVoucher,
     listVouchers,
@@ -62,4 +80,6 @@ module.exports = {
     createPromo,
     listPromos,
     getPromoByCode,
+    toggleVoucherStatus,
+    togglePromoStatus,
 };
