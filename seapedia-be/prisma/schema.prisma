@@ -333,3 +333,13 @@ model SystemSetting {
 
   @@map("system_settings")
 }
+
+model RevokedToken {
+  id        String   @id @default(uuid())
+  jti       String   @unique
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@map("revoked_tokens")
+}

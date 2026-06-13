@@ -1,5 +1,6 @@
 const prisma = require('../../config/db');
 const { formatProduct } = require('../../utils/serialize');
+const { sanitizeText } = require('../../utils/sanitize');
 
 const getStoreBySeller = async (sellerId) => {
     const store = await prisma.store.findUnique({ where: { sellerId } });
@@ -26,7 +27,12 @@ const createProduct = async (sellerId, data) => {
     const store = await getStoreBySeller(sellerId);
 
     const product = await prisma.product.create({
-        data: { ...data, storeId: store.id },
+        data: {
+            ...data,
+            name: sanitizeText(data.name),
+            description: data.description ? sanitizeText(data.description) : data.description,
+            storeId: store.id,
+        },
     });
 
     return formatProduct(product);
@@ -44,9 +50,13 @@ const updateProduct = async (sellerId, productId, data) => {
         throw { statusCode: 403, message: 'You do not have permission to modify this product' };
     }
 
+    const sanitizedData = { ...data };
+    if (sanitizedData.name) sanitizedData.name = sanitizeText(sanitizedData.name);
+    if (sanitizedData.description) sanitizedData.description = sanitizeText(sanitizedData.description);
+
     const updated = await prisma.product.update({
         where: { id: productId },
-        data,
+        data: sanitizedData,
     });
 
     return formatProduct(updated);

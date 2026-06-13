@@ -1,7 +1,7 @@
+const prisma = require('../config/db');
 const { verifyToken } = require('../utils/jwt');
 
-// Wajib login, token harus valid (tidak peduli activeRole sudah dipilih atau belum)
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
     const header = req.headers.authorization;
 
     if (!header || !header.startsWith('Bearer ')) {
@@ -11,21 +11,28 @@ const authenticate = (req, res, next) => {
     const token = header.split(' ')[1];
 
     try {
-        req.user = verifyToken(token);
+        const decoded = verifyToken(token);
+
+        const revoked = await prisma.revokedToken.findUnique({ where: { jti: decoded.jti } });
+        if (revoked) {
+            return res.status(401).json({ success: false, message: 'Token has been revoked. Please login again.' });
+        }
+
+        req.user = decoded;
         next();
     } catch (err) {
         return res.status(401).json({ success: false, message: 'Invalid or expired token' });
     }
 };
 
-// Tidak wajib login, tapi kalau ada token valid, req.user akan terisi
-// Dipakai untuk endpoint yang boleh diakses guest maupun user login (misal: submit review)
-const optionalAuthenticate = (req, res, next) => {
+const optionalAuthenticate = async (req, res, next) => {
     const header = req.headers.authorization;
 
     if (header && header.startsWith('Bearer ')) {
         try {
-            req.user = verifyToken(header.split(' ')[1]);
+            const decoded = verifyToken(header.split(' ')[1]);
+            const revoked = await prisma.revokedToken.findUnique({ where: { jti: decoded.jti } });
+            req.user = revoked ? null : decoded;
         } catch (err) {
             req.user = null;
         }

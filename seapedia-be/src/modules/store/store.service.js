@@ -1,5 +1,6 @@
 const prisma = require('../../config/db');
 const { formatStore, formatProduct } = require('../../utils/serialize');
+const { sanitizeText } = require('../../utils/sanitize');
 
 const getMyStore = async (sellerId) => {
     const store = await prisma.store.findUnique({
@@ -16,13 +17,19 @@ const createStore = async (sellerId, { name, description }) => {
         throw { statusCode: 409, message: 'You already have a store. Use update instead.' };
     }
 
-    const nameTaken = await prisma.store.findUnique({ where: { name } });
+    const cleanName = sanitizeText(name);
+
+    const nameTaken = await prisma.store.findUnique({ where: { name: cleanName } });
     if (nameTaken) {
         throw { statusCode: 409, message: 'Store name is already taken', errors: { name: ['Store name is already taken'] } };
     }
 
     const store = await prisma.store.create({
-        data: { name, description, sellerId },
+        data: {
+            name: cleanName,
+            description: description ? sanitizeText(description) : description,
+            sellerId,
+        },
     });
 
     return formatStore(store);
@@ -35,8 +42,10 @@ const updateStore = async (sellerId, { name, description }) => {
         throw { statusCode: 404, message: 'Store not found. Create a store first.' };
     }
 
-    if (name && name !== store.name) {
-        const nameTaken = await prisma.store.findUnique({ where: { name } });
+    const cleanName = name ? sanitizeText(name) : undefined;
+
+    if (cleanName && cleanName !== store.name) {
+        const nameTaken = await prisma.store.findUnique({ where: { name: cleanName } });
         if (nameTaken) {
             throw { statusCode: 409, message: 'Store name is already taken', errors: { name: ['Store name is already taken'] } };
         }
@@ -45,8 +54,8 @@ const updateStore = async (sellerId, { name, description }) => {
     const updated = await prisma.store.update({
         where: { sellerId },
         data: {
-            name: name ?? store.name,
-            description: description ?? store.description,
+            name: cleanName ?? store.name,
+            description: description !== undefined ? sanitizeText(description) : store.description,
         },
     });
 

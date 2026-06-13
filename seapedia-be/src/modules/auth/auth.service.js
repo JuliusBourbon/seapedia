@@ -139,4 +139,13 @@ const getProfile = async (userId) => {
     return sanitizeUser(user);
 };
 
-module.exports = { register, login, selectRole, getProfile };
+const logout = async (decodedToken) => {
+    await prisma.revokedToken.create({
+        data: {
+            jti: decodedToken.jti,
+            expiresAt: new Date(decodedToken.exp * 1000),
+        },
+    });
+};
+
+module.exports = { register, login, selectRole, getProfile, logout };

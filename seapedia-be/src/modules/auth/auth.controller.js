@@ -55,9 +55,11 @@ const me = async (req, res, next) => {
 };
 
 const logout = async (req, res, next) => {
-    // Stateless JWT: instruksikan client untuk menghapus token.
-    // Catatan implementasi token blacklist (opsional) didokumentasikan di README.
-    return success(res, 200, 'Logout successful. Please discard your token on the client.');
+    try {
+        await authService.logout(req.user);
+        return success(res, 200, 'Logout successful. Token has been revoked.');
+    } catch (err) {
+        return next(err);
+    }
 };
-
 module.exports = { register, login, selectRole, me, logout };

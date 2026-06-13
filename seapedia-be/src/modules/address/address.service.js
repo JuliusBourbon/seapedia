@@ -1,4 +1,13 @@
 const prisma = require('../../config/db');
+const { sanitizeText } = require('../../utils/sanitize');
+
+const sanitizeAddressInput = (data) => ({
+    ...data,
+    label: data.label !== undefined ? sanitizeText(data.label) : data.label,
+    recipientName: data.recipientName !== undefined ? sanitizeText(data.recipientName) : data.recipientName,
+    fullAddress: data.fullAddress !== undefined ? sanitizeText(data.fullAddress) : data.fullAddress,
+    city: data.city !== undefined ? sanitizeText(data.city) : data.city,
+});
 
 const getAddresses = async (userId) => {
     return prisma.address.findMany({
@@ -8,6 +17,7 @@ const getAddresses = async (userId) => {
 };
 
 const createAddress = async (userId, data) => {
+    data = sanitizeAddressInput(data);
     const existingCount = await prisma.address.count({ where: { userId } });
 
     if (data.isDefault) {
@@ -23,6 +33,7 @@ const createAddress = async (userId, data) => {
 };
 
 const updateAddress = async (userId, addressId, data) => {
+    data = sanitizeAddressInput(data);
     const address = await prisma.address.findUnique({ where: { id: addressId } });
 
     if (!address || address.userId !== userId) {
