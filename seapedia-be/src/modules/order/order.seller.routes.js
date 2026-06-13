@@ -6,5 +6,6 @@ const { authenticate } = require('../../middlewares/auth.middleware');
 const { requireActiveRole } = require('../../middlewares/role.middleware');
 
 router.get('/orders', authenticate, requireActiveRole('SELLER'), controller.getSellerOrders);
+router.patch('/orders/:id/process', authenticate, requireActiveRole('SELLER'), controller.processOrder);
 
 module.exports = router;

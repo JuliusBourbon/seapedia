@@ -34,6 +34,16 @@ enum WalletTransactionType {
   REFUND
 }
 
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum DiscountSource {
+  VOUCHER
+  PROMO
+}
+
 model User {
   id        String    @id @default(uuid())
   username  String    @unique
@@ -217,6 +227,10 @@ model Order {
   items         OrderItem[]
   statusHistory OrderStatusHistory[]
 
+  discountCode   String?
+  discountSource DiscountSource?
+  discountAmount Decimal         @default(0) @db.Decimal(12, 2)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -249,4 +263,34 @@ model OrderStatusHistory {
   createdAt DateTime @default(now())
 
   @@map("order_status_history")
+}
+
+model Voucher {
+  id         String       @id @default(uuid())
+  code       String       @unique
+  type       DiscountType
+  value      Decimal      @db.Decimal(12, 2)
+  expiryDate DateTime
+  usageLimit Int
+  usedCount  Int          @default(0)
+  isActive   Boolean      @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("vouchers")
+}
+
+model Promo {
+  id         String       @id @default(uuid())
+  code       String       @unique
+  type       DiscountType
+  value      Decimal      @db.Decimal(12, 2)
+  expiryDate DateTime
+  isActive   Boolean      @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("promos")
 }

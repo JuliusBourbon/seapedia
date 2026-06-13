@@ -1,6 +1,15 @@
 const orderService = require('./order.service');
 const { success } = require('../../utils/responseFormatter');
 
+const previewCheckout = async (req, res, next) => {
+    try {
+        const summary = await orderService.previewCheckout(req.user.userId, req.body);
+        return success(res, 200, 'Checkout summary calculated', summary);
+    } catch (err) {
+        return next(err);
+    }
+};
+
 const checkout = async (req, res, next) => {
     try {
         const order = await orderService.checkout(req.user.userId, req.body);
@@ -37,4 +46,20 @@ const getSellerOrders = async (req, res, next) => {
     }
 };
 
-module.exports = { checkout, getBuyerOrders, getBuyerOrderById, getSellerOrders };
+const processOrder = async (req, res, next) => {
+    try {
+        const order = await orderService.processOrder(req.user.userId, req.params.id);
+        return success(res, 200, 'Order processed successfully', order);
+    } catch (err) {
+        return next(err);
+    }
+};
+
+module.exports = {
+    previewCheckout,
+    checkout,
+    getBuyerOrders,
+    getBuyerOrderById,
+    getSellerOrders,
+    processOrder,
+};

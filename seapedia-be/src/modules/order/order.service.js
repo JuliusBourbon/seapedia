@@ -1,11 +1,13 @@
 const prisma = require('../../config/db');
 const { DELIVERY_FEES, PPN_RATE } = require('../../config/constants');
+const { validateDiscountCode } = require('../discount/discount.service');
 
 const formatOrder = (order) => ({
     ...order,
     subtotal: Number(order.subtotal),
     deliveryFee: Number(order.deliveryFee),
     ppn: Number(order.ppn),
+    discountAmount: Number(order.discountAmount),
     total: Number(order.total),
     items: order.items
         ? order.items.map((item) => ({
@@ -16,7 +18,7 @@ const formatOrder = (order) => ({
         : undefined,
 });
 
-const checkout = async (buyerId, { addressId, deliveryMethod }) => {
+const getActiveCart = async (buyerId) => {
     const cart = await prisma.cart.findUnique({
         where: { buyerId },
         include: { items: { include: { product: true } } },
@@ -30,12 +32,52 @@ const checkout = async (buyerId, { addressId, deliveryMethod }) => {
         throw { statusCode: 400, message: 'Cart has no associated store' };
     }
 
+    return cart;
+};
+
+// Urutan kalkulasi:
+// 1. subtotal = sum(price * quantity)
+// 2. discount dihitung dari subtotal (Voucher/Promo, salah satu saja)
+// 3. discountedSubtotal = subtotal - discount
+// 4. ppn = 12% dari discountedSubtotal  <-- PPN dihitung SETELAH diskon
+// 5. total = discountedSubtotal + deliveryFee + ppn
+const calculateSummary = async (cart, deliveryMethod, discountCode) => {
+    const subtotal = cart.items.reduce((acc, item) => acc + Number(item.product.price) * item.quantity, 0);
+    const deliveryFee = DELIVERY_FEES[deliveryMethod];
+
+    let discount = { amount: 0, source: null, code: null, type: null, value: null };
+
+    if (discountCode) {
+        const result = await validateDiscountCode(discountCode, subtotal);
+        discount = {
+            amount: result.amount,
+            source: result.source, // 'VOUCHER' | 'PROMO'
+            code: result.code,
+            type: result.type,
+            value: result.value,
+        };
+    }
+
+    const discountedSubtotal = subtotal - discount.amount;
+    const ppn = Math.round(discountedSubtotal * PPN_RATE);
+    const total = discountedSubtotal + deliveryFee + ppn;
+
+    return { subtotal, discount, deliveryFee, ppn, discountedSubtotal, total };
+};
+
+const previewCheckout = async (buyerId, { deliveryMethod, discountCode }) => {
+    const cart = await getActiveCart(buyerId);
+    return calculateSummary(cart, deliveryMethod, discountCode);
+};
+
+const checkout = async (buyerId, { addressId, deliveryMethod, discountCode }) => {
+    const cart = await getActiveCart(buyerId);
+
     const address = await prisma.address.findUnique({ where: { id: addressId } });
     if (!address || address.userId !== buyerId) {
         throw { statusCode: 404, message: 'Address not found' };
     }
 
-    // Validasi awal (sebelum transaksi) supaya error message lebih informatif
     for (const item of cart.items) {
         if (item.quantity > item.product.stock) {
             throw {
@@ -45,21 +87,16 @@ const checkout = async (buyerId, { addressId, deliveryMethod }) => {
         }
     }
 
-    // Kalkulasi total
-    const subtotal = cart.items.reduce((acc, item) => acc + Number(item.product.price) * item.quantity, 0);
-    const deliveryFee = DELIVERY_FEES[deliveryMethod];
-    const ppn = Math.round(subtotal * PPN_RATE);
-    const total = subtotal + deliveryFee + ppn;
+    const summary = await calculateSummary(cart, deliveryMethod, discountCode);
 
     const wallet = await prisma.wallet.findUnique({ where: { userId: buyerId } });
     const walletBalance = wallet ? Number(wallet.balance) : 0;
 
-    if (walletBalance < total) {
+    if (walletBalance < summary.total) {
         throw { statusCode: 400, message: 'Insufficient wallet balance for this checkout' };
     }
 
     const order = await prisma.$transaction(async (tx) => {
-        // Kurangi stok dengan kondisi atomik agar tidak pernah negatif
         for (const item of cart.items) {
             const result = await tx.product.updateMany({
                 where: { id: item.productId, stock: { gte: item.quantity } },
@@ -77,10 +114,13 @@ const checkout = async (buyerId, { addressId, deliveryMethod }) => {
                 storeId: cart.storeId,
                 addressId,
                 deliveryMethod,
-                subtotal,
-                deliveryFee,
-                ppn,
-                total,
+                subtotal: summary.subtotal,
+                deliveryFee: summary.deliveryFee,
+                ppn: summary.ppn,
+                discountAmount: summary.discount.amount,
+                discountCode: summary.discount.code,
+                discountSource: summary.discount.source,
+                total: summary.total,
                 status: 'SEDANG_DIKEMAS',
                 items: {
                     create: cart.items.map((item) => ({
@@ -100,19 +140,27 @@ const checkout = async (buyerId, { addressId, deliveryMethod }) => {
 
         const updatedWallet = await tx.wallet.update({
             where: { userId: buyerId },
-            data: { balance: { decrement: total } },
+            data: { balance: { decrement: summary.total } },
         });
 
         await tx.walletTransaction.create({
             data: {
                 walletId: updatedWallet.id,
                 type: 'PAYMENT',
-                amount: total,
+                amount: summary.total,
                 balanceAfter: updatedWallet.balance,
                 description: `Payment for order ${newOrder.id}`,
                 orderId: newOrder.id,
             },
         });
+
+        // Voucher punya batas pemakaian -> tambah usedCount. Promo tidak punya batas pemakaian.
+        if (summary.discount.source === 'VOUCHER') {
+            await tx.voucher.update({
+                where: { code: summary.discount.code },
+                data: { usedCount: { increment: 1 } },
+            });
+        }
 
         await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
         await tx.cart.update({ where: { id: cart.id }, data: { storeId: null } });
@@ -153,7 +201,6 @@ const getBuyerOrderById = async (buyerId, orderId) => {
 
 const getSellerOrders = async (sellerId) => {
     const store = await prisma.store.findUnique({ where: { sellerId } });
-
     if (!store) {
         throw { statusCode: 404, message: 'You do not have a store yet' };
     }
@@ -171,4 +218,50 @@ const getSellerOrders = async (sellerId) => {
     return orders.map(formatOrder);
 };
 
-module.exports = { checkout, getBuyerOrders, getBuyerOrderById, getSellerOrders };
+// Seller memproses order: Sedang Dikemas -> Menunggu Pengirim
+const processOrder = async (sellerId, orderId) => {
+    const store = await prisma.store.findUnique({ where: { sellerId } });
+    if (!store) {
+        throw { statusCode: 404, message: 'You do not have a store yet' };
+    }
+
+    const order = await prisma.order.findUnique({ where: { id: orderId } });
+    if (!order || order.storeId !== store.id) {
+        throw { statusCode: 404, message: 'Order not found' };
+    }
+
+    if (order.status !== 'SEDANG_DIKEMAS') {
+        throw {
+            statusCode: 400,
+            message: `Order cannot be processed because its current status is "${order.status}", expected "SEDANG_DIKEMAS"`,
+        };
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+        const o = await tx.order.update({
+            where: { id: orderId },
+            data: { status: 'MENUNGGU_PENGIRIM' },
+        });
+
+        await tx.orderStatusHistory.create({
+            data: {
+                orderId,
+                status: 'MENUNGGU_PENGIRIM',
+                note: 'Order processed by seller and is now ready for driver pickup',
+            },
+        });
+
+        return o;
+    });
+
+    return formatOrder(updated);
+};
+
+module.exports = {
+    previewCheckout,
+    checkout,
+    getBuyerOrders,
+    getBuyerOrderById,
+    getSellerOrders,
+    processOrder,
+};
