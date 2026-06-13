@@ -16,6 +16,14 @@ const formatOrder = (order) => ({
             subtotal: Number(item.subtotal),
         }))
         : undefined,
+    delivery: order.delivery
+        ? {
+            status: order.delivery.status,
+            driver: order.delivery.driver || null,
+            takenAt: order.delivery.takenAt,
+            completedAt: order.delivery.completedAt,
+        }
+        : null,
 });
 
 const getActiveCart = async (buyerId) => {
@@ -35,12 +43,7 @@ const getActiveCart = async (buyerId) => {
     return cart;
 };
 
-// Urutan kalkulasi:
-// 1. subtotal = sum(price * quantity)
-// 2. discount dihitung dari subtotal (Voucher/Promo, salah satu saja)
-// 3. discountedSubtotal = subtotal - discount
-// 4. ppn = 12% dari discountedSubtotal  <-- PPN dihitung SETELAH diskon
-// 5. total = discountedSubtotal + deliveryFee + ppn
+// Urutan kalkulasi: subtotal -> discount -> discountedSubtotal -> ppn (dari discountedSubtotal) -> total
 const calculateSummary = async (cart, deliveryMethod, discountCode) => {
     const subtotal = cart.items.reduce((acc, item) => acc + Number(item.product.price) * item.quantity, 0);
     const deliveryFee = DELIVERY_FEES[deliveryMethod];
@@ -51,7 +54,7 @@ const calculateSummary = async (cart, deliveryMethod, discountCode) => {
         const result = await validateDiscountCode(discountCode, subtotal);
         discount = {
             amount: result.amount,
-            source: result.source, // 'VOUCHER' | 'PROMO'
+            source: result.source,
             code: result.code,
             type: result.type,
             value: result.value,
@@ -154,7 +157,6 @@ const checkout = async (buyerId, { addressId, deliveryMethod, discountCode }) =>
             },
         });
 
-        // Voucher punya batas pemakaian -> tambah usedCount. Promo tidak punya batas pemakaian.
         if (summary.discount.source === 'VOUCHER') {
             await tx.voucher.update({
                 where: { code: summary.discount.code },
@@ -174,7 +176,10 @@ const checkout = async (buyerId, { addressId, deliveryMethod, discountCode }) =>
 const getBuyerOrders = async (buyerId) => {
     const orders = await prisma.order.findMany({
         where: { buyerId },
-        include: { store: { select: { id: true, name: true } } },
+        include: {
+            store: { select: { id: true, name: true } },
+            delivery: { include: { driver: { select: { id: true, name: true, username: true } } } },
+        },
         orderBy: { createdAt: 'desc' },
     });
 
@@ -189,6 +194,7 @@ const getBuyerOrderById = async (buyerId, orderId) => {
             statusHistory: { orderBy: { createdAt: 'asc' } },
             store: { select: { id: true, name: true } },
             address: true,
+            delivery: { include: { driver: { select: { id: true, name: true, username: true } } } },
         },
     });
 
@@ -211,6 +217,7 @@ const getSellerOrders = async (sellerId) => {
             items: true,
             statusHistory: { orderBy: { createdAt: 'asc' } },
             buyer: { select: { id: true, name: true, username: true } },
+            delivery: { include: { driver: { select: { id: true, name: true, username: true } } } },
         },
         orderBy: { createdAt: 'desc' },
     });
@@ -218,7 +225,7 @@ const getSellerOrders = async (sellerId) => {
     return orders.map(formatOrder);
 };
 
-// Seller memproses order: Sedang Dikemas -> Menunggu Pengirim
+// Seller memproses order: Sedang Dikemas -> Menunggu Pengirim, sekaligus membuat job delivery
 const processOrder = async (sellerId, orderId) => {
     const store = await prisma.store.findUnique({ where: { sellerId } });
     if (!store) {
@@ -251,10 +258,19 @@ const processOrder = async (sellerId, orderId) => {
             },
         });
 
+        // Buat delivery job yang akan muncul di daftar "available jobs" untuk Driver
+        await tx.delivery.create({
+            data: {
+                orderId,
+                status: 'AVAILABLE',
+                earning: o.deliveryFee,
+            },
+        });
+
         return o;
     });
 
-    return formatOrder(updated);
+    return formatOrder({ ...updated, items: undefined, delivery: null });
 };
 
 module.exports = {

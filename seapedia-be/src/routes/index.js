@@ -23,28 +23,33 @@ const discountPublicRoutes = require('../modules/discount/discount.public.routes
 const reportBuyerRoutes = require('../modules/report/report.buyer.routes');
 const reportSellerRoutes = require('../modules/report/report.seller.routes');
 
+const deliveryRoutes = require('../modules/delivery/delivery.routes');
+
 // Public-facing endpoints
 router.use('/auth', authRoutes);
 router.use('/reviews', reviewRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/products', publicProductRoutes);
 router.use('/stores', publicStoreRoutes);
-router.use('/', discountPublicRoutes); // GET /vouchers, GET /vouchers/:code, GET /promos, GET /promos/:code
+router.use('/', discountPublicRoutes);
 
 // Admin-only endpoints
-router.use('/admin', discountAdminRoutes); // POST /admin/vouchers, POST /admin/promos
+router.use('/admin', discountAdminRoutes);
 
 // Seller-only endpoints
 router.use('/seller/store', sellerStoreRoutes);
 router.use('/seller/products', sellerProductRoutes);
-router.use('/seller', orderSellerRoutes); // GET /seller/orders, PATCH /seller/orders/:id/process
-router.use('/seller/reports', reportSellerRoutes); // GET /seller/reports/summary
+router.use('/seller', orderSellerRoutes);
+router.use('/seller/reports', reportSellerRoutes);
 
 // Buyer-only endpoints
 router.use('/buyer/wallet', walletRoutes);
 router.use('/buyer/addresses', addressRoutes);
 router.use('/buyer/cart', cartRoutes);
-router.use('/buyer', orderBuyerRoutes); // POST /buyer/checkout/preview, /buyer/checkout, GET /buyer/orders, /buyer/orders/:id
-router.use('/buyer/reports', reportBuyerRoutes); // GET /buyer/reports/summary
+router.use('/buyer', orderBuyerRoutes);
+router.use('/buyer/reports', reportBuyerRoutes);
+
+// Driver-only endpoints
+router.use('/driver', deliveryRoutes);
 
 module.exports = router;

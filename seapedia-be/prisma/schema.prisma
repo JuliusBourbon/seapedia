@@ -44,6 +44,12 @@ enum DiscountSource {
   PROMO
 }
 
+enum DeliveryStatus {
+  AVAILABLE // Menunggu Pengirim
+  TAKEN // Sedang Dikirim
+  COMPLETED // Pesanan Selesai
+}
+
 model User {
   id        String    @id @default(uuid())
   username  String    @unique
@@ -55,9 +61,10 @@ model User {
   cart      Cart?
   orders    Order[]
 
-  roles   UserRole[]
-  reviews ApplicationReview[]
-  store   Store?
+  roles      UserRole[]
+  reviews    ApplicationReview[]
+  store      Store?
+  deliveries Delivery[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -231,6 +238,8 @@ model Order {
   discountSource DiscountSource?
   discountAmount Decimal         @default(0) @db.Decimal(12, 2)
 
+  delivery Delivery?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -293,4 +302,24 @@ model Promo {
   updatedAt DateTime @updatedAt
 
   @@map("promos")
+}
+
+model Delivery {
+  id       String  @id @default(uuid())
+  orderId  String  @unique
+  driverId String?
+
+  status  DeliveryStatus @default(AVAILABLE)
+  earning Decimal        @db.Decimal(12, 2)
+
+  takenAt     DateTime?
+  completedAt DateTime?
+
+  order  Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  driver User? @relation(fields: [driverId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("deliveries")
 }

@@ -6,7 +6,6 @@ const { authenticate } = require('../../middlewares/auth.middleware');
 const { requireActiveRole } = require('../../middlewares/role.middleware');
 const { success } = require('../../utils/responseFormatter');
 
-// Diupdate: sekarang membaca wallet balance, riwayat top-up/pembayaran, dan jumlah order aktif
 router.get('/buyer/summary', authenticate, requireActiveRole('BUYER'), async (req, res, next) => {
     try {
         const wallet = await prisma.wallet.findUnique({ where: { userId: req.user.userId } });
@@ -44,26 +43,46 @@ router.get('/seller/summary', authenticate, requireActiveRole('SELLER'), async (
             include: { products: true },
         });
 
+        const pendingOrders = store
+            ? await prisma.order.count({ where: { storeId: store.id, status: 'SEDANG_DIKEMAS' } })
+            : 0;
+
         return success(res, 200, 'Seller dashboard summary', {
             hasStore: !!store,
             storeId: store ? store.id : null,
             storeName: store ? store.name : null,
             totalProducts: store ? store.products.length : 0,
+            pendingOrders,
             totalIncome: 0,
-            pendingOrders: 0,
-            note: 'Income data will be available starting Level 4',
+            note: 'Income data will be available starting Level 6',
         });
     } catch (err) {
         return next(err);
     }
 });
 
-router.get('/driver/summary', authenticate, requireActiveRole('DRIVER'), (req, res) => {
-    return success(res, 200, 'Driver dashboard summary', {
-        totalEarnings: 0,
-        completedJobs: 0,
-        note: 'Delivery job data will be available starting Level 5',
-    });
+// Diupdate: membaca delivery job aktif, riwayat job selesai, dan total earnings driver
+router.get('/driver/summary', authenticate, requireActiveRole('DRIVER'), async (req, res, next) => {
+    try {
+        const activeJob = await prisma.delivery.findFirst({
+            where: { driverId: req.user.userId, status: 'TAKEN' },
+        });
+
+        const completedJobs = await prisma.delivery.findMany({
+            where: { driverId: req.user.userId, status: 'COMPLETED' },
+        });
+
+        const totalEarnings = completedJobs.reduce((acc, d) => acc + Number(d.earning), 0);
+
+        return success(res, 200, 'Driver dashboard summary', {
+            hasActiveJob: !!activeJob,
+            activeJobId: activeJob ? activeJob.id : null,
+            completedJobs: completedJobs.length,
+            totalEarnings,
+        });
+    } catch (err) {
+        return next(err);
+    }
 });
 
 router.get('/admin/summary', authenticate, requireActiveRole('ADMIN'), (req, res) => {
