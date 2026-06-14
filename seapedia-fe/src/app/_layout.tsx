@@ -1,15 +1,25 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import { useColorScheme } from 'react-native';
+import { useEffect } from "react";
+import { Stack } from "expo-router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { PaperProvider } from "react-native-paper";
+import { StatusBar } from "expo-status-bar";
+import queryClient from "../../lib/queryClient";
+import { useAuthStore } from "../../stores/auth.store";
+import "../global.css";
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+export default function RootLayout() {
+  const loadToken = useAuthStore((s) => s.loadToken);
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  useEffect(() => {
+    loadToken();
+  }, []);
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <PaperProvider>
+        <StatusBar style="auto" />
+        <Stack screenOptions={{ headerShown: false }} />
+      </PaperProvider>
+    </QueryClientProvider>
   );
 }
