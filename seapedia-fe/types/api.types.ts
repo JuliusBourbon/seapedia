@@ -80,40 +80,64 @@ export type OrderStatus =
     | "DIKEMBALIKAN";
 
 export interface OrderStatusHistory {
+    id: string;
+    orderId: string;
     status: OrderStatus;
-    timestamp: string;
     note: string | null;
+    createdAt: string;
 }
 
 export interface OrderItem {
+    id: string;
+    orderId: string;
     productId: string;
     productName: string;
     quantity: number;
-    unitPrice: number;
+    price: number;
     subtotal: number;
 }
 
-export interface Delivery {
-    id: string;
-    method: DeliveryMethod;
+export interface OrderDelivery {
     status: "AVAILABLE" | "TAKEN" | "COMPLETED";
-    fee: number;
-    driverId: string | null;
+    driver: {
+        id: string;
+        name: string;
+        username: string;
+    } | null;
+    takenAt: string | null;
+    completedAt: string | null;
 }
 
 export interface Order {
     id: string;
+    buyerId: string;
+    storeId: string;
+    addressId: string;
     status: OrderStatus;
+    deliveryMethod: DeliveryMethod;
     subtotal: number;
-    discount: number;
+    discountAmount: number;
+    discountCode: string | null;
+    discountSource: string | null;
     ppn: number;
     deliveryFee: number;
     total: number;
-    discountCode: string | null;
     createdAt: string;
-    items: OrderItem[];
+    updatedAt: string;
+    items?: OrderItem[];
     statusHistory: OrderStatusHistory[];
-    delivery: Delivery | null;
+    store: { id: string; name: string } | null;
+    address: {
+        id: string;
+        label: string;
+        recipientName: string;
+        phoneNumber: string;
+        fullAddress: string;
+        city: string;
+        postalCode: string;
+        isDefault: boolean;
+    } | null;
+    delivery: OrderDelivery | null;
 }
 
 // ─── Wallet ───────────────────────────────────────────────────────────────────
@@ -124,6 +148,7 @@ export interface WalletTransaction {
     id: string;
     type: TransactionType;
     amount: number;
+    balanceAfter: number;
     description: string;
     createdAt: string;
 }

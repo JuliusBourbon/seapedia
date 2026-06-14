@@ -68,6 +68,7 @@ export default function HomeScreen() {
     };
 
     const getDashboardRoute = () => {
+        console.log("activeRole:", activeRole);
         if (!activeRole) return null;
         const map: Record<string, string> = {
             BUYER: "/(buyer)/dashboard",

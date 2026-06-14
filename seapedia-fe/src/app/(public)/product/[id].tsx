@@ -1,8 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity, Modal } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { catalogService } from "../../../../services/catalog.service";
+import { buyerService } from "../../../../services/buyer.service";
 import { useAuthStore } from "../../../../stores/auth.store";
+import { useCartStore } from "../../../../stores/cart.store";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import Button from "@/components/ui/Button";
 import Header from "@/components/layout/Header";
@@ -17,13 +20,47 @@ function formatRupiah(amount: number) {
 
 export default function ProductDetailScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
+    const [conflictModalVisible, setConflictModalVisible] = useState(false);
+    const [successMsg, setSuccessMsg] = useState("");
+
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
     const activeRole = useAuthStore((s) => s.activeRole);
+    const setCartSummary = useCartStore((s) => s.setCartSummary);
+    const qc = useQueryClient();
 
     const { data: product, isLoading, isError } = useQuery({
         queryKey: ["product", id],
         queryFn: () => catalogService.getProduct(id!),
         enabled: !!id,
+    });
+
+    const addToCartMutation = useMutation({
+        mutationFn: () => buyerService.addToCart(id!, 1),
+        onSuccess: (data) => {
+            setCartSummary(data.totalItems ?? 0, data.storeId ?? null);
+            qc.invalidateQueries({ queryKey: ["cart"] });
+            setSuccessMsg("Berhasil ditambahkan ke keranjang!");
+            setTimeout(() => setSuccessMsg(""), 2500);
+        },
+        onError: (err: any) => {
+            if (err?.response?.status === 409) {
+                setConflictModalVisible(true);
+            }
+        },
+    });
+
+    const clearAndAddMutation = useMutation({
+        mutationFn: async () => {
+            await buyerService.clearCart();
+            return buyerService.addToCart(id!, 1);
+        },
+        onSuccess: (data) => {
+            setCartSummary(data.totalItems ?? 0, data.storeId ?? null);
+            qc.invalidateQueries({ queryKey: ["cart"] });
+            setConflictModalVisible(false);
+            setSuccessMsg("Keranjang dikosongkan dan produk ditambahkan!");
+            setTimeout(() => setSuccessMsg(""), 2500);
+        },
     });
 
     if (isLoading) return <LoadingSpinner fullScreen message="Memuat produk..." />;
@@ -51,40 +88,26 @@ export default function ProductDetailScreen() {
                 </View>
 
                 <View className="px-4 pt-5">
-                    {/* Nama & harga */}
-                    <Text className="text-xl font-bold text-gray-900 mb-1">
-                        {product.name}
-                    </Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-1">{product.name}</Text>
                     <Text className="text-2xl font-bold text-sea-600 mb-3">
                         {formatRupiah(product.price)}
                     </Text>
 
-                    {/* Stok */}
                     <View className="flex-row items-center gap-2 mb-4">
-                        <View
-                            className={`rounded-full px-2.5 py-0.5 ${product.stock > 0 ? "bg-green-100" : "bg-red-100"
-                                }`}
-                        >
-                            <Text
-                                className={`text-xs font-semibold ${product.stock > 0 ? "text-green-700" : "text-red-600"
-                                    }`}
-                            >
+                        <View className={`rounded-full px-2.5 py-0.5 ${product.stock > 0 ? "bg-green-100" : "bg-red-100"}`}>
+                            <Text className={`text-xs font-semibold ${product.stock > 0 ? "text-green-700" : "text-red-600"}`}>
                                 {product.stock > 0 ? `Stok: ${product.stock}` : "Habis"}
                             </Text>
                         </View>
                     </View>
 
-                    {/* Deskripsi */}
                     {product.description ? (
                         <View className="mb-5">
-                            <Text className="text-sm font-semibold text-gray-700 mb-1">
-                                Deskripsi
-                            </Text>
+                            <Text className="text-sm font-semibold text-gray-700 mb-1">Deskripsi</Text>
                             <Text className="text-gray-600 leading-6">{product.description}</Text>
                         </View>
                     ) : null}
 
-                    {/* Info toko */}
                     {product.store ? (
                         <TouchableOpacity
                             onPress={() => router.push({ pathname: "/(public)/store/[id]", params: { id: product.store.id } })}
@@ -100,15 +123,31 @@ export default function ProductDetailScreen() {
                 </View>
             </ScrollView>
 
+            {/* Success toast */}
+            {successMsg ? (
+                <View className="absolute top-24 left-4 right-4 bg-green-500 rounded-xl px-4 py-3 shadow-lg">
+                    <Text className="text-white font-semibold text-center text-sm">{successMsg}</Text>
+                </View>
+            ) : null}
+
             {/* Bottom action */}
-            <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4">
+            <View className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 py-4 gap-2">
                 {canAddToCart ? (
-                    <Button
-                        label="Tambah ke Keranjang"
-                        onPress={() => router.push("/(buyer)/cart" as any)}
-                        fullWidth
-                        disabled={product.stock === 0}
-                    />
+                    <>
+                        <Button
+                            label={addToCartMutation.isPending ? "Menambahkan..." : "Tambah ke Keranjang"}
+                            onPress={() => addToCartMutation.mutate()}
+                            loading={addToCartMutation.isPending}
+                            disabled={product.stock === 0}
+                            fullWidth
+                        />
+                        <Button
+                            label="Lihat Keranjang"
+                            onPress={() => router.push("/(buyer)/cart" as any)}
+                            variant="outline"
+                            fullWidth
+                        />
+                    </>
                 ) : (
                     <Button
                         label={isAuthenticated ? "Masuk sebagai Pembeli untuk membeli" : "Masuk untuk membeli"}
@@ -118,6 +157,42 @@ export default function ProductDetailScreen() {
                     />
                 )}
             </View>
+
+            {/* Modal konflik toko (409) */}
+            <Modal
+                visible={conflictModalVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setConflictModalVisible(false)}
+            >
+                <View className="flex-1 bg-black/50 justify-center px-6">
+                    <View className="bg-white rounded-3xl p-6">
+                        <Text className="text-xl mb-2">⚠️</Text>
+                        <Text className="text-lg font-bold text-gray-900 mb-2">
+                            Produk dari Toko Berbeda
+                        </Text>
+                        <Text className="text-gray-500 text-sm mb-5">
+                            Keranjang Anda berisi produk dari toko lain. Apakah ingin mengosongkan
+                            keranjang dan menambahkan produk ini?
+                        </Text>
+                        <View className="flex-row gap-3">
+                            <Button
+                                label="Batal"
+                                onPress={() => setConflictModalVisible(false)}
+                                variant="outline"
+                                fullWidth
+                            />
+                            <Button
+                                label="Kosongkan & Tambah"
+                                onPress={() => clearAndAddMutation.mutate()}
+                                loading={clearAndAddMutation.isPending}
+                                variant="danger"
+                                fullWidth
+                            />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
