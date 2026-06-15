@@ -2,7 +2,7 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 import { router } from "expo-router";
 
-export const API_BASE_URL = "http://192.168.1.3:3000/api/v1";
+export const API_BASE_URL = "http://192.168.1.11:3000/api/v1";
 export const TOKEN_KEY = "seapedia_token";
 
 const api = axios.create({
