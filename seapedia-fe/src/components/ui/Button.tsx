@@ -1,68 +1,200 @@
-import { TouchableOpacity, Text, ActivityIndicator } from "react-native";
+import React from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  PressableProps,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+import { useTheme } from '@/hooks/use-theme';
+import { ThemedText } from '../themed-text';
+import { Spacing } from '@/constants/theme';
 
-interface ButtonProps {
-    label: string;
-    onPress: () => void;
-    variant?: "primary" | "outline" | "ghost" | "danger";
-    size?: "sm" | "md" | "lg";
-    loading?: boolean;
-    disabled?: boolean;
-    fullWidth?: boolean;
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'danger' | 'warning';
+
+export interface ButtonProps extends Omit<PressableProps, 'style'> {
+  variant?: ButtonVariant;
+  size?: 'small' | 'medium' | 'large';
+  loading?: boolean;
+  label: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  style?: ViewStyle;
+  labelStyle?: TextStyle;
 }
 
-export default function Button({
-    label,
-    onPress,
-    variant = "primary",
-    size = "md",
-    loading = false,
-    disabled = false,
-    fullWidth = false,
+export function Button({
+  variant = 'primary',
+  size = 'medium',
+  loading = false,
+  label,
+  leftIcon,
+  rightIcon,
+  style,
+  labelStyle,
+  disabled,
+  ...props
 }: ButtonProps) {
-    const base = "rounded-xl flex-row items-center justify-center";
+  const theme = useTheme();
+  const scale = useSharedValue(1);
 
-    const sizeClass = {
-        sm: "px-3 py-2",
-        md: "px-5 py-3",
-        lg: "px-6 py-4",
-    }[size];
+  const handlePressIn = () => {
+    if (!disabled && !loading) {
+      scale.value = withSpring(0.96, { damping: 10, stiffness: 300 });
+    }
+  };
 
-    const variantClass = {
-        primary: "bg-sea-500",
-        outline: "border border-sea-500 bg-transparent",
-        ghost: "bg-transparent",
-        danger: "bg-red-500",
-    }[variant];
+  const handlePressOut = () => {
+    if (!disabled && !loading) {
+      scale.value = withSpring(1, { damping: 10, stiffness: 300 });
+    }
+  };
 
-    const textClass = {
-        primary: "text-white font-semibold",
-        outline: "text-sea-600 font-semibold",
-        ghost: "text-sea-600 font-semibold",
-        danger: "text-white font-semibold",
-    }[variant];
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ scale: scale.value }],
+    };
+  });
 
-    const textSize = {
-        sm: "text-sm",
-        md: "text-base",
-        lg: "text-lg",
-    }[size];
+  const getVariantStyles = () => {
+    switch (variant) {
+      case 'primary':
+        return {
+          container: { backgroundColor: theme.primary },
+          text: { color: '#FFFFFF' },
+        };
+      case 'secondary':
+        return {
+          container: { backgroundColor: theme.secondary },
+          text: { color: '#FFFFFF' },
+        };
+      case 'outline':
+        return {
+          container: {
+            backgroundColor: 'transparent',
+            borderWidth: 1.5,
+            borderColor: theme.primary,
+          },
+          text: { color: theme.primary },
+        };
+      case 'danger':
+        return {
+          container: { backgroundColor: theme.danger },
+          text: { color: '#FFFFFF' },
+        };
+      case 'warning':
+        return {
+          container: { backgroundColor: theme.warning },
+          text: { color: '#FFFFFF' },
+        };
+      default:
+        return {
+          container: { backgroundColor: theme.primary },
+          text: { color: '#FFFFFF' },
+        };
+    }
+  };
 
-    const isDisabled = disabled || loading;
+  const getSizeStyles = () => {
+    switch (size) {
+      case 'small':
+        return {
+          container: {
+            paddingVertical: Spacing.one * 1.5,
+            paddingHorizontal: Spacing.three,
+            borderRadius: 8,
+          },
+          text: { fontSize: 13, fontWeight: '600' as const },
+        };
+      case 'large':
+        return {
+          container: {
+            paddingVertical: Spacing.three,
+            paddingHorizontal: Spacing.five,
+            borderRadius: 14,
+          },
+          text: { fontSize: 17, fontWeight: '700' as const },
+        };
+      case 'medium':
+      default:
+        return {
+          container: {
+            paddingVertical: Spacing.two * 1.5,
+            paddingHorizontal: Spacing.four,
+            borderRadius: 12,
+          },
+          text: { fontSize: 15, fontWeight: '600' as const },
+        };
+    }
+  };
 
-    return (
-        <TouchableOpacity
-            onPress={onPress}
-            disabled={isDisabled}
-            className={`${base} ${sizeClass} ${variantClass} ${fullWidth ? "w-full" : ""} ${isDisabled ? "opacity-50" : ""}`}
+  const variantStyle = getVariantStyles();
+  const sizeStyle = getSizeStyles();
+
+  const isDisabled = disabled || loading;
+
+  return (
+    <AnimatedPressable
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      disabled={isDisabled}
+      style={[
+        styles.baseButton,
+        variantStyle.container,
+        sizeStyle.container,
+        isDisabled && styles.disabled,
+        style,
+        animatedStyle,
+      ]}
+      {...props}
+    >
+      {!loading && leftIcon}
+      {loading ? (
+        <ActivityIndicator
+          size="small"
+          color={variant === 'outline' ? theme.primary : '#FFFFFF'}
+        />
+      ) : (
+        <ThemedText
+          style={[
+            styles.label,
+            variantStyle.text,
+            sizeStyle.text,
+            labelStyle,
+          ]}
         >
-            {loading ? (
-                <ActivityIndicator
-                    size="small"
-                    color={variant === "outline" || variant === "ghost" ? "#0891b2" : "#fff"}
-                    className="mr-2"
-                />
-            ) : null}
-            <Text className={`${textClass} ${textSize}`}>{label}</Text>
-        </TouchableOpacity>
-    );
+          {label}
+        </ThemedText>
+      )}
+      {!loading && rightIcon}
+    </AnimatedPressable>
+  );
 }
+
+const styles = StyleSheet.create({
+  baseButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.two,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  label: {
+    textAlign: 'center',
+  },
+  disabled: {
+    opacity: 0.5,
+  },
+});
