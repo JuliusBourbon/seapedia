@@ -1,0 +1,59 @@
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { ShoppingBag } from 'lucide-react-native';
+import { useTheme } from '@/hooks/use-theme';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { Button } from '@/components/ui/button';
+import { useRouter } from 'expo-router';
+import { Spacing } from '@/constants/theme';
+
+export default function BuyerOrdersTabPlaceholder() {
+  const theme = useTheme();
+  const router = useRouter();
+
+  return (
+    <ThemedView style={styles.container}>
+      <View style={styles.content}>
+        <ShoppingBag size={64} color={theme.placeholder} />
+        <ThemedText type="smallBold" style={styles.title}>
+          Riwayat Pesanan Anda
+        </ThemedText>
+        <ThemedText style={styles.subtitle} themeColor="textSecondary">
+          Fitur riwayat transaksi belanja dan pelacakan pengantaran barang akan hadir setelah Level 4 diimplementasikan.
+        </ThemedText>
+        <Button
+          label="Kembali Ke Dasbor"
+          onPress={() => router.push('/(buyer)/(tabs)/dashboard')}
+          style={styles.btn}
+        />
+      </View>
+    </ThemedView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  content: {
+    padding: Spacing.five,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  title: {
+    fontSize: 18,
+    marginTop: Spacing.three,
+  },
+  subtitle: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginTop: Spacing.two,
+    marginBottom: Spacing.four,
+  },
+  btn: {
+    width: 200,
+  },
+});

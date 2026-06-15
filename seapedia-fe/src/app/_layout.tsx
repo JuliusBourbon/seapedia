@@ -52,13 +52,13 @@ export default function RootLayout() {
 
         if (inGuestTabs || inLoginOrRegister || inSelectRole) {
           if (activeRole === 'BUYER') {
-            router.replace('/(buyer)/dashboard');
+            router.replace('/(buyer)/(tabs)/dashboard' as any);
           } else if (activeRole === 'SELLER') {
-            router.replace('/(seller)/dashboard');
+            router.replace('/(seller)/dashboard' as any);
           } else if (activeRole === 'DRIVER') {
-            router.replace('/(driver)/dashboard');
+            router.replace('/(driver)/dashboard' as any);
           } else if (activeRole === 'ADMIN') {
-            router.replace('/(admin)/dashboard');
+            router.replace('/(admin)/dashboard' as any);
           }
         }
       }
