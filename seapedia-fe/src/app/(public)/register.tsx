@@ -44,18 +44,18 @@ export default function RegisterScreen() {
     }
   };
 
-  const validate = () => {
+  const validate = (u: string, n: string, e: string, p: string) => {
     const tempErrors: Record<string, string> = {};
-    if (!username.trim()) tempErrors.username = 'Username wajib diisi';
-    else if (username.length < 3) tempErrors.username = 'Username minimal 3 karakter';
+    if (!u) tempErrors.username = 'Username wajib diisi';
+    else if (u.length < 3) tempErrors.username = 'Username minimal 3 karakter';
     
-    if (!email.trim()) tempErrors.email = 'Email wajib diisi';
-    else if (!/\S+@\S+\.\S+/.test(email)) tempErrors.email = 'Format email tidak valid';
+    if (!e) tempErrors.email = 'Email wajib diisi';
+    else if (!/\S+@\S+\.\S+/.test(e)) tempErrors.email = 'Format email tidak valid';
 
-    if (!password.trim()) tempErrors.password = 'Password wajib diisi';
-    else if (password.length < 6) tempErrors.password = 'Password minimal 6 karakter';
+    if (!p) tempErrors.password = 'Password wajib diisi';
+    else if (p.length < 6) tempErrors.password = 'Password minimal 6 karakter';
 
-    if (!name.trim()) tempErrors.name = 'Nama lengkap wajib diisi';
+    if (!n) tempErrors.name = 'Nama lengkap wajib diisi';
 
     if (selectedRoles.length === 0) {
       tempErrors.roles = 'Pilih minimal satu peran';
@@ -66,15 +66,27 @@ export default function RegisterScreen() {
   };
 
   const handleRegister = async () => {
-    if (!validate()) return;
+    // Sanitasi input sisi klien
+    const cleanUsername = username.trim().toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 20);
+    const cleanName = name.trim().slice(0, 50);
+    const cleanEmail = email.trim().slice(0, 100);
+    const cleanPassword = password.trim().slice(0, 50);
+
+    // Update state agar sinkron dengan UI
+    setUsername(cleanUsername);
+    setName(cleanName);
+    setEmail(cleanEmail);
+    setPassword(cleanPassword);
+
+    if (!validate(cleanUsername, cleanName, cleanEmail, cleanPassword)) return;
 
     setLoading(true);
     try {
       const payload = {
-        username,
-        email,
-        password,
-        name,
+        username: cleanUsername,
+        email: cleanEmail,
+        password: cleanPassword,
+        name: cleanName,
         roles: selectedRoles,
       };
 
@@ -89,11 +101,10 @@ export default function RegisterScreen() {
       }
     } catch (err: any) {
       if (err.response?.data?.errors) {
-        // Map backend errors (e.g. zod validation object)
+        // Map backend errors
         const beErrors: Record<string, string> = {};
         const errorsData = err.response.data.errors;
         
-        // Zod validation errors
         if (typeof errorsData === 'object' && errorsData !== null) {
           Object.keys(errorsData).forEach((key) => {
             const val = errorsData[key];

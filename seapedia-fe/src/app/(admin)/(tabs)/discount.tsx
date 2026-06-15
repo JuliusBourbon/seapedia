@@ -114,23 +114,26 @@ export default function AdminDiscountScreen() {
     );
   };
 
-  const validateForm = () => {
+  const validateForm = (c: string, v: string, e: string, u: string) => {
     const errors: Record<string, string> = {};
-    if (!code || code.trim().length < 3) {
-      errors.code = 'Kode minimal 3 karakter.';
+    if (!c || c.length < 3) {
+      errors.code = 'Kode minimal 3 karakter alfanumerik.';
     }
-    if (!value || isNaN(Number(value)) || Number(value) <= 0) {
+    
+    const valueNum = Number(v);
+    if (!v || isNaN(valueNum) || valueNum <= 0) {
       errors.value = 'Nilai diskon harus berupa angka positif.';
-    } else if (discountType === 'PERCENTAGE' && Number(value) > 100) {
+    } else if (discountType === 'PERCENTAGE' && valueNum > 100) {
       errors.value = 'Nilai persentase maksimal 100%.';
     }
     
-    if (!expiryDate || isNaN(Date.parse(expiryDate))) {
+    if (!e || isNaN(Date.parse(e))) {
       errors.expiryDate = 'Format tanggal kadaluarsa tidak valid (YYYY-MM-DD).';
     }
 
     if (formType === 'VOUCHER') {
-      if (!usageLimit || isNaN(Number(usageLimit)) || Number(usageLimit) <= 0) {
+      const limitNum = Number(u);
+      if (!u || isNaN(limitNum) || limitNum <= 0) {
         errors.usageLimit = 'Batas penggunaan harus berupa angka positif.';
       }
     }
@@ -140,20 +143,31 @@ export default function AdminDiscountScreen() {
   };
 
   const handleCreateDiscount = async () => {
-    if (!validateForm()) return;
+    // Sanitasi input sisi klien
+    const cleanCode = code.toUpperCase().trim().replace(/[^A-Z0-9]/g, '').slice(0, 20);
+    const cleanValue = value.trim().replace(/\D/g, '');
+    const cleanUsageLimit = usageLimit.trim().replace(/\D/g, '');
+    const cleanExpiryDate = expiryDate.trim();
+
+    setCode(cleanCode);
+    setValue(cleanValue);
+    setUsageLimit(cleanUsageLimit);
+    setExpiryDate(cleanExpiryDate);
+
+    if (!validateForm(cleanCode, cleanValue, cleanExpiryDate, cleanUsageLimit)) return;
 
     setSubmitLoading(true);
     try {
-      const formattedDate = new Date(expiryDate).toISOString();
+      const formattedDate = new Date(cleanExpiryDate).toISOString();
       const payload: any = {
-        code: code.toUpperCase().trim(),
+        code: cleanCode,
         type: discountType,
-        value: Number(value),
+        value: Number(cleanValue),
         expiryDate: formattedDate,
       };
 
       if (formType === 'VOUCHER') {
-        payload.usageLimit = Number(usageLimit);
+        payload.usageLimit = Number(cleanUsageLimit);
       }
 
       const url = formType === 'VOUCHER' ? '/admin/vouchers' : '/admin/promos';

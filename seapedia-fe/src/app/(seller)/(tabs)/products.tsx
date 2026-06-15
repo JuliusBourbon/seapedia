@@ -92,21 +92,21 @@ export default function SellerProductsScreen() {
     setModalVisible(true);
   };
 
-  const validateForm = () => {
+  const validateForm = (nm: string, prc: string, stk: string) => {
     const tempErrors: Record<string, string> = {};
-    if (!name.trim()) tempErrors.name = 'Nama produk wajib diisi';
+    if (!nm) tempErrors.name = 'Nama produk wajib diisi';
     
-    const priceNum = Number(price);
-    if (!price.trim()) {
+    const priceNum = Number(prc);
+    if (!prc) {
       tempErrors.price = 'Harga wajib diisi';
     } else if (isNaN(priceNum) || priceNum <= 0) {
       tempErrors.price = 'Harga harus berupa angka positif';
     }
 
-    const stockNum = Number(stock);
-    if (!stock.trim()) {
+    const stockNum = Number(stk);
+    if (!stk) {
       tempErrors.stock = 'Stok wajib diisi';
-    } else if (isNaN(stockNum) || !Number.isInteger(stockNum) || stockNum < 0) {
+    } else if (isNaN(stockNum) || stockNum < 0) {
       tempErrors.stock = 'Stok harus berupa bilangan bulat non-negatif';
     }
 
@@ -115,15 +115,27 @@ export default function SellerProductsScreen() {
   };
 
   const handleSaveProduct = async () => {
-    if (!validateForm()) return;
+    // Sanitasi input sisi klien
+    const cleanName = name.trim().slice(0, 100);
+    const cleanDescription = description.trim().slice(0, 500);
+    const cleanPriceStr = price.trim().replace(/\D/g, '');
+    const cleanStockStr = stock.trim().replace(/\D/g, '');
+
+    // Sinkronisasi dengan state UI
+    setName(cleanName);
+    setDescription(cleanDescription);
+    setPrice(cleanPriceStr);
+    setStock(cleanStockStr);
+
+    if (!validateForm(cleanName, cleanPriceStr, cleanStockStr)) return;
 
     setSubmitting(true);
     try {
       const payload = {
-        name,
-        description: description.trim() || null,
-        price: Number(price),
-        stock: Number(stock),
+        name: cleanName,
+        description: cleanDescription || null,
+        price: Number(cleanPriceStr),
+        stock: Number(cleanStockStr),
       };
 
       let response;

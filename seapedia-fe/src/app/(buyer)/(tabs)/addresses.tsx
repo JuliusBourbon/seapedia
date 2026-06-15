@@ -105,39 +105,53 @@ export default function AddressManagementScreen() {
     setModalVisible(true);
   };
 
-  const validateForm = () => {
+  const validateForm = (lbl: string, rec: string, phone: string, addr: string, cty: string, post: string) => {
     const tempErrors: Record<string, string> = {};
-    if (!label.trim()) tempErrors.label = 'Label alamat wajib diisi (misal: Rumah)';
-    if (!recipientName.trim()) tempErrors.recipientName = 'Nama penerima wajib diisi';
+    if (!lbl) tempErrors.label = 'Label alamat wajib diisi (misal: Rumah)';
+    if (!rec) tempErrors.recipientName = 'Nama penerima wajib diisi';
     
-    if (!phoneNumber.trim()) {
+    if (!phone) {
       tempErrors.phoneNumber = 'No telepon wajib diisi';
-    } else if (!/^\d+$/.test(phoneNumber)) {
-      tempErrors.phoneNumber = 'No telepon harus berisi angka saja';
-    } else if (phoneNumber.length < 9 || phoneNumber.length > 15) {
+    } else if (phone.length < 9 || phone.length > 15) {
       tempErrors.phoneNumber = 'No telepon harus antara 9 - 15 digit';
     }
 
-    if (!fullAddress.trim()) tempErrors.fullAddress = 'Alamat lengkap wajib diisi';
-    if (!city.trim()) tempErrors.city = 'Kota wajib diisi';
-    if (!postalCode.trim()) tempErrors.postalCode = 'Kode pos wajib diisi';
+    if (!addr) tempErrors.fullAddress = 'Alamat lengkap wajib diisi';
+    if (!cty) tempErrors.city = 'Kota wajib diisi';
+    if (!post) tempErrors.postalCode = 'Kode pos wajib diisi';
 
     setErrors(tempErrors);
     return Object.keys(tempErrors).length === 0;
   };
 
   const handleSaveAddress = async () => {
-    if (!validateForm()) return;
+    // Sanitasi input sisi klien
+    const cleanLabel = label.trim().slice(0, 30);
+    const cleanRecipientName = recipientName.trim().slice(0, 50);
+    const cleanPhoneNumber = phoneNumber.trim().replace(/\D/g, '').slice(0, 15);
+    const cleanFullAddress = fullAddress.trim().slice(0, 250);
+    const cleanCity = city.trim().slice(0, 50);
+    const cleanPostalCode = postalCode.trim().replace(/\D/g, '').slice(0, 6);
+
+    // Sinkronisasi state agar sinkron di input form UI
+    setLabel(cleanLabel);
+    setRecipientName(cleanRecipientName);
+    setPhoneNumber(cleanPhoneNumber);
+    setFullAddress(cleanFullAddress);
+    setCity(cleanCity);
+    setPostalCode(cleanPostalCode);
+
+    if (!validateForm(cleanLabel, cleanRecipientName, cleanPhoneNumber, cleanFullAddress, cleanCity, cleanPostalCode)) return;
 
     setSubmitting(true);
     try {
       const payload = {
-        label,
-        recipientName,
-        phoneNumber,
-        fullAddress,
-        city,
-        postalCode,
+        label: cleanLabel,
+        recipientName: cleanRecipientName,
+        phoneNumber: cleanPhoneNumber,
+        fullAddress: cleanFullAddress,
+        city: cleanCity,
+        postalCode: cleanPostalCode,
         isDefault,
       };
 
