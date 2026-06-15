@@ -2,10 +2,12 @@ import { Tabs, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { Home, ShoppingBag, MapPin, BarChart3, ShoppingCart } from 'lucide-react-native';
 import { Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function BuyerTabsLayout() {
   const theme = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -16,8 +18,8 @@ export default function BuyerTabsLayout() {
           backgroundColor: theme.backgroundElement,
           borderTopWidth: 1,
           borderTopColor: theme.border,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
           paddingTop: 8,
         },
         headerStyle: {

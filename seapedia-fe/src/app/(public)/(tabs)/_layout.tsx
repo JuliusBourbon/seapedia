@@ -3,11 +3,13 @@ import { useTheme } from '@/hooks/use-theme';
 import { Home, Compass, Star, LogIn, User, ShoppingCart } from 'lucide-react-native';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function PublicTabsLayout() {
   const theme = useTheme();
   const router = useRouter();
   const { isAuthenticated, activeRole } = useAuthStore();
+  const insets = useSafeAreaInsets();
 
   return (
     <Tabs
@@ -18,8 +20,8 @@ export default function PublicTabsLayout() {
           backgroundColor: theme.backgroundElement,
           borderTopWidth: 1,
           borderTopColor: theme.border,
-          height: 60,
-          paddingBottom: 8,
+          height: 60 + insets.bottom,
+          paddingBottom: 8 + insets.bottom,
           paddingTop: 8,
         },
         headerStyle: {
