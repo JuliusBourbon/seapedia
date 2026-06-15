@@ -20,6 +20,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -34,6 +35,7 @@ interface ReviewData {
 export default function ApplicationReviewsScreen() {
   const theme = useTheme();
   const { user } = useAuthStore();
+  const insets = useSafeAreaInsets();
   const [reviews, setReviews] = useState<ReviewData[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -205,7 +207,7 @@ export default function ApplicationReviewsScreen() {
             data={reviews}
             renderItem={renderReviewItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.listContainer}
+            contentContainerStyle={[styles.listContainer, { paddingBottom: 136 + insets.bottom }]}
             ListEmptyComponent={renderEmpty}
             refreshControl={
               <RefreshControl
@@ -217,7 +219,7 @@ export default function ApplicationReviewsScreen() {
             }
           />
 
-          <View style={styles.fabContainer}>
+          <View style={[styles.fabContainer, { bottom: 68 + insets.bottom }]}>
             <Button
               label="Tulis Review"
               leftIcon={<MessageSquarePlus size={20} color="#FFFFFF" />}

@@ -16,6 +16,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
 interface CartItem {
@@ -42,6 +43,7 @@ interface CartData {
 export default function CartScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const [cart, setCart] = useState<CartData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -251,7 +253,7 @@ export default function CartScreen() {
         keyExtractor={(item) => item.productId}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 100 + insets.bottom }]}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -263,7 +265,17 @@ export default function CartScreen() {
       />
 
       {hasItems && (
-        <ThemedView type="backgroundElement" style={[styles.summaryFooter, { borderTopColor: theme.border }]}>
+        <ThemedView
+          type="backgroundElement"
+          style={[
+            styles.summaryFooter,
+            {
+              borderTopColor: theme.border,
+              height: 84 + insets.bottom,
+              paddingBottom: Spacing.four + insets.bottom,
+            },
+          ]}
+        >
           <View style={styles.summaryRow}>
             <View>
               <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">

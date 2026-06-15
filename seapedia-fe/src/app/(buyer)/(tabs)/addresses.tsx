@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
 interface Address {
@@ -37,6 +38,7 @@ interface Address {
 
 export default function AddressManagementScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loading, setLoading] = useState(true);
@@ -289,7 +291,7 @@ export default function AddressManagementScreen() {
         data={addresses}
         renderItem={renderAddressCard}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 136 + insets.bottom }]}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -301,7 +303,7 @@ export default function AddressManagementScreen() {
         }
       />
 
-      <View style={styles.fabContainer}>
+      <View style={[styles.fabContainer, { bottom: 68 + insets.bottom }]}>
         <Button
           label="Tambah Alamat Baru"
           leftIcon={<Plus size={20} color="#FFFFFF" />}

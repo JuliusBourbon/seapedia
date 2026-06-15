@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
 
@@ -40,6 +41,7 @@ export default function ProductDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { activeRole, isAuthenticated } = useAuthStore();
+  const insets = useSafeAreaInsets();
 
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -163,7 +165,7 @@ export default function ProductDetailScreen() {
 
   return (
     <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
         {/* Product Visual Header */}
         <LinearGradient
           colors={['#0D9488', '#0EA5E9', '#3B82F6']}
@@ -209,7 +211,7 @@ export default function ProductDetailScreen() {
             <ThemedText type="smallBold" style={styles.sectionTitle} themeColor="textSecondary">
               Informasi Toko
             </ThemedText>
-            <Pressable onPress={() => router.push(`/(public)/store/${product.store.id}`)}>
+            <Pressable onPress={() => router.push(`/(public)/store/${product.store.id}` as any)}>
               <Card style={styles.storeCard}>
                 <View style={[styles.storeIconContainer, { backgroundColor: `${theme.primary}15` }]}>
                   <StoreIcon size={24} color={theme.primary} />
@@ -229,7 +231,17 @@ export default function ProductDetailScreen() {
       </ScrollView>
 
       {/* Sticky Bottom Actions */}
-      <ThemedView type="backgroundElement" style={[styles.stickyFooter, { borderTopColor: theme.border }]}>
+      <ThemedView
+        type="backgroundElement"
+        style={[
+          styles.stickyFooter,
+          {
+            borderTopColor: theme.border,
+            height: 80 + insets.bottom,
+            paddingBottom: Spacing.four + insets.bottom,
+          },
+        ]}
+      >
         {product.stock > 0 && activeRole === 'BUYER' && (
           <View style={styles.qtyContainer}>
             <Pressable

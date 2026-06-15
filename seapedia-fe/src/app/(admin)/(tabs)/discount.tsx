@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
 interface DiscountItem {
@@ -36,6 +37,7 @@ type ModeTab = 'VOUCHER' | 'PROMO';
 
 export default function AdminDiscountScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [vouchers, setVouchers] = useState<DiscountItem[]>([]);
   const [promos, setPromos] = useState<DiscountItem[]>([]);
@@ -328,7 +330,7 @@ export default function AdminDiscountScreen() {
         data={activeData}
         renderItem={renderDiscountItem}
         keyExtractor={(item) => item.code}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 136 + insets.bottom }]}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -346,7 +348,7 @@ export default function AdminDiscountScreen() {
           setFormType(activeTab);
           setIsModalOpen(true);
         }}
-        style={[styles.fab, { backgroundColor: theme.primary }]}
+        style={[styles.fab, { backgroundColor: theme.primary, bottom: 68 + insets.bottom }]}
       >
         <Plus size={24} color="#FFFFFF" />
       </Pressable>

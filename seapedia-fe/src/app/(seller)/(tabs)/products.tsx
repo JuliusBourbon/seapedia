@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Spacing } from '@/constants/theme';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
 interface Product {
@@ -33,6 +34,7 @@ interface Product {
 
 export default function SellerProductsScreen() {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -275,7 +277,7 @@ export default function SellerProductsScreen() {
         data={products}
         renderItem={renderProductItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 136 + insets.bottom }]}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -287,7 +289,7 @@ export default function SellerProductsScreen() {
         }
       />
 
-      <View style={styles.fabContainer}>
+      <View style={[styles.fabContainer, { bottom: 68 + insets.bottom }]}>
         <Button
           label="Tambah Produk Baru"
           leftIcon={<Plus size={20} color="#FFFFFF" />}
