@@ -297,20 +297,26 @@ export default function SellerOrderDetailScreen() {
           <View style={styles.addressHeaderRow}>
             <MapPin size={18} color={theme.primary} />
             <ThemedText type="smallBold" style={{ marginLeft: Spacing.one }}>
-              {order.address.label}
+              {order.address?.label || 'Alamat tidak tersedia'}
             </ThemedText>
           </View>
-          <View style={{ marginTop: Spacing.two, gap: 2 }}>
-            <ThemedText type="smallBold" style={{ fontSize: 14 }}>
-              Penerima: {order.address.recipientName}
+          {order.address ? (
+            <View style={{ marginTop: Spacing.two, gap: 2 }}>
+              <ThemedText type="smallBold" style={{ fontSize: 14 }}>
+                Penerima: {order.address.recipientName}
+              </ThemedText>
+              <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+                Telepon: {order.address.phoneNumber}
+              </ThemedText>
+              <ThemedText style={styles.fullAddressText}>
+                {order.address.fullAddress}, {order.address.city}, {order.address.postalCode}
+              </ThemedText>
+            </View>
+          ) : (
+            <ThemedText style={{ fontSize: 13, marginTop: Spacing.two }} themeColor="textSecondary">
+              Informasi detail alamat tidak dilampirkan oleh server.
             </ThemedText>
-            <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
-              Telepon: {order.address.phoneNumber}
-            </ThemedText>
-            <ThemedText style={styles.fullAddressText}>
-              {order.address.fullAddress}, {order.address.city}, {order.address.postalCode}
-            </ThemedText>
-          </View>
+          )}
         </Card>
 
         {/* List of items purchased */}
