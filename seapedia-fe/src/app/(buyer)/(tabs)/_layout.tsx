@@ -1,9 +1,11 @@
-import { Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
-import { Home, ShoppingBag, MapPin, BarChart3 } from 'lucide-react-native';
+import { Home, ShoppingBag, MapPin, BarChart3, ShoppingCart } from 'lucide-react-native';
+import { Pressable } from 'react-native';
 
 export default function BuyerTabsLayout() {
   const theme = useTheme();
+  const router = useRouter();
 
   return (
     <Tabs
@@ -27,6 +29,17 @@ export default function BuyerTabsLayout() {
         headerTitleStyle: {
           fontWeight: '700',
         },
+        headerRight: () => (
+          <Pressable
+            onPress={() => router.push('/(buyer)/cart' as any)}
+            style={({ pressed }) => ({
+              marginRight: 16,
+              opacity: pressed ? 0.7 : 1,
+            })}
+          >
+            <ShoppingCart size={24} color={theme.primary} />
+          </Pressable>
+        ),
       }}
     >
       <Tabs.Screen

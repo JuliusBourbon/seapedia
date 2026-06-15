@@ -47,10 +47,12 @@ export default function RootLayout() {
         }
       } else if (activeRole) {
         // activeRole is selected. Redirect to dashboard if trying to access public main tab screens or select-role
-        const inGuestTabs = segments[0] === '(public)' && segments[1] === '(tabs)';
-        const inLoginOrRegister = segments[1] === 'login' || segments[1] === 'register';
+        const inLoginOrRegister = 
+          segments[1] === 'login' || 
+          segments[1] === 'register' ||
+          (segments[1] === '(tabs)' && segments[2] === 'login');
 
-        if (inGuestTabs || inLoginOrRegister || inSelectRole) {
+        if (inLoginOrRegister || inSelectRole) {
           if (activeRole === 'BUYER') {
             router.replace('/(buyer)/(tabs)/dashboard' as any);
           } else if (activeRole === 'SELLER') {
