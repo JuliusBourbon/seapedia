@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -15,7 +14,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ProductCard, ProductData } from '@/components/product-card';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 interface StoreDetail {
@@ -64,26 +62,26 @@ export default function StoreDetailScreen() {
   const renderHeader = () => {
     if (!store) return null;
     return (
-      <View style={styles.headerContainer}>
+      <View className="w-full pb-2">
         <LinearGradient
           colors={['#0F766E', '#0D9488']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={styles.storeBanner}
+          className="flex-row items-center py-6 px-4 rounded-b-[20px] mb-3"
         >
-          <View style={[styles.storeIconContainer, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]}>
+          <View className="w-[60px] h-[60px] rounded-full items-center justify-center bg-white/20">
             <Store size={36} color="#FFFFFF" />
           </View>
-          <View style={styles.storeInfoText}>
-            <ThemedText style={styles.storeName}>{store.name}</ThemedText>
-            <ThemedText style={styles.storeDescription}>
+          <View className="flex-1 ml-4">
+            <ThemedText className="text-white text-xl font-extrabold">{store.name}</ThemedText>
+            <ThemedText className="text-white/85 text-[13px] mt-[2px]">
               {store.description || 'Nelayan / Toko Maritim Terpercaya'}
             </ThemedText>
           </View>
         </LinearGradient>
 
-        <View style={styles.sectionTitleRow}>
-          <ThemedText type="smallBold" style={{ fontSize: 16 }}>
+        <View className="px-4 py-2">
+          <ThemedText type="smallBold" className="text-base">
             Produk Toko ({store.products?.length || 0})
           </ThemedText>
         </View>
@@ -94,8 +92,8 @@ export default function StoreDetailScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <ThemedText style={{ color: theme.textSecondary }}>
+      <View className="items-center justify-center py-12">
+        <ThemedText className="text-textSecondary">
           Toko ini belum memiliki produk yang dijual.
         </ThemedText>
       </View>
@@ -104,9 +102,9 @@ export default function StoreDetailScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.loadingContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-4 text-textSecondary">
           Memuat halaman toko maritim...
         </ThemedText>
       </ThemedView>
@@ -115,16 +113,16 @@ export default function StoreDetailScreen() {
 
   if (error || !store) {
     return (
-      <ThemedView style={styles.errorContainer}>
+      <ThemedView className="flex-1 items-center justify-center p-8">
         <ShieldAlert size={48} color={theme.danger} />
-        <ThemedText style={styles.errorText}>{error || 'Toko tidak ditemukan'}</ThemedText>
-        <Button label="Kembali" onPress={() => router.back()} style={{ marginTop: Spacing.four }} />
+        <ThemedText className="text-base font-semibold mt-4 text-center">{error || 'Toko tidak ditemukan'}</ThemedText>
+        <Button label="Kembali" onPress={() => router.back()} className="mt-6" />
       </ThemedView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={store.products || []}
         renderItem={({ item }) => (
@@ -135,11 +133,8 @@ export default function StoreDetailScreen() {
         )}
         keyExtractor={(item) => item.id}
         numColumns={Platform.OS === 'web' ? undefined : 2}
-        contentContainerStyle={[
-          styles.listContainer,
-          Platform.OS === 'web' && styles.webListContainer,
-        ]}
-        columnWrapperStyle={Platform.OS !== 'web' && store.products?.length > 0 ? styles.columnWrapper : undefined}
+        contentContainerClassName={Platform.OS === 'web' ? "flex-row flex-wrap justify-center px-4 pb-8" : "pb-8"}
+        columnWrapperClassName={Platform.OS !== 'web' && store.products?.length > 0 ? "justify-between px-2" : undefined}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
         refreshControl={
@@ -154,82 +149,3 @@ export default function StoreDetailScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.five,
-  },
-  errorText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: Spacing.three,
-    textAlign: 'center',
-  },
-  listContainer: {
-    paddingBottom: Spacing.five,
-  },
-  webListContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing.four,
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.two,
-  },
-  headerContainer: {
-    width: '100%',
-    paddingBottom: Spacing.two,
-  },
-  storeBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    marginBottom: Spacing.three,
-  },
-  storeIconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  storeInfoText: {
-    flex: 1,
-    marginLeft: Spacing.four,
-  },
-  storeName: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  storeDescription: {
-    color: 'rgba(255, 255, 255, 0.85)',
-    fontSize: 13,
-    marginTop: 2,
-  },
-  sectionTitleRow: {
-    paddingHorizontal: Spacing.four,
-    paddingVertical: Spacing.two,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-  },
-});

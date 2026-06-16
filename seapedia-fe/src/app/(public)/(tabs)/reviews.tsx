@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -19,7 +18,6 @@ import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Spacing } from '@/constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -139,14 +137,14 @@ export default function ApplicationReviewsScreen() {
         />
       );
     }
-    return <View style={styles.starRow}>{stars}</View>;
+    return <View className="flex-row mt-1">{stars}</View>;
   };
 
   const renderStarSelector = () => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <Pressable key={i} onPress={() => setFormRating(i)} style={styles.starPressable}>
+        <Pressable key={i} onPress={() => setFormRating(i)} className="p-1">
           <Star
             size={36}
             color={i <= formRating ? theme.warning : theme.border}
@@ -155,7 +153,7 @@ export default function ApplicationReviewsScreen() {
         </Pressable>
       );
     }
-    return <View style={styles.starSelectorRow}>{stars}</View>;
+    return <View className="flex-row justify-between px-5 my-2">{stars}</View>;
   };
 
   const renderReviewItem = ({ item }: { item: ReviewData }) => {
@@ -166,17 +164,17 @@ export default function ApplicationReviewsScreen() {
     });
 
     return (
-      <Card style={styles.reviewCard}>
-        <View style={styles.reviewHeader}>
+      <Card className="mb-4">
+        <View className="flex-row justify-between items-start mb-2">
           <View>
-            <ThemedText style={styles.reviewerName}>{item.reviewerName}</ThemedText>
+            <ThemedText className="text-base font-bold">{item.reviewerName}</ThemedText>
             {renderStars(item.rating)}
           </View>
-          <ThemedText style={styles.reviewDate} themeColor="textSecondary">
+          <ThemedText className="text-xs" themeColor="textSecondary">
             {formattedDate}
           </ThemedText>
         </View>
-        <ThemedText style={styles.reviewComment}>{item.comment}</ThemedText>
+        <ThemedText className="text-sm leading-5">{item.comment}</ThemedText>
       </Card>
     );
   };
@@ -184,8 +182,8 @@ export default function ApplicationReviewsScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <ThemedText style={{ color: theme.textSecondary }}>
+      <View className="items-center justify-center py-12">
+        <ThemedText className="text-textSecondary text-center px-4">
           {error ? error : 'Belum ada review untuk aplikasi ini. Jadilah yang pertama!'}
         </ThemedText>
       </View>
@@ -193,21 +191,22 @@ export default function ApplicationReviewsScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       {loading && !refreshing ? (
-        <View style={styles.loadingContainer}>
+        <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
-          <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+          <ThemedText className="mt-4 text-textSecondary">
             Memuat ulasan pengguna...
           </ThemedText>
         </View>
       ) : (
-        <View style={{ flex: 1 }}>
+        <View className="flex-1">
           <FlatList
             data={reviews}
             renderItem={renderReviewItem}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={[styles.listContainer, { paddingBottom: 136 + insets.bottom }]}
+            contentContainerClassName="p-4"
+            contentContainerStyle={{ paddingBottom: 136 + insets.bottom }}
             ListEmptyComponent={renderEmpty}
             refreshControl={
               <RefreshControl
@@ -219,12 +218,12 @@ export default function ApplicationReviewsScreen() {
             }
           />
 
-          <View style={[styles.fabContainer, { bottom: 68 + insets.bottom }]}>
+          <View className="absolute left-4 right-4" style={{ bottom: 68 + insets.bottom }}>
             <Button
               label="Tulis Review"
               leftIcon={<MessageSquarePlus size={20} color="#FFFFFF" />}
               onPress={() => setModalVisible(true)}
-              style={styles.fabButton}
+              className="rounded-full h-[52px] shadow-lg shadow-black/15 elevation-5"
             />
           </View>
         </View>
@@ -237,22 +236,22 @@ export default function ApplicationReviewsScreen() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
+        <View className="flex-1 bg-black/50 justify-end">
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={styles.keyboardView}
+            className="w-full"
           >
-            <ThemedView type="backgroundElement" style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+            <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[85%]">
+              <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
+                <ThemedText type="smallBold" className="text-lg">
                   Tulis Review Aplikasi
                 </ThemedText>
-                <Pressable onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                <Pressable onPress={() => setModalVisible(false)} className="p-1">
                   <X size={20} color={theme.text} />
                 </Pressable>
               </View>
 
-              <ScrollView contentContainerStyle={styles.modalForm}>
+              <ScrollView contentContainerClassName="p-4 pb-8">
                 <Input
                   label="Nama Pengulas"
                   placeholder="Masukkan nama Anda"
@@ -262,8 +261,8 @@ export default function ApplicationReviewsScreen() {
                   editable={!user?.name} // Lock if logged in
                 />
 
-                <View style={styles.ratingSection}>
-                  <ThemedText type="smallBold" style={{ color: theme.textSecondary, marginBottom: Spacing.one }}>
+                <View className="mb-4">
+                  <ThemedText type="smallBold" className="text-textSecondary mb-1">
                     Rating Aplikasi
                   </ThemedText>
                   {renderStarSelector()}
@@ -277,14 +276,14 @@ export default function ApplicationReviewsScreen() {
                   error={formErrors.comment}
                   multiline
                   numberOfLines={4}
-                  inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: Spacing.two }}
+                  inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: 8 }}
                 />
 
                 <Button
                   label="Kirim Ulasan"
                   onPress={handleSubmitReview}
                   loading={submitting}
-                  style={{ marginTop: Spacing.three }}
+                  className="mt-4"
                 />
               </ScrollView>
             </ThemedView>
@@ -294,102 +293,3 @@ export default function ApplicationReviewsScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContainer: {
-    padding: Spacing.four,
-    paddingBottom: 80, // Space for FAB
-  },
-  reviewCard: {
-    marginBottom: Spacing.three,
-  },
-  reviewHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: Spacing.two,
-  },
-  reviewerName: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  starRow: {
-    flexDirection: 'row',
-    marginTop: Spacing.one / 2,
-  },
-  reviewDate: {
-    fontSize: 12,
-  },
-  reviewComment: {
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-  },
-  fabContainer: {
-    position: 'absolute',
-    bottom: Spacing.four,
-    left: Spacing.four,
-    right: Spacing.four,
-  },
-  fabButton: {
-    borderRadius: 99,
-    height: 52,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  keyboardView: {
-    width: '100%',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '85%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.four,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-  },
-  closeButton: {
-    padding: Spacing.one,
-  },
-  modalForm: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.six,
-  },
-  ratingSection: {
-    marginBottom: Spacing.three,
-  },
-  starSelectorRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.five,
-    marginVertical: Spacing.two,
-  },
-  starPressable: {
-    padding: Spacing.one,
-  },
-});

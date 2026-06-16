@@ -1,60 +1,35 @@
 import React from 'react';
-import { StyleSheet, View, ViewProps, Platform } from 'react-native';
-import { useTheme } from '@/hooks/use-theme';
-import { Spacing } from '@/constants/theme';
+import { View, ViewProps, Platform } from 'react-native';
 
 export interface CardProps extends ViewProps {
   variant?: 'default' | 'flat' | 'glass';
+  className?: string;
 }
 
-export function Card({ style, variant = 'default', ...props }: CardProps) {
-  const theme = useTheme();
-
-  const getVariantStyles = () => {
+export function Card({ style, variant = 'default', className, ...props }: CardProps) {
+  const getVariantClasses = () => {
     switch (variant) {
       case 'flat':
-        return {
-          backgroundColor: theme.backgroundElement,
-          borderWidth: 1.5,
-          borderColor: theme.border,
-        };
+        return 'bg-backgroundElement border-[1.5px] border-border';
       case 'glass':
-        return {
-          backgroundColor: Platform.select({
-            ios: 'rgba(255, 255, 255, 0.4)',
-            android: theme.backgroundElement,
-            default: 'rgba(255, 255, 255, 0.4)',
-          }),
-          borderWidth: 1,
-          borderColor: 'rgba(255, 255, 255, 0.2)',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.05,
-          shadowRadius: 16,
-        };
+        return Platform.select({
+          ios: 'bg-white/40 border border-white/20 shadow-xl',
+          android: 'bg-backgroundElement border border-white/20 shadow-xl',
+          default: 'bg-white/40 border border-white/20 shadow-xl',
+        });
       case 'default':
       default:
-        return {
-          backgroundColor: theme.backgroundElement,
-          shadowColor: '#0F172A',
-          shadowOffset: { width: 0, height: 6 },
-          shadowOpacity: theme.background === '#F8FAFC' ? 0.04 : 0.2,
-          shadowRadius: 12,
-          elevation: 3,
-          borderWidth: 1,
-          borderColor: theme.border,
-        };
+        return 'bg-backgroundElement shadow-md shadow-slate-900/5 dark:shadow-slate-900/20 border border-border';
     }
   };
 
-  const cardStyle = getVariantStyles();
+  const variantClass = getVariantClasses();
 
-  return <View style={[styles.card, cardStyle, style]} {...props} />;
+  return (
+    <View 
+      className={`rounded-2xl p-4 ${variantClass} ${className || ''}`} 
+      style={style} 
+      {...props} 
+    />
+  );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: 16,
-    padding: Spacing.three,
-  },
-});

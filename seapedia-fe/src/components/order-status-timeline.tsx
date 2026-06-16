@@ -64,7 +64,7 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
     : statusSteps;
 
   return (
-    <View style={styles.container}>
+    <View className="pl-1">
       {stepsToRender.map((step, index) => {
         // Find if this step is present in the history
         const historyItem = statusHistory.find((h) => h.status === step);
@@ -84,12 +84,12 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
           : null;
 
         return (
-          <View key={step} style={styles.stepRow}>
+          <View key={step} className="flex-row items-start min-h-[65px]">
             {/* Left side timeline indicators */}
-            <View style={styles.indicatorContainer}>
+            <View className="items-center w-8">
               <View
+                className="w-8 h-8 rounded-full border-2 items-center justify-center z-10"
                 style={[
-                  styles.circleIndicator,
                   {
                     backgroundColor: isActive ? stepColor : isPassed ? `${stepColor}20` : theme.backgroundElement,
                     borderColor: stepColor,
@@ -100,8 +100,8 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
               </View>
               {index < stepsToRender.length - 1 && (
                 <View
+                  className="w-[2.5px] flex-1 min-h-[35px] my-[2px] z-0"
                   style={[
-                    styles.verticalLine,
                     {
                       backgroundColor: isPassed && index < statusHistory.length - 1 ? theme.success : theme.border,
                     },
@@ -111,26 +111,26 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
             </View>
 
             {/* Right side status detail card */}
-            <View style={styles.detailsContainer}>
-              <View style={styles.titleRow}>
+            <View className="flex-1 ml-4 pb-3">
+              <View className="flex-row justify-between items-center">
                 <ThemedText
                   type="smallBold"
+                  className="text-[14px] font-bold"
                   style={[
-                    styles.statusLabel,
                     { color: isActive ? theme.primary : isPassed ? theme.text : theme.textSecondary },
                   ]}
                 >
                   {label}
                 </ThemedText>
                 {formattedDate && (
-                  <ThemedText style={styles.dateText} themeColor="textSecondary">
+                  <ThemedText className="text-[11px]" themeColor="textSecondary">
                     {formattedDate}
                   </ThemedText>
                 )}
               </View>
               
               {historyItem?.note && (
-                <ThemedText style={styles.noteText} themeColor="textSecondary">
+                <ThemedText className="text-[12px] mt-1 leading-[16px]" themeColor="textSecondary">
                   {historyItem.note}
                 </ThemedText>
               )}
@@ -141,56 +141,3 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingLeft: Spacing.one,
-  },
-  stepRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    minHeight: 65,
-  },
-  indicatorContainer: {
-    alignItems: 'center',
-    width: 32,
-  },
-  circleIndicator: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 2,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 2,
-  },
-  verticalLine: {
-    width: 2.5,
-    flex: 1,
-    minHeight: 35,
-    marginVertical: 2,
-    zIndex: 1,
-  },
-  detailsContainer: {
-    flex: 1,
-    marginLeft: Spacing.four,
-    paddingBottom: Spacing.three,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  statusLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  dateText: {
-    fontSize: 11,
-  },
-  noteText: {
-    fontSize: 12,
-    marginTop: 4,
-    lineHeight: 16,
-  },
-});

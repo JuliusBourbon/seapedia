@@ -1,8 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, ViewStyle, TextStyle } from 'react-native';
-import { useTheme } from '@/hooks/use-theme';
+import { View, ViewStyle, TextStyle } from 'react-native';
 import { ThemedText } from '../themed-text';
-import { Spacing } from '@/constants/theme';
 
 export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'neutral';
 
@@ -11,70 +9,36 @@ export interface BadgeProps {
   variant?: BadgeVariant;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  className?: string;
+  textClasses?: string;
 }
 
-export function Badge({ label, variant = 'neutral', style, textStyle }: BadgeProps) {
-  const theme = useTheme();
-
-  const getVariantStyles = () => {
+export function Badge({ label, variant = 'neutral', style, textStyle, className, textClasses }: BadgeProps) {
+  const getVariantClasses = () => {
     switch (variant) {
-      case 'primary':
-        return {
-          container: { backgroundColor: `${theme.primary}15` }, // ~8% opacity hex suffix
-          text: { color: theme.primary },
-        };
-      case 'secondary':
-        return {
-          container: { backgroundColor: `${theme.secondary}15` },
-          text: { color: theme.secondary },
-        };
-      case 'success':
-        return {
-          container: { backgroundColor: `${theme.success}15` },
-          text: { color: theme.success },
-        };
-      case 'danger':
-        return {
-          container: { backgroundColor: `${theme.danger}15` },
-          text: { color: theme.danger },
-        };
-      case 'warning':
-        return {
-          container: { backgroundColor: `${theme.warning}15` },
-          text: { color: theme.warning },
-        };
+      case 'primary': return { container: 'bg-primary/10', text: 'text-primary' };
+      case 'secondary': return { container: 'bg-secondary/10', text: 'text-secondary' };
+      case 'success': return { container: 'bg-success/10', text: 'text-success' };
+      case 'danger': return { container: 'bg-danger/10', text: 'text-danger' };
+      case 'warning': return { container: 'bg-warning/10', text: 'text-warning' };
       case 'neutral':
-      default:
-        return {
-          container: { backgroundColor: `${theme.textSecondary}15` },
-          text: { color: theme.textSecondary },
-        };
+      default: return { container: 'bg-textSecondary/10', text: 'text-textSecondary' };
     }
   };
 
-  const badgeStyle = getVariantStyles();
+  const badgeClass = getVariantClasses();
 
   return (
-    <View style={[styles.badgeContainer, badgeStyle.container, style]}>
-      <ThemedText style={[styles.badgeText, badgeStyle.text, textStyle]}>
+    <View 
+      style={style}
+      className={`py-[2px] px-[10px] rounded-full self-start items-center justify-center ${badgeClass.container} ${className || ''}`}
+    >
+      <ThemedText 
+        style={textStyle}
+        className={`text-[11px] font-bold uppercase ${badgeClass.text} ${textClasses || ''}`}
+      >
         {label}
       </ThemedText>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badgeContainer: {
-    paddingVertical: Spacing.half,
-    paddingHorizontal: Spacing.two * 1.2,
-    borderRadius: 99,
-    alignSelf: 'flex-start',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  badgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-  },
-});

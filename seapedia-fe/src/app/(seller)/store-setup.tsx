@@ -86,25 +86,25 @@ export default function StoreSetupScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.headerContainer}>
-            <View style={[styles.iconContainer, { backgroundColor: `${theme.primary}15` }]}>
+        <ScrollView contentContainerClassName="flex-grow justify-center px-5 py-5">
+          <View className="items-center mb-5">
+            <View className="w-20 h-20 rounded-[40px] items-center justify-center mb-3" style={{ backgroundColor: `${theme.primary}15` }}>
               <Anchor size={40} color={theme.primary} />
             </View>
-            <ThemedText type="subtitle" style={styles.title}>
+            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center">
               Buka Toko Seapedia
             </ThemedText>
-            <ThemedText style={styles.subtitle} themeColor="textSecondary">
+            <ThemedText className="text-sm text-center mt-1 px-4" themeColor="textSecondary">
               Mulai jual hasil tangkapan laut segar Anda langsung ke pembeli maritim.
             </ThemedText>
           </View>
 
-          <View style={styles.formContainer}>
+          <View className="w-full">
             <Input
               label="Nama Toko"
               placeholder="Contoh: Toko Nelayan Bahari"
@@ -121,14 +121,14 @@ export default function StoreSetupScreen() {
               onChangeText={setDescription}
               multiline
               numberOfLines={4}
-              inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: Spacing.two }}
+              inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: 8 }}
             />
 
             <Button
               label="Buka Toko Sekarang"
               onPress={handleCreateStore}
               loading={loading}
-              style={styles.submitButton}
+              className="mt-3 h-[52px]"
             />
 
             <Button
@@ -136,7 +136,7 @@ export default function StoreSetupScreen() {
               variant="outline"
               leftIcon={<LogOut size={16} color={theme.primary} />}
               onPress={handleCancel}
-              style={styles.cancelButton}
+              className="mt-2 h-[52px]"
             />
           </View>
         </ScrollView>
@@ -144,49 +144,3 @@ export default function StoreSetupScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: Spacing.five,
-    justifyContent: 'center',
-    paddingVertical: Spacing.five,
-  },
-  headerContainer: {
-    alignItems: 'center',
-    marginBottom: Spacing.five,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.three,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: Spacing.one,
-    paddingHorizontal: Spacing.four,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  submitButton: {
-    marginTop: Spacing.three,
-    height: 52,
-  },
-  cancelButton: {
-    marginTop: Spacing.two,
-    height: 52,
-  },
-});

@@ -1,3 +1,4 @@
+import '@/global.css';
 import { DarkTheme, DefaultTheme, ThemeProvider, Stack, useRouter, useSegments } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { useEffect, useState } from 'react';

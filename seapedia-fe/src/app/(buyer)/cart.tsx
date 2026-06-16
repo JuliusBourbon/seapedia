@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -15,7 +14,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
@@ -148,43 +146,39 @@ export default function CartScreen() {
     const isUpdating = updatingItemId === item.productId;
 
     return (
-      <Card style={styles.itemCard}>
-        <View style={styles.itemHeader}>
-          <ThemedText type="smallBold" style={styles.itemName} numberOfLines={1}>
+      <Card className="mb-4 p-4">
+        <View className="flex-row justify-between items-center mb-2">
+          <ThemedText type="smallBold" className="text-[15px] flex-1 pr-3" numberOfLines={1}>
             {item.productName}
           </ThemedText>
-          <Pressable onPress={() => handleRemoveItem(item.productId)} style={styles.removeBtn}>
+          <Pressable onPress={() => handleRemoveItem(item.productId)} className="p-1">
             <Trash2 size={16} color={theme.danger} />
           </Pressable>
         </View>
 
-        <View style={styles.itemFooter}>
-          <ThemedText style={styles.itemPrice} themeColor="primary">
+        <View className="flex-row justify-between items-center">
+          <ThemedText className="text-[15px] font-extrabold" themeColor="primary">
             {formattedPrice}
           </ThemedText>
 
-          <View style={styles.qtyContainer}>
+          <View className="flex-row items-center gap-3">
             {isUpdating ? (
               <ActivityIndicator size="small" color={theme.primary} />
             ) : (
               <>
                 <Pressable
                   onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity - 1)}
-                  style={[styles.qtyBtn, { borderColor: theme.border }]}
+                  className="w-7 h-7 rounded-md border-[1.5px] border-border items-center justify-center active:opacity-70"
                 >
-                  <ThemedText style={styles.qtyBtnText}>-</ThemedText>
+                  <ThemedText className="text-[15px] font-bold">-</ThemedText>
                 </Pressable>
-                <ThemedText style={styles.qtyText}>{item.quantity}</ThemedText>
+                <ThemedText className="text-[14px] font-bold w-5 text-center">{item.quantity}</ThemedText>
                 <Pressable
                   onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity + 1)}
                   disabled={item.quantity >= item.stock}
-                  style={[
-                    styles.qtyBtn,
-                    { borderColor: theme.border },
-                    item.quantity >= item.stock && { opacity: 0.4 },
-                  ]}
+                  className={`w-7 h-7 rounded-md border-[1.5px] border-border items-center justify-center active:opacity-70 ${item.quantity >= item.stock ? 'opacity-40' : ''}`}
                 >
-                  <ThemedText style={styles.qtyBtnText}>+</ThemedText>
+                  <ThemedText className="text-[15px] font-bold">+</ThemedText>
                 </Pressable>
               </>
             )}
@@ -192,7 +186,7 @@ export default function CartScreen() {
         </View>
         
         {item.quantity >= item.stock && (
-          <ThemedText style={styles.stockLimitWarning} themeColor="warning">
+          <ThemedText className="text-[11px] mt-1 font-semibold" themeColor="warning">
             Maksimum stok tercapai ({item.stock} item)
           </ThemedText>
         )}
@@ -203,9 +197,9 @@ export default function CartScreen() {
   const renderHeader = () => {
     if (!cart?.store) return null;
     return (
-      <View style={styles.storeHeader}>
+      <View className="flex-row items-center mb-3 pb-2 border-b-[1.5px] border-black/5 dark:border-white/5 gap-2">
         <Store size={20} color={theme.primary} />
-        <ThemedText type="smallBold" style={styles.storeName}>
+        <ThemedText type="smallBold" className="text-base">
           Toko: {cart.store.name}
         </ThemedText>
       </View>
@@ -215,18 +209,18 @@ export default function CartScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5 mt-12">
         <ShoppingCart size={64} color={theme.placeholder} />
-        <ThemedText type="smallBold" style={{ fontSize: 18, marginTop: Spacing.three }}>
+        <ThemedText type="smallBold" className="text-[18px] mt-4">
           Keranjang Belanja Kosong
         </ThemedText>
-        <ThemedText style={styles.emptySubtitle} themeColor="textSecondary">
+        <ThemedText className="text-[14px] text-center mt-2 px-3" themeColor="textSecondary">
           Yuk, jelajahi produk hasil laut terbaik nelayan kami dan isi keranjang belanja Anda!
         </ThemedText>
         <Button
           label="Mulai Belanja"
           onPress={() => router.push('/(public)/(tabs)')}
-          style={styles.emptyButton}
+          className="mt-6 w-[180px]"
         />
       </View>
     );
@@ -234,9 +228,9 @@ export default function CartScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-4 text-textSecondary">
           Membuka keranjang belanja Anda...
         </ThemedText>
       </ThemedView>
@@ -246,14 +240,15 @@ export default function CartScreen() {
   const hasItems = cart && cart.items.length > 0;
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={cart?.items || []}
         renderItem={renderItem}
         keyExtractor={(item) => item.productId}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={[styles.listContent, { paddingBottom: 100 + insets.bottom }]}
+        contentContainerClassName="p-4"
+        contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -267,21 +262,18 @@ export default function CartScreen() {
       {hasItems && (
         <ThemedView
           type="backgroundElement"
-          style={[
-            styles.summaryFooter,
-            {
-              borderTopColor: theme.border,
-              height: 84 + insets.bottom,
-              paddingBottom: Spacing.four + insets.bottom,
-            },
-          ]}
+          className="absolute bottom-0 left-0 right-0 border-t border-border p-4"
+          style={{
+            height: 84 + insets.bottom,
+            paddingBottom: 16 + insets.bottom,
+          }}
         >
-          <View style={styles.summaryRow}>
+          <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+              <ThemedText className="text-[13px]" themeColor="textSecondary">
                 Subtotal ({cart.summary.totalItems} Barang)
               </ThemedText>
-              <ThemedText style={styles.subtotalPrice}>
+              <ThemedText className="text-[18px] font-black text-[#0D9488] mt-[2px]">
                 {new Intl.NumberFormat('id-ID', {
                   style: 'currency',
                   currency: 'IDR',
@@ -289,9 +281,9 @@ export default function CartScreen() {
                 }).format(cart.summary.subtotal)}
               </ThemedText>
             </View>
-            <View style={styles.footerActions}>
-              <Pressable onPress={handleClearCart} style={styles.clearBtn}>
-                <ThemedText style={{ color: theme.danger, fontSize: 13, fontWeight: '700' }}>
+            <View className="flex-row items-center gap-4">
+              <Pressable onPress={handleClearCart} className="py-2 px-1 active:opacity-70">
+                <ThemedText className="text-danger text-[13px] font-bold">
                   Kosongkan
                 </ThemedText>
               </Pressable>
@@ -300,7 +292,7 @@ export default function CartScreen() {
                 label="Checkout"
                 rightIcon={<ArrowRight size={16} color="#FFFFFF" />}
                 onPress={() => router.push('/(buyer)/checkout')}
-                style={styles.checkoutBtn}
+                className="h-11 w-[140px]"
               />
             </View>
           </View>
@@ -309,134 +301,3 @@ export default function CartScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: 100, // Space for sticky footer
-  },
-  storeHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.three,
-    paddingBottom: Spacing.two,
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-    gap: Spacing.two,
-  },
-  storeName: {
-    fontSize: 16,
-  },
-  itemCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  itemHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.two,
-  },
-  itemName: {
-    fontSize: 15,
-    flex: 1,
-    paddingRight: Spacing.three,
-  },
-  removeBtn: {
-    padding: Spacing.one,
-  },
-  itemFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemPrice: {
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  qtyContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
-  },
-  qtyBtn: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  qtyBtnText: {
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  qtyText: {
-    fontSize: 14,
-    fontWeight: '700',
-    width: 20,
-    textAlign: 'center',
-  },
-  stockLimitWarning: {
-    fontSize: 11,
-    marginTop: Spacing.one,
-    fontWeight: '600',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-  emptySubtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: Spacing.two,
-    paddingHorizontal: Spacing.three,
-  },
-  emptyButton: {
-    marginTop: Spacing.four,
-    width: 180,
-  },
-  summaryFooter: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTopWidth: 1,
-    padding: Spacing.four,
-    height: 84,
-  },
-  summaryRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  subtotalPrice: {
-    fontSize: 18,
-    fontWeight: '900',
-    color: '#0D9488',
-    marginTop: 2,
-  },
-  footerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.four,
-  },
-  clearBtn: {
-    paddingVertical: Spacing.two,
-    paddingHorizontal: Spacing.one,
-  },
-  checkoutBtn: {
-    height: 44,
-    width: 140,
-  },
-});

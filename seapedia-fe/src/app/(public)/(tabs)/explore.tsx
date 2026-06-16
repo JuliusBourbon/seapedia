@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   ActivityIndicator,
@@ -12,7 +11,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Input } from '@/components/ui/input';
 import { ProductCard, ProductData } from '@/components/product-card';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 export default function ExploreProductsScreen() {
@@ -63,8 +61,8 @@ export default function ExploreProductsScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <ThemedText style={{ color: theme.textSecondary }}>
+      <View className="items-center justify-center py-16">
+        <ThemedText className="text-textSecondary">
           {error ? error : 'Produk maritim tidak ditemukan.'}
         </ThemedText>
       </View>
@@ -72,21 +70,21 @@ export default function ExploreProductsScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={styles.searchSection}>
+    <ThemedView className="flex-1">
+      <View className="p-4 border-b border-black/5 dark:border-white/5">
         <Input
           placeholder="Cari ikan, kepiting, udang, atau toko..."
           value={searchQuery}
           onChangeText={setSearchQuery}
           leftIcon={<Search size={20} color={theme.textSecondary} />}
-          containerStyle={styles.searchInputContainer}
+          containerClasses="mb-0"
         />
       </View>
 
       {loading ? (
-        <View style={styles.loadingContainer}>
+        <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
-          <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+          <ThemedText className="mt-4 text-textSecondary">
             Mencari produk terbaik...
           </ThemedText>
         </View>
@@ -101,52 +99,11 @@ export default function ExploreProductsScreen() {
           )}
           keyExtractor={(item) => item.id}
           numColumns={Platform.OS === 'web' ? undefined : 2}
-          contentContainerStyle={[
-            styles.listContainer,
-            Platform.OS === 'web' && styles.webListContainer,
-          ]}
-          columnWrapperStyle={Platform.OS !== 'web' && filteredProducts.length > 0 ? styles.columnWrapper : undefined}
+          contentContainerClassName={Platform.OS === 'web' ? "flex-row flex-wrap justify-center px-4 py-3 pb-8" : "py-3 pb-8"}
+          columnWrapperClassName={Platform.OS !== 'web' && filteredProducts.length > 0 ? "justify-between px-2" : undefined}
           ListEmptyComponent={renderEmpty}
         />
       )}
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  searchSection: {
-    padding: Spacing.four,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-  },
-  searchInputContainer: {
-    marginBottom: 0,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContainer: {
-    paddingVertical: Spacing.three,
-    paddingBottom: Spacing.five,
-  },
-  webListContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing.four,
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.two,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-  },
-});

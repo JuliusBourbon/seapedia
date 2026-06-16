@@ -179,9 +179,9 @@ export default function DriverJobDetailScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil rincian pekerjaan...
         </ThemedText>
       </ThemedView>
@@ -190,10 +190,10 @@ export default function DriverJobDetailScreen() {
 
   if (error || !job) {
     return (
-      <ThemedView style={styles.errorContainer}>
+      <ThemedView className="flex-1 items-center justify-center p-5">
         <ShieldAlert size={48} color={theme.danger} />
-        <ThemedText style={styles.errorText}>{error || 'Rincian pekerjaan tidak ditemukan'}</ThemedText>
-        <Button label="Kembali" onPress={() => router.back()} style={{ marginTop: Spacing.four }} />
+        <ThemedText className="text-[16px] font-semibold mt-3 text-center">{error || 'Rincian pekerjaan tidak ditemukan'}</ThemedText>
+        <Button label="Kembali" onPress={() => router.back()} className="mt-4" />
       </ThemedView>
     );
   }
@@ -201,9 +201,9 @@ export default function DriverJobDetailScreen() {
   const deliveryMethodLabel = DELIVERY_METHODS[job.order.deliveryMethod]?.label || job.order.deliveryMethod;
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerClassName="p-4 pb-5 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -214,62 +214,62 @@ export default function DriverJobDetailScreen() {
         }
       >
         {/* Status Header Card */}
-        <Card style={styles.headerCard}>
-          <View style={styles.headerRow}>
+        <Card className="p-4">
+          <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText style={styles.orderIdText} themeColor="textSecondary">
+              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                 ID Job Pengiriman:
               </ThemedText>
-              <ThemedText style={styles.orderIdValue}>
+              <ThemedText className="text-[13px] font-extrabold font-mono mt-[2px]">
                 {job.id}
               </ThemedText>
             </View>
             {getStatusBadge(job.status)}
           </View>
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-          <View style={styles.earningRow}>
+          <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
+          <View className="flex-row items-center">
             <Truck size={18} color={theme.primary} />
-            <ThemedText style={{ fontSize: 14, fontWeight: '700', marginLeft: Spacing.two }}>
+            <ThemedText className="text-[14px] font-bold ml-2">
               Ongkos Kirim (Earning): {formatCurrency(job.earning)}
             </ThemedText>
           </View>
         </Card>
 
         {/* Route Card (Pickup & destination) */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Rute Pengiriman
         </ThemedText>
-        <Card style={styles.cardPadding}>
+        <Card className="p-4">
           {/* Pickup */}
-          <View style={styles.routePoint}>
-            <View style={[styles.pointDot, { backgroundColor: theme.primary }]} />
-            <View style={styles.routeDetails}>
-              <ThemedText style={styles.pointLabel} themeColor="textSecondary">
+          <View className="flex-row items-start gap-3">
+            <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.primary }} />
+            <View className="flex-1 gap-[2px]">
+              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                 Penjemputan (Toko Nelayan)
               </ThemedText>
-              <ThemedText type="smallBold" style={styles.pointValue}>
+              <ThemedText type="smallBold" className="text-[15px]">
                 {job.order.store.name}
               </ThemedText>
             </View>
           </View>
 
           {/* Line */}
-          <View style={[styles.pointLine, { backgroundColor: theme.border }]} />
+          <View className="w-[2px] h-[25px] ml-[5px] my-[2px]" style={{ backgroundColor: theme.border }} />
 
           {/* Dropoff */}
-          <View style={styles.routePoint}>
-            <View style={[styles.pointDot, { backgroundColor: theme.warning }]} />
-            <View style={styles.routeDetails}>
-              <View style={styles.destHeader}>
-                <ThemedText style={styles.pointLabel} themeColor="textSecondary">
+          <View className="flex-row items-start gap-3">
+            <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.warning }} />
+            <View className="flex-1 gap-[2px]">
+              <View className="flex-row justify-between items-center mb-[2px]">
+                <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                   Tujuan (Penerima)
                 </ThemedText>
                 <Badge label={deliveryMethodLabel} variant="neutral" />
               </View>
-              <ThemedText type="smallBold" style={styles.pointValue}>
+              <ThemedText type="smallBold" className="text-[15px]">
                 {job.order.address.recipientName} ({job.order.address.phoneNumber})
               </ThemedText>
-              <ThemedText style={styles.addressText} themeColor="textSecondary">
+              <ThemedText className="text-[13px] leading-[18px] mt-[2px]" themeColor="textSecondary">
                 {job.order.address.fullAddress}, {job.order.address.city}, {job.order.address.postalCode}
               </ThemedText>
             </View>
@@ -277,23 +277,23 @@ export default function DriverJobDetailScreen() {
         </Card>
 
         {/* Items to Deliver */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Daftar Barang Bawaan
         </ThemedText>
-        <Card style={styles.cardPadding}>
+        <Card className="p-4">
           {job.order.items.map((item, idx) => (
             <View key={item.id}>
-              {idx > 0 && <View style={[styles.divider, { backgroundColor: theme.border, marginVertical: Spacing.two }]} />}
-              <View style={styles.itemRow}>
-                <View style={styles.itemDetails}>
-                  <ThemedText type="smallBold" style={{ fontSize: 14 }}>
+              {idx > 0 && <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />}
+              <View className="flex-row justify-between items-center">
+                <View className="flex-1 pr-3">
+                  <ThemedText type="smallBold" className="text-[14px]">
                     {item.productName}
                   </ThemedText>
-                  <ThemedText style={{ fontSize: 12, marginTop: 2 }} themeColor="textSecondary">
+                  <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                     Jumlah: {item.quantity} item
                   </ThemedText>
                 </View>
-                <ThemedText style={{ fontSize: 12 }} themeColor="textSecondary">
+                <ThemedText className="text-[12px]" themeColor="textSecondary">
                   {formatCurrency(item.price)} / pcs
                 </ThemedText>
               </View>
@@ -303,19 +303,19 @@ export default function DriverJobDetailScreen() {
 
         {/* Job Dates */}
         {job.status !== 'AVAILABLE' && (
-          <Card style={styles.cardPadding}>
+          <Card className="p-4">
             {job.takenAt && (
-              <View style={styles.dateInfoRow}>
+              <View className="flex-row items-center">
                 <Calendar size={16} color={theme.textSecondary} />
-                <ThemedText style={styles.dateInfoText} themeColor="textSecondary">
+                <ThemedText className="text-[13px] ml-2" themeColor="textSecondary">
                   Diambil pada: {new Date(job.takenAt).toLocaleString('id-ID')}
                 </ThemedText>
               </View>
             )}
             {job.completedAt && (
-              <View style={[styles.dateInfoRow, { marginTop: Spacing.two }]}>
+              <View className="flex-row items-center mt-2">
                 <CheckCircle2 size={16} color={theme.success} />
-                <ThemedText style={styles.dateInfoText} themeColor="textSecondary">
+                <ThemedText className="text-[13px] ml-2" themeColor="textSecondary">
                   Selesai pada: {new Date(job.completedAt).toLocaleString('id-ID')}
                 </ThemedText>
               </View>
@@ -331,7 +331,7 @@ export default function DriverJobDetailScreen() {
             size="large"
             loading={actionLoading}
             onPress={handleTakeJob}
-            style={styles.actionButton}
+            className="mt-2"
           />
         )}
 
@@ -343,136 +343,10 @@ export default function DriverJobDetailScreen() {
             loading={actionLoading}
             leftIcon={<CheckCircle2 size={20} color="#FFFFFF" />}
             onPress={handleCompleteJob}
-            style={styles.actionButton}
+            className="mt-2"
           />
         )}
       </ScrollView>
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.five,
-  },
-  errorText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: Spacing.three,
-    textAlign: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-    gap: Spacing.three,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.one,
-    marginTop: Spacing.two,
-  },
-  headerCard: {
-    padding: Spacing.four,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  orderIdText: {
-    fontSize: 11,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-  },
-  orderIdValue: {
-    fontSize: 13,
-    fontWeight: '800',
-    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace' }),
-    marginTop: 2,
-  },
-  divider: {
-    height: 1.5,
-    marginVertical: Spacing.three,
-  },
-  earningRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cardPadding: {
-    padding: Spacing.four,
-  },
-  routePoint: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.three,
-  },
-  pointDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginTop: 4,
-  },
-  routeDetails: {
-    flex: 1,
-    gap: 2,
-  },
-  destHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  pointLabel: {
-    fontSize: 11,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-  },
-  pointValue: {
-    fontSize: 15,
-  },
-  addressText: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2,
-  },
-  pointLine: {
-    width: 2,
-    height: 25,
-    marginLeft: 5,
-    marginVertical: 2,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  itemDetails: {
-    flex: 1,
-    paddingRight: Spacing.three,
-  },
-  dateInfoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  dateInfoText: {
-    fontSize: 13,
-    marginLeft: Spacing.two,
-  },
-  actionButton: {
-    marginTop: Spacing.two,
-  },
-});

@@ -100,42 +100,42 @@ export default function DriverEarningsScreen() {
       : 'Selesai';
 
     return (
-      <Card style={styles.historyCard}>
-        <View style={styles.cardHeader}>
-          <View style={styles.titleContainer}>
+      <Card className="mb-3 p-4">
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center gap-2">
             <ShieldCheck size={16} color={theme.success} />
-            <ThemedText type="smallBold" style={{ fontSize: 13 }} themeColor="success">
+            <ThemedText type="smallBold" className="text-[13px]" themeColor="success">
               Pengiriman Selesai
             </ThemedText>
           </View>
-          <ThemedText style={styles.earningText}>
+          <ThemedText className="font-extrabold text-[#10B981] text-[15px]">
             +{formatCurrency(item.earning)}
           </ThemedText>
         </View>
 
-        <View style={styles.cardBody}>
-          <View style={styles.infoRow}>
+        <View className="gap-2">
+          <View className="flex-row items-center gap-2">
             <Store size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               Pickup: {item.order.store.name}
             </ThemedText>
           </View>
 
-          <View style={styles.infoRow}>
+          <View className="flex-row items-center gap-2">
             <MapPin size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               Tujuan: {item.order.address.recipientName} ({item.order.address.city})
             </ThemedText>
           </View>
 
-          <View style={styles.infoRow}>
+          <View className="flex-row items-center gap-2">
             <Calendar size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               Waktu Selesai: {formattedDate}
             </ThemedText>
           </View>
 
-          <ThemedText style={styles.orderIdText} themeColor="textSecondary">
+          <ThemedText className="text-[10px] font-mono mt-1" themeColor="textSecondary">
             ID Job: {item.id}
           </ThemedText>
         </View>
@@ -146,9 +146,9 @@ export default function DriverEarningsScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <ClipboardList size={52} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           {error ? error : 'Anda belum memiliki riwayat pengiriman selesai.'}
         </ThemedText>
       </View>
@@ -157,9 +157,9 @@ export default function DriverEarningsScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil data pendapatan Anda...
         </ThemedText>
       </ThemedView>
@@ -167,30 +167,30 @@ export default function DriverEarningsScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       {/* Earnings Overview Header */}
-      <View style={[styles.headerSection, { backgroundColor: theme.backgroundElement, borderBottomColor: theme.border }]}>
-        <View style={styles.summaryBox}>
+      <View className="flex-row items-center py-4 px-4 border-b shadow-sm elevation-2" style={{ backgroundColor: theme.backgroundElement, borderBottomColor: theme.border }}>
+        <View className="flex-[1.3] flex-row items-center gap-3">
           <Wallet size={28} color={theme.primary} />
-          <View style={styles.summaryText}>
-            <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+          <View className="gap-[2px]">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               Akumulasi Saldo Mitra
             </ThemedText>
-            <ThemedText type="title" style={styles.totalEarnings}>
+            <ThemedText type="title" className="text-[20px] font-black text-[#0D9488]">
               {formatCurrency(summary?.totalEarnings ?? 0)}
             </ThemedText>
           </View>
         </View>
 
-        <View style={[styles.dividerVertical, { backgroundColor: theme.border }]} />
+        <View className="w-[1.5px] h-10 mx-2" style={{ backgroundColor: theme.border }} />
 
-        <View style={styles.jobsCountBox}>
+        <View className="flex-[0.8] flex-row items-center gap-3 pl-2">
           <CheckCircle2 size={28} color={theme.success} />
-          <View style={styles.summaryText}>
-            <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+          <View className="gap-[2px]">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               Total Order
             </ThemedText>
-            <ThemedText type="subtitle" style={styles.totalJobs}>
+            <ThemedText type="subtitle" className="text-[16px] font-extrabold">
               {summary?.totalCompletedJobs ?? 0} Job
             </ThemedText>
           </View>
@@ -201,7 +201,7 @@ export default function DriverEarningsScreen() {
         data={history}
         renderItem={renderHistoryItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="p-4 pb-5"
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -215,105 +215,3 @@ export default function DriverEarningsScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.four,
-    paddingHorizontal: Spacing.four,
-    borderBottomWidth: 1,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-  },
-  summaryBox: {
-    flex: 1.3,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
-  },
-  jobsCountBox: {
-    flex: 0.8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.three,
-    paddingLeft: Spacing.two,
-  },
-  summaryText: {
-    gap: 2,
-  },
-  totalEarnings: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#0D9488',
-  },
-  totalJobs: {
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  dividerVertical: {
-    width: 1.5,
-    height: 40,
-    marginHorizontal: Spacing.two,
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  historyCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  earningText: {
-    fontWeight: '800',
-    color: '#10B981', // green
-    fontSize: 15,
-  },
-  cardBody: {
-    gap: Spacing.two,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  infoText: {
-    fontSize: 13,
-  },
-  orderIdText: {
-    fontSize: 10,
-    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace' }),
-    marginTop: 4,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-});

@@ -169,9 +169,9 @@ export default function DriverDashboardScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Memuat dasbor kurir Anda...
         </ThemedText>
       </ThemedView>
@@ -179,9 +179,9 @@ export default function DriverDashboardScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerClassName="p-4 pb-5 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -192,16 +192,16 @@ export default function DriverDashboardScreen() {
         }
       >
         {/* Profile Info Banner */}
-        <Card style={styles.profileCard}>
-          <View style={styles.profileHeader}>
-            <View style={[styles.avatarBox, { backgroundColor: `${theme.primary}15` }]}>
+        <Card className="p-4 mb-2">
+          <View className="flex-row items-center">
+            <View className="w-[60px] h-[60px] rounded-[14px] items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
               <User size={36} color={theme.primary} />
             </View>
-            <View style={styles.profileText}>
-              <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+            <View className="ml-4 flex-1">
+              <ThemedText type="smallBold" className="text-[18px]">
                 {user?.name}
               </ThemedText>
-              <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+              <ThemedText className="text-[13px]" themeColor="textSecondary">
                 Kurir Mitra (@{user?.username})
               </ThemedText>
             </View>
@@ -214,72 +214,72 @@ export default function DriverDashboardScreen() {
               size="small"
               leftIcon={<RefreshCcw size={16} color={theme.primary} />}
               onPress={() => router.push('/(public)/select-role')}
-              style={{ marginTop: Spacing.three }}
+              className="mt-3"
             />
           )}
         </Card>
 
         {/* Stats Grid */}
-        <View style={styles.statsRow}>
-          <Card style={styles.statCard}>
+        <View className="flex-row gap-3 mb-2">
+          <Card className="flex-1 p-4 items-start gap-1">
             <Wallet size={24} color={theme.primary} />
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">
+            <ThemedText className="text-[12px] mt-1" themeColor="textSecondary">
               Total Pendapatan
             </ThemedText>
-            <ThemedText type="subtitle" style={styles.statVal}>
+            <ThemedText type="subtitle" className="text-[20px] font-extrabold">
               {formatCurrency(summary?.totalEarnings ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card style={styles.statCard}>
+          <Card className="flex-1 p-4 items-start gap-1">
             <CheckCircle2 size={24} color={theme.success} />
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">
+            <ThemedText className="text-[12px] mt-1" themeColor="textSecondary">
               Order Selesai
             </ThemedText>
-            <ThemedText type="subtitle" style={styles.statVal}>
+            <ThemedText type="subtitle" className="text-[20px] font-extrabold">
               {summary?.completedJobs ?? 0}
             </ThemedText>
           </Card>
         </View>
 
         {/* Active Job Section */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Tugas Pengantaran Aktif
         </ThemedText>
 
         {activeJob ? (
-          <Card style={styles.activeJobCard}>
-            <View style={styles.jobHeader}>
+          <Card className="p-4">
+            <View className="flex-row justify-between items-center">
               <Badge label="Pekerjaan Berlangsung" variant="primary" />
-              <ThemedText style={styles.earningText}>
+              <ThemedText className="font-extrabold text-[#0D9488] text-[15px]">
                 Earning: {formatCurrency(activeJob.earning)}
               </ThemedText>
             </View>
 
-            <View style={[styles.divider, { backgroundColor: theme.border }]} />
+            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
 
             {/* Pickup Location */}
-            <View style={styles.routePoint}>
-              <View style={[styles.pointDot, { backgroundColor: theme.primary }]} />
-              <View style={styles.routeDetails}>
-                <ThemedText style={styles.pointLabel} themeColor="textSecondary">
+            <View className="flex-row items-start gap-3">
+              <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.primary }} />
+              <View className="flex-1 gap-[2px]">
+                <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                   Lokasi Penjemputan (Toko Nelayan)
                 </ThemedText>
-                <ThemedText type="smallBold" style={styles.pointValue}>
+                <ThemedText type="smallBold" className="text-[15px]">
                   {activeJob.order.store.name}
                 </ThemedText>
               </View>
             </View>
 
             {/* Connecting line */}
-            <View style={[styles.pointLine, { backgroundColor: theme.border }]} />
+            <View className="w-[2px] h-[25px] ml-[5px] my-[2px]" style={{ backgroundColor: theme.border }} />
 
             {/* Destination Location */}
-            <View style={styles.routePoint}>
-              <View style={[styles.pointDot, { backgroundColor: theme.warning }]} />
-              <View style={styles.routeDetails}>
-                <View style={styles.destHeader}>
-                  <ThemedText style={styles.pointLabel} themeColor="textSecondary">
+            <View className="flex-row items-start gap-3">
+              <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.warning }} />
+              <View className="flex-1 gap-[2px]">
+                <View className="flex-row justify-between items-center">
+                  <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                     Lokasi Pengantaran (Pembeli)
                   </ThemedText>
                   <Badge 
@@ -288,27 +288,27 @@ export default function DriverDashboardScreen() {
                     style={{ paddingVertical: 1, paddingHorizontal: 4 }} 
                   />
                 </View>
-                <ThemedText type="smallBold" style={styles.pointValue}>
+                <ThemedText type="smallBold" className="text-[15px]">
                   {activeJob.order.address.recipientName} ({activeJob.order.address.phoneNumber})
                 </ThemedText>
-                <ThemedText style={styles.addressText} themeColor="textSecondary">
+                <ThemedText className="text-[13px] leading-[18px] mt-[2px]" themeColor="textSecondary">
                   {activeJob.order.address.fullAddress}, {activeJob.order.address.city}, {activeJob.order.address.postalCode}
                 </ThemedText>
               </View>
             </View>
 
-            <View style={[styles.divider, { backgroundColor: theme.border }]} />
+            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
 
             {/* Items Summary */}
             {activeJob.order.items && activeJob.order.items.length > 0 && (
-              <View style={styles.itemsSummary}>
-                <ThemedText type="smallBold" style={{ fontSize: 13, marginBottom: Spacing.one }}>
+              <View className="mb-3">
+                <ThemedText type="smallBold" className="text-[13px] mb-1">
                   Daftar Barang Bawaan:
                 </ThemedText>
                 {activeJob.order.items.map((item) => (
-                  <View key={item.id} style={styles.itemRow}>
+                  <View key={item.id} className="flex-row items-center gap-2 mt-1">
                     <Package size={14} color={theme.textSecondary} />
-                    <ThemedText style={styles.itemText} themeColor="textSecondary">
+                    <ThemedText className="text-[13px]" themeColor="textSecondary">
                       {item.productName} (x{item.quantity})
                     </ThemedText>
                   </View>
@@ -323,7 +323,7 @@ export default function DriverDashboardScreen() {
               loading={completing}
               leftIcon={<CheckCircle2 size={20} color="#FFFFFF" />}
               onPress={() => handleCompleteJob(activeJob.id)}
-              style={styles.completeBtn}
+              className="h-[50px]"
             />
 
             <Button
@@ -331,13 +331,13 @@ export default function DriverDashboardScreen() {
               variant="outline"
               size="small"
               onPress={() => router.push(`/(driver)/jobs/${activeJob.id}` as any)}
-              style={{ marginTop: Spacing.two }}
+              className="mt-2"
             />
           </Card>
         ) : (
-          <Card style={styles.noJobCard}>
+          <Card className="p-5 items-center justify-center gap-2">
             <Info size={36} color={theme.placeholder} />
-            <ThemedText style={styles.noJobText} themeColor="textSecondary">
+            <ThemedText className="text-[14px] text-center mt-1 leading-[20px]" themeColor="textSecondary">
               Anda tidak memiliki pekerjaan pengantaran aktif saat ini.
             </ThemedText>
             <Button
@@ -346,7 +346,7 @@ export default function DriverDashboardScreen() {
               size="medium"
               leftIcon={<Truck size={18} color="#FFFFFF" />}
               onPress={() => router.push('/(driver)/(tabs)/jobs')}
-              style={styles.findJobBtn}
+              className="mt-3 self-stretch"
             />
           </Card>
         )}
@@ -358,161 +358,9 @@ export default function DriverDashboardScreen() {
           leftIcon={<LogOut size={20} color="#FFFFFF" />}
           onPress={handleLogout}
           loading={loggingOut}
-          style={styles.logoutBtn}
+          className="mt-4 h-[50px]"
         />
       </ScrollView>
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-    gap: Spacing.three,
-  },
-  profileCard: {
-    marginBottom: Spacing.two,
-  },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatarBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profileText: {
-    marginLeft: Spacing.four,
-    flex: 1,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-    marginBottom: Spacing.two,
-  },
-  statCard: {
-    flex: 1,
-    padding: Spacing.four,
-    alignItems: 'flex-start',
-    gap: Spacing.one,
-  },
-  statLabel: {
-    fontSize: 12,
-    marginTop: Spacing.one,
-  },
-  statVal: {
-    fontSize: 20,
-    fontWeight: '800',
-  },
-  sectionTitle: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.one,
-    marginTop: Spacing.two,
-  },
-  activeJobCard: {
-    padding: Spacing.four,
-  },
-  jobHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  earningText: {
-    fontWeight: '800',
-    color: '#0D9488',
-    fontSize: 15,
-  },
-  divider: {
-    height: 1.5,
-    marginVertical: Spacing.three,
-  },
-  routePoint: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.three,
-  },
-  pointDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    marginTop: 4,
-  },
-  routeDetails: {
-    flex: 1,
-    gap: 2,
-  },
-  destHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  pointLabel: {
-    fontSize: 11,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-  },
-  pointValue: {
-    fontSize: 15,
-  },
-  addressText: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2,
-  },
-  pointLine: {
-    width: 2,
-    height: 25,
-    marginLeft: 5,
-    marginVertical: 2,
-  },
-  itemsSummary: {
-    marginBottom: Spacing.three,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-    marginTop: Spacing.half,
-  },
-  itemText: {
-    fontSize: 13,
-  },
-  completeBtn: {
-    height: 50,
-  },
-  noJobCard: {
-    padding: Spacing.five,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.two,
-  },
-  noJobText: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: Spacing.one,
-    lineHeight: 20,
-  },
-  findJobBtn: {
-    marginTop: Spacing.three,
-    alignSelf: 'stretch',
-  },
-  logoutBtn: {
-    marginTop: Spacing.four,
-    height: 50,
-  },
-});

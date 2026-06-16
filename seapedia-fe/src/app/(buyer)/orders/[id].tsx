@@ -137,9 +137,9 @@ export default function BuyerOrderDetailScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil rincian pesanan...
         </ThemedText>
       </ThemedView>
@@ -148,10 +148,10 @@ export default function BuyerOrderDetailScreen() {
 
   if (error || !order) {
     return (
-      <ThemedView style={styles.errorContainer}>
+      <ThemedView className="flex-1 items-center justify-center p-5">
         <ShieldAlert size={48} color={theme.danger} />
-        <ThemedText style={styles.errorText}>{error || 'Rincian pesanan tidak ditemukan'}</ThemedText>
-        <Button label="Kembali" onPress={() => router.back()} style={{ marginTop: Spacing.four }} />
+        <ThemedText className="text-base font-semibold mt-3 text-center">{error || 'Rincian pesanan tidak ditemukan'}</ThemedText>
+        <Button label="Kembali" onPress={() => router.back()} className="mt-4" />
       </ThemedView>
     );
   }
@@ -165,9 +165,9 @@ export default function BuyerOrderDetailScreen() {
   });
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerClassName="p-4 pb-5 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -178,51 +178,51 @@ export default function BuyerOrderDetailScreen() {
         }
       >
         {/* Order Status Header Card */}
-        <Card style={styles.headerCard}>
-          <View style={styles.headerRow}>
+        <Card className="p-4">
+          <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText style={styles.orderIdText} themeColor="textSecondary">
+              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                 ID Pesanan:
               </ThemedText>
-              <ThemedText style={styles.orderIdValue}>
+              <ThemedText className="text-[13px] font-extrabold font-mono mt-[2px]">
                 {order.id}
               </ThemedText>
             </View>
             {getStatusBadge(order.status)}
           </View>
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
-          <View style={styles.dateRow}>
+          <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
+          <View className="flex-row items-center">
             <Calendar size={16} color={theme.textSecondary} />
-            <ThemedText style={{ fontSize: 13, marginLeft: Spacing.one }} themeColor="textSecondary">
+            <ThemedText className="text-[13px] ml-1" themeColor="textSecondary">
               Waktu Transaksi: {formattedDate}
             </ThemedText>
           </View>
         </Card>
 
         {/* Status history timeline */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Status Pengiriman
         </ThemedText>
-        <Card style={styles.cardPadding}>
+        <Card className="p-4">
           <OrderStatusTimeline statusHistory={order.statusHistory} currentStatus={order.status} />
         </Card>
 
         {/* Shipping details (Courier/Driver) */}
         {order.status !== 'SEDANG_DIKEMAS' && (
           <>
-            <ThemedText type="smallBold" style={styles.sectionTitle}>
+            <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
               Informasi Kurir
             </ThemedText>
-            <Card style={styles.driverCard}>
-              <View style={styles.driverRow}>
-                <View style={[styles.iconBox, { backgroundColor: `${theme.primary}15` }]}>
+            <Card className="p-3">
+              <View className="flex-row items-center">
+                <View className="w-11 h-11 rounded-lg items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
                   <Truck size={24} color={theme.primary} />
                 </View>
-                <View style={styles.driverInfo}>
+                <View className="ml-3 flex-1">
                   <ThemedText type="smallBold">
                     {order.delivery?.driver ? order.delivery.driver.name : 'Mencari Kurir Pengirim...'}
                   </ThemedText>
-                  <ThemedText style={{ fontSize: 12 }} themeColor="textSecondary">
+                  <ThemedText className="text-[12px]" themeColor="textSecondary">
                     {order.delivery?.driver ? `@${order.delivery.driver.username}` : 'Menunggu kurir mengambil pesanan.'}
                   </ThemedText>
                 </View>
@@ -232,49 +232,49 @@ export default function BuyerOrderDetailScreen() {
         )}
 
         {/* Shipping address details */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Alamat Pengantaran
         </ThemedText>
-        <Card style={styles.cardPadding}>
-          <View style={styles.addressHeaderRow}>
+        <Card className="p-4">
+          <View className="flex-row items-center">
             <MapPin size={18} color={theme.primary} />
-            <ThemedText type="smallBold" style={{ marginLeft: Spacing.one }}>
-              {order.address.label}
+            <ThemedText type="smallBold" className="ml-1">
+              {order.address?.label ?? 'Alamat'}
             </ThemedText>
           </View>
-          <View style={{ marginTop: Spacing.two, gap: 2 }}>
-            <ThemedText type="smallBold" style={{ fontSize: 14 }}>
-              {order.address.recipientName}
+          <View className="mt-2 gap-[2px]">
+            <ThemedText type="smallBold" className="text-[14px]">
+              {order.address?.recipientName ?? 'Penerima tidak diketahui'}
             </ThemedText>
-            <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
-              {order.address.phoneNumber}
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
+              {order.address?.phoneNumber ?? '-'}
             </ThemedText>
-            <ThemedText style={styles.fullAddressText}>
-              {order.address.fullAddress}, {order.address.city}, {order.address.postalCode}
+            <ThemedText className="text-[13px] leading-[18px] mt-1">
+              {order.address ? `${order.address.fullAddress}, ${order.address.city}, ${order.address.postalCode}` : '-'}
             </ThemedText>
           </View>
         </Card>
 
         {/* List of items purchased */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Barang Yang Dibeli
         </ThemedText>
-        <Card style={styles.cardPadding}>
-          <ThemedText type="smallBold" style={styles.storeNameText}>
-            Toko: {order.store.name}
+        <Card className="p-4">
+          <ThemedText type="smallBold" className="text-[15px]">
+            Toko: {order.store?.name}
           </ThemedText>
-          <View style={[styles.divider, { backgroundColor: theme.border, marginVertical: Spacing.two }]} />
-          {order.items.map((item) => (
-            <View key={item.id} style={styles.itemRow}>
-              <View style={styles.itemDetails}>
-                <ThemedText type="smallBold" style={{ fontSize: 14 }}>
+          <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />
+          {order.items?.map((item) => (
+            <View key={item.id} className="flex-row justify-between items-center mb-2">
+              <View className="flex-1 pr-3">
+                <ThemedText type="smallBold" className="text-[14px]">
                   {item.productName}
                 </ThemedText>
-                <ThemedText style={{ fontSize: 12, marginTop: 2 }} themeColor="textSecondary">
+                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                   {item.quantity} x {formatCurrency(item.price)}
                 </ThemedText>
               </View>
-              <ThemedText type="smallBold" style={styles.itemSubtotal}>
+              <ThemedText type="smallBold" className="text-[14px] font-bold">
                 {formatCurrency(item.subtotal)}
               </ThemedText>
             </View>
@@ -282,45 +282,45 @@ export default function BuyerOrderDetailScreen() {
         </Card>
 
         {/* Financial billing details */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Rincian Transaksi Keuangan
         </ThemedText>
-        <Card style={styles.cardPadding}>
-          <View style={styles.billingContainer}>
-            <View style={styles.billingRow}>
-              <ThemedText style={{ color: theme.textSecondary }}>Subtotal Belanja</ThemedText>
-              <ThemedText style={styles.billingVal}>{formatCurrency(order.subtotal)}</ThemedText>
+        <Card className="p-4">
+          <View className="gap-2">
+            <View className="flex-row justify-between items-center">
+              <ThemedText themeColor="textSecondary">Subtotal Belanja</ThemedText>
+              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.subtotal)}</ThemedText>
             </View>
 
             {order.discountAmount > 0 && (
-              <View style={styles.billingRow}>
+              <View className="flex-row justify-between items-center">
                 <ThemedText style={{ color: theme.success }}>
                   Diskon ({order.discountCode})
                 </ThemedText>
-                <ThemedText style={[styles.billingVal, { color: theme.success }]}>
+                <ThemedText className="text-[14px] font-semibold" style={{ color: theme.success }}>
                   -{formatCurrency(order.discountAmount)}
                 </ThemedText>
               </View>
             )}
 
-            <View style={styles.billingRow}>
-              <ThemedText style={{ color: theme.textSecondary }}>Biaya Ongkos Kirim</ThemedText>
-              <ThemedText style={styles.billingVal}>{formatCurrency(order.deliveryFee)}</ThemedText>
+            <View className="flex-row justify-between items-center">
+              <ThemedText themeColor="textSecondary">Biaya Ongkos Kirim</ThemedText>
+              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.deliveryFee)}</ThemedText>
             </View>
 
-            <View style={styles.billingRow}>
-              <ThemedText style={{ color: theme.textSecondary }}>PPN (12%)</ThemedText>
-              <ThemedText style={styles.billingVal}>{formatCurrency(order.ppn)}</ThemedText>
+            <View className="flex-row justify-between items-center">
+              <ThemedText themeColor="textSecondary">PPN (12%)</ThemedText>
+              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.ppn)}</ThemedText>
             </View>
 
-            <View style={[styles.divider, { backgroundColor: theme.border, marginVertical: Spacing.two }]} />
+            <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />
 
-            <View style={styles.billingTotalRow}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.two }}>
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center gap-2">
                 <CreditCard size={18} color={theme.textSecondary} />
                 <ThemedText type="smallBold">Total Bayar</ThemedText>
               </View>
-              <ThemedText style={styles.totalPriceText} themeColor="primary">
+              <ThemedText className="text-[18px] font-black" themeColor="primary">
                 {formatCurrency(order.total)}
               </ThemedText>
             </View>
@@ -330,134 +330,3 @@ export default function BuyerOrderDetailScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.five,
-  },
-  errorText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: Spacing.three,
-    textAlign: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-    gap: Spacing.three,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.one,
-    marginTop: Spacing.two,
-  },
-  headerCard: {
-    padding: Spacing.four,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  orderIdText: {
-    fontSize: 11,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-  },
-  orderIdValue: {
-    fontSize: 13,
-    fontWeight: '800',
-    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace' }),
-    marginTop: 2,
-  },
-  divider: {
-    height: 1.5,
-    marginVertical: Spacing.three,
-  },
-  dateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  cardPadding: {
-    padding: Spacing.four,
-  },
-  driverCard: {
-    padding: Spacing.three,
-  },
-  driverRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconBox: {
-    width: 44,
-    height: 44,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  driverInfo: {
-    marginLeft: Spacing.three,
-    flex: 1,
-  },
-  addressHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  fullAddressText: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 4,
-  },
-  storeNameText: {
-    fontSize: 15,
-  },
-  itemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.two,
-  },
-  itemDetails: {
-    flex: 1,
-    paddingRight: Spacing.three,
-  },
-  itemSubtotal: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  billingContainer: {
-    gap: Spacing.two,
-  },
-  billingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  billingVal: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  billingTotalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  totalPriceText: {
-    fontSize: 18,
-    fontWeight: '900',
-  },
-});

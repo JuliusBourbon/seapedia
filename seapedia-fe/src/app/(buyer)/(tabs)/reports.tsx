@@ -69,9 +69,9 @@ export default function BuyerReportsScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengompilasi laporan pengeluaran Anda...
         </ThemedText>
       </ThemedView>
@@ -83,9 +83,9 @@ export default function BuyerReportsScreen() {
   const maxStatusCount = Math.max(...Object.values(statusBreakdown), 1);
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerClassName="p-4 pb-5 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -96,69 +96,69 @@ export default function BuyerReportsScreen() {
         }
       >
         {/* Banner Overview */}
-        <Card style={styles.mainSpendCard}>
-          <View style={styles.spendHeader}>
+        <Card className="p-5 bg-[#0D9488] border-[#0F766E]">
+          <View className="flex-row items-center gap-2">
             <DollarSign size={24} color="#FFFFFF" />
-            <ThemedText style={styles.spendTitle}>Total Pengeluaran Belanja</ThemedText>
+            <ThemedText className="text-[rgba(255,255,255,0.85)] text-[13px] font-semibold">Total Pengeluaran Belanja</ThemedText>
           </View>
-          <ThemedText style={styles.spendedValue}>
+          <ThemedText className="text-white text-[30px] font-black mt-2">
             {formatCurrency(report?.totalSpending ?? 0)}
           </ThemedText>
-          <ThemedText style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: Spacing.one }}>
+          <ThemedText className="text-[rgba(255,255,255,0.7)] text-[13px] mt-1">
             Dari total {report?.totalOrders ?? 0} pesanan yang dibuat
           </ThemedText>
         </Card>
 
         {/* Stats Grid */}
-        <View style={styles.statsGrid}>
-          <Card style={styles.statCard}>
-            <View style={[styles.iconBox, { backgroundColor: `${theme.success}10` }]}>
+        <View className="flex-row flex-wrap gap-3">
+          <Card className="w-[47.5%] p-4 gap-1">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.success}10` }}>
               <Gift size={20} color={theme.success} />
             </View>
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">Hemat Voucher</ThemedText>
-            <ThemedText type="smallBold" style={[styles.statVal, { color: theme.success }]}>
+            <ThemedText className="text-[11px]" themeColor="textSecondary">Hemat Voucher</ThemedText>
+            <ThemedText type="smallBold" className="text-[15px]" style={{ color: theme.success }}>
               {formatCurrency(report?.totalDiscount ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card style={styles.statCard}>
-            <View style={[styles.iconBox, { backgroundColor: `${theme.primary}10` }]}>
+          <Card className="w-[47.5%] p-4 gap-1">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.primary}10` }}>
               <Percent size={20} color={theme.primary} />
             </View>
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">Total PPN (12%)</ThemedText>
-            <ThemedText type="smallBold" style={styles.statVal}>
+            <ThemedText className="text-[11px]" themeColor="textSecondary">Total PPN (12%)</ThemedText>
+            <ThemedText type="smallBold" className="text-[15px]">
               {formatCurrency(report?.totalPpn ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card style={styles.statCard}>
-            <View style={[styles.iconBox, { backgroundColor: `${theme.secondary}10` }]}>
+          <Card className="w-[47.5%] p-4 gap-1">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.secondary}10` }}>
               <Truck size={20} color={theme.secondary} />
             </View>
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">Ongkos Kirim</ThemedText>
-            <ThemedText type="smallBold" style={styles.statVal}>
+            <ThemedText className="text-[11px]" themeColor="textSecondary">Ongkos Kirim</ThemedText>
+            <ThemedText type="smallBold" className="text-[15px]">
               {formatCurrency(report?.totalDeliveryFee ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card style={styles.statCard}>
-            <View style={[styles.iconBox, { backgroundColor: `${theme.danger}10` }]}>
+          <Card className="w-[47.5%] p-4 gap-1">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.danger}10` }}>
               <TrendingDown size={20} color={theme.danger} />
             </View>
-            <ThemedText style={styles.statLabel} themeColor="textSecondary">Refund Pengembalian</ThemedText>
-            <ThemedText type="smallBold" style={[styles.statVal, { color: theme.danger }]}>
+            <ThemedText className="text-[11px]" themeColor="textSecondary">Refund Pengembalian</ThemedText>
+            <ThemedText type="smallBold" className="text-[15px]" style={{ color: theme.danger }}>
               {formatCurrency(report?.totalRefunded ?? 0)}
             </ThemedText>
           </Card>
         </View>
 
         {/* Status Breakdown Section */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
           Sebaran Status Pesanan
         </ThemedText>
-        <Card style={styles.breakdownCard}>
+        <Card className="p-4 gap-3">
           {statusKeys.length === 0 ? (
-            <ThemedText style={{ textAlign: 'center', marginVertical: Spacing.four }} themeColor="textSecondary">
+            <ThemedText className="text-center my-4" themeColor="textSecondary">
               Belum ada data status pesanan tersedia.
             </ThemedText>
           ) : (
@@ -168,29 +168,27 @@ export default function BuyerReportsScreen() {
               const label = ORDER_STATUS_LABELS[statusKey as keyof typeof ORDER_STATUS_LABELS] || statusKey;
 
               return (
-                <View key={statusKey} style={styles.breakdownRow}>
-                  <View style={styles.breakdownLabelRow}>
-                    <ThemedText type="smallBold" style={{ fontSize: 13 }}>
+                <View key={statusKey} className="gap-1">
+                  <View className="flex-row justify-between items-center">
+                    <ThemedText type="smallBold" className="text-[13px]">
                       {label}
                     </ThemedText>
-                    <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+                    <ThemedText className="text-[13px]" themeColor="textSecondary">
                       {count} Pesanan
                     </ThemedText>
                   </View>
-                  <View style={styles.barBackground}>
+                  <View className="h-2 rounded-full overflow-hidden bg-black/5 dark:bg-white/5">
                     <View
-                      style={[
-                        styles.barFill,
-                        {
-                          width: `${barPercent}%`,
-                          backgroundColor:
-                            statusKey === 'PESANAN_SELESAI'
-                              ? theme.success
-                              : statusKey === 'DIKEMBALIKAN'
-                              ? theme.danger
-                              : theme.primary,
-                        },
-                      ]}
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${barPercent}%`,
+                        backgroundColor:
+                          statusKey === 'PESANAN_SELESAI'
+                            ? theme.success
+                            : statusKey === 'DIKEMBALIKAN'
+                            ? theme.danger
+                            : theme.primary,
+                      }}
                     />
                   </View>
                 </View>
@@ -201,9 +199,9 @@ export default function BuyerReportsScreen() {
 
         {/* Note on Refund */}
         {report && report.refundedOrdersCount > 0 && (
-          <Card style={styles.infoCard}>
+          <Card className="p-4 flex-row gap-3 items-start bg-warning/5">
             <HelpCircle size={18} color={theme.warning} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
+            <ThemedText className="flex-1 text-[12px] leading-[18px]" themeColor="textSecondary">
               Sebanyak **{report.refundedOrdersCount} pesanan** dibatalkan dan direfund (dikembalikan ke Wallet Anda) senilai total **{formatCurrency(report.totalRefunded)}** karena melewati SLA waktu pengantaran kurir.
             </ThemedText>
           </Card>
@@ -212,106 +210,3 @@ export default function BuyerReportsScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-    gap: Spacing.three,
-  },
-  sectionTitle: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.one,
-    marginTop: Spacing.two,
-  },
-  mainSpendCard: {
-    padding: Spacing.five,
-    backgroundColor: '#0D9488', // Teal primary color override for banner
-    borderColor: '#0F766E',
-  },
-  spendHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  spendTitle: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  spendedValue: {
-    color: '#FFFFFF',
-    fontSize: 30,
-    fontWeight: '900',
-    marginTop: Spacing.two,
-  },
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.three,
-  },
-  statCard: {
-    width: '47.5%',
-    padding: Spacing.three * 1.2,
-    gap: 4,
-  },
-  iconBox: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 11,
-  },
-  statVal: {
-    fontSize: 15,
-  },
-  breakdownCard: {
-    padding: Spacing.four,
-    gap: Spacing.three,
-  },
-  breakdownRow: {
-    gap: Spacing.one,
-  },
-  breakdownLabelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  barBackground: {
-    height: 8,
-    borderRadius: 99,
-    backgroundColor: 'rgba(0, 0, 0, 0.04)',
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
-    borderRadius: 99,
-  },
-  infoCard: {
-    padding: Spacing.four,
-    flexDirection: 'row',
-    gap: Spacing.three,
-    alignItems: 'flex-start',
-    backgroundColor: 'rgba(245, 158, 11, 0.05)',
-  },
-  infoText: {
-    flex: 1,
-    fontSize: 12,
-    lineHeight: 18,
-  },
-});

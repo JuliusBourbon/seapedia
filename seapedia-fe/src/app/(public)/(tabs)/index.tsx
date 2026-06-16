@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -16,7 +15,6 @@ import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ProductCard, ProductData } from '@/components/product-card';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 const { width } = Dimensions.get('window');
@@ -60,36 +58,42 @@ export default function MarketplaceHomeScreen() {
   };
 
   const renderHeader = () => (
-    <View style={styles.headerContainer}>
+    <View className="w-full pb-4">
       {/* Ocean Welcome Banner */}
       <LinearGradient
         colors={['#0F766E', '#0D9488', '#0EA5E9']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.heroBanner}
+        className="py-8 px-6 rounded-b-[24px] shadow-lg shadow-[#0D9488]/10 elevation-5 mb-6"
       >
-        <View style={styles.heroContent}>
-          <Anchor size={40} color="#FFFFFF" style={styles.heroIcon} />
-          <ThemedText style={styles.heroTitle}>
+        <View className="items-center">
+          <Anchor size={40} color="#FFFFFF" className="mb-2" />
+          <ThemedText 
+            className="text-white text-[32px] font-black tracking-widest"
+            style={{ textShadowColor: 'rgba(0, 0, 0, 0.2)', textShadowOffset: { width: 1, height: 2 }, textShadowRadius: 4 }}
+          >
             SEAPEDIA
           </ThemedText>
-          <ThemedText style={styles.heroSubtitle}>
+          <ThemedText className="text-white/90 text-sm font-semibold text-center mt-1">
             Marketplace Multi-Role Hasil Laut & Maritim Terlengkap
           </ThemedText>
         </View>
       </LinearGradient>
 
       {/* Fake Search Bar Button */}
-      <Pressable onPress={handleSearchPress} style={[styles.searchBar, { borderColor: theme.border, backgroundColor: theme.backgroundElement }]}>
+      <Pressable 
+        onPress={handleSearchPress} 
+        className="flex-row items-center mx-6 px-4 h-12 rounded-xl border-[1.5px] mb-6 bg-backgroundElement border-border"
+      >
         <Search size={20} color={theme.textSecondary} />
-        <ThemedText style={{ color: theme.placeholder, marginLeft: Spacing.two }}>
+        <ThemedText className="text-placeholder ml-2">
           Cari ikan segar, udang, atau toko maritim...
         </ThemedText>
       </Pressable>
 
-      <View style={styles.sectionHeader}>
+      <View className="flex-row items-center px-6 mt-2 mb-2">
         <Store size={20} color={theme.primary} />
-        <ThemedText type="smallBold" style={{ fontSize: 18, marginLeft: Spacing.two }}>
+        <ThemedText type="smallBold" className="text-lg ml-2">
           Jelajah Katalog Terkini
         </ThemedText>
       </View>
@@ -99,8 +103,8 @@ export default function MarketplaceHomeScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
-        <ThemedText style={{ color: theme.textSecondary }}>
+      <View className="items-center justify-center py-16">
+        <ThemedText className="text-textSecondary">
           {error ? error : 'Belum ada produk yang dijual saat ini.'}
         </ThemedText>
       </View>
@@ -108,11 +112,11 @@ export default function MarketplaceHomeScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       {loading && !refreshing ? (
-        <View style={styles.loadingContainer}>
+        <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
-          <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+          <ThemedText className="mt-4 text-textSecondary">
             Menyelam mencari produk maritim...
           </ThemedText>
         </View>
@@ -127,11 +131,8 @@ export default function MarketplaceHomeScreen() {
           )}
           keyExtractor={(item) => item.id}
           numColumns={Platform.OS === 'web' ? undefined : 2}
-          contentContainerStyle={[
-            styles.listContainer,
-            Platform.OS === 'web' && styles.webListContainer,
-          ]}
-          columnWrapperStyle={Platform.OS !== 'web' && products.length > 0 ? styles.columnWrapper : undefined}
+          contentContainerClassName={Platform.OS === 'web' ? "flex-row flex-wrap justify-center px-4 pb-8" : "pb-8"}
+          columnWrapperClassName={Platform.OS !== 'web' && products.length > 0 ? "justify-between px-2" : undefined}
           ListHeaderComponent={renderHeader}
           ListEmptyComponent={renderEmpty}
           refreshControl={
@@ -147,87 +148,3 @@ export default function MarketplaceHomeScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContainer: {
-    paddingBottom: Spacing.five,
-  },
-  webListContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    paddingHorizontal: Spacing.four,
-  },
-  columnWrapper: {
-    justifyContent: 'space-between',
-    paddingHorizontal: Spacing.two,
-  },
-  headerContainer: {
-    width: '100%',
-    paddingBottom: Spacing.three,
-  },
-  heroBanner: {
-    paddingVertical: Spacing.five,
-    paddingHorizontal: Spacing.four,
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-    shadowColor: '#0D9488',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.1,
-    shadowRadius: 16,
-    elevation: 5,
-    marginBottom: Spacing.four,
-  },
-  heroContent: {
-    alignItems: 'center',
-  },
-  heroIcon: {
-    marginBottom: Spacing.two,
-  },
-  heroTitle: {
-    color: '#FFFFFF',
-    fontSize: 32,
-    fontWeight: '900',
-    letterSpacing: 2,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
-    textShadowOffset: { width: 1, height: 2 },
-    textShadowRadius: 4,
-  },
-  heroSubtitle: {
-    color: 'rgba(255, 255, 255, 0.9)',
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
-    marginTop: Spacing.one,
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: Spacing.four,
-    paddingHorizontal: Spacing.three,
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    marginBottom: Spacing.four,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: Spacing.four,
-    marginTop: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-  },
-});

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
   View,
   Alert,
   Pressable,
@@ -15,7 +14,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 type SignupRole = 'BUYER' | 'SELLER' | 'DRIVER';
@@ -128,24 +126,18 @@ export default function RegisterScreen() {
     return (
       <Pressable
         onPress={() => toggleRole(role)}
-        style={[
-          styles.checkboxItem,
-          {
-            backgroundColor: theme.backgroundElement,
-            borderColor: isSelected ? theme.primary : theme.border,
-          },
-        ]}
+        className={`flex-row items-center border-[1.5px] rounded-xl p-4 mb-2 ${isSelected ? 'border-primary' : 'border-border'} bg-backgroundElement`}
       >
         {isSelected ? (
           <CheckSquare size={24} color={theme.primary} />
         ) : (
           <Square size={24} color={theme.textSecondary} />
         )}
-        <View style={styles.checkboxTextContainer}>
-          <ThemedText type="smallBold" style={styles.checkboxLabel}>
+        <View className="ml-4 flex-1">
+          <ThemedText type="smallBold" className="text-sm font-bold">
             {label}
           </ThemedText>
-          <ThemedText style={styles.checkboxDescription} themeColor="textSecondary">
+          <ThemedText className="text-xs mt-[2px]" themeColor="textSecondary">
             {description}
           </ThemedText>
         </View>
@@ -154,22 +146,22 @@ export default function RegisterScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.headerContainer}>
-            <ThemedText type="subtitle" style={styles.title}>
+        <ScrollView contentContainerClassName="flex-grow px-8 py-6">
+          <View className="items-center mb-6">
+            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center">
               Daftar Akun Baru
             </ThemedText>
-            <ThemedText style={styles.subtitle} themeColor="textSecondary">
+            <ThemedText className="text-sm text-center mt-1" themeColor="textSecondary">
               Bergabunglah dengan SEAPEDIA dan pilih peran Anda
             </ThemedText>
           </View>
 
-          <View style={styles.formContainer}>
+          <View className="w-full">
             <Input
               label="Username"
               placeholder="Minimal 3 karakter"
@@ -211,8 +203,8 @@ export default function RegisterScreen() {
               autoCapitalize="none"
             />
 
-            <View style={styles.roleSelectionSection}>
-              <ThemedText type="smallBold" style={[styles.sectionTitle, { color: theme.textSecondary }]}>
+            <View className="my-2">
+              <ThemedText type="smallBold" className="mb-2 text-textSecondary">
                 Pilih Peran Akun (Dapat memilih lebih dari satu)
               </ThemedText>
               
@@ -232,7 +224,7 @@ export default function RegisterScreen() {
                 'Antar pesanan ke pembeli dan peroleh penghasilan.'
               )}
               {errors.roles && (
-                <ThemedText style={{ color: theme.danger, fontSize: 12, marginTop: Spacing.one, fontWeight: '600' }}>
+                <ThemedText className="text-danger text-xs mt-1 font-semibold">
                   {errors.roles}
                 </ThemedText>
               )}
@@ -242,15 +234,15 @@ export default function RegisterScreen() {
               label="Daftar Sekarang"
               onPress={handleRegister}
               loading={loading}
-              style={styles.registerButton}
+              className="mt-6 h-[52px]"
             />
 
-            <View style={styles.loginLinkContainer}>
-              <ThemedText style={{ color: theme.textSecondary }}>
+            <View className="flex-row justify-center items-center mt-6 mb-8">
+              <ThemedText className="text-textSecondary">
                 Sudah memiliki akun?{' '}
               </ThemedText>
               <Pressable onPress={() => router.replace('/(public)/(tabs)/login')}>
-                <ThemedText style={{ color: theme.primary, fontWeight: '700' }}>
+                <ThemedText className="text-primary font-bold">
                   Masuk di sini
                 </ThemedText>
               </Pressable>
@@ -261,68 +253,3 @@ export default function RegisterScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: Spacing.five,
-    paddingVertical: Spacing.four,
-  },
-  headerContainer: {
-    alignItems: 'center',
-    marginBottom: Spacing.four,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: Spacing.one,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  roleSelectionSection: {
-    marginVertical: Spacing.two,
-  },
-  sectionTitle: {
-    marginBottom: Spacing.two,
-  },
-  checkboxItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderRadius: 12,
-    padding: Spacing.three,
-    marginBottom: Spacing.two,
-  },
-  checkboxTextContainer: {
-    marginLeft: Spacing.three,
-    flex: 1,
-  },
-  checkboxLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  checkboxDescription: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  registerButton: {
-    marginTop: Spacing.four,
-    height: 52,
-  },
-  loginLinkContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: Spacing.four,
-    marginBottom: Spacing.five,
-  },
-});

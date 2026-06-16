@@ -2,6 +2,7 @@ import { Tabs } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { Truck, ClipboardList, Wallet } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
 
 export default function DriverTabsLayout() {
   const theme = useTheme();
@@ -16,8 +17,8 @@ export default function DriverTabsLayout() {
           backgroundColor: theme.backgroundElement,
           borderTopWidth: 1,
           borderTopColor: theme.border,
-          height: 60 + insets.bottom,
-          paddingBottom: 8 + insets.bottom,
+          height: Platform.OS === 'android' ? 65 : 60 + insets.bottom,
+          paddingBottom: Platform.OS === 'android' ? 10 : Math.max(insets.bottom, 8),
           paddingTop: 8,
         },
         headerStyle: {

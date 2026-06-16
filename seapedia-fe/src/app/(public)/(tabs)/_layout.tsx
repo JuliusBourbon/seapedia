@@ -37,10 +37,7 @@ export default function PublicTabsLayout() {
           isAuthenticated && activeRole === 'BUYER' ? (
             <Pressable
               onPress={() => router.push('/(buyer)/cart' as any)}
-              style={({ pressed }) => ({
-                marginRight: 16,
-                opacity: pressed ? 0.7 : 1,
-              })}
+              className="mr-4 active:opacity-70"
             >
               <ShoppingCart size={24} color={theme.primary} />
             </Pressable>

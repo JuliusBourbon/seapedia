@@ -225,36 +225,36 @@ export default function AddressManagementScreen() {
 
   const renderAddressCard = ({ item }: { item: Address }) => {
     return (
-      <Card style={[styles.addressCard, item.isDefault && { borderColor: theme.primary, borderWidth: 1.5 }]}>
-        <View style={styles.cardHeader}>
-          <View style={styles.headerLeft}>
+      <Card className={`mb-3 p-4 border-[1.5px] ${item.isDefault ? 'border-primary' : 'border-transparent'}`}>
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center flex-1">
             <MapPin size={18} color={item.isDefault ? theme.primary : theme.textSecondary} />
-            <ThemedText type="smallBold" style={styles.addressLabel}>
+            <ThemedText type="smallBold" className="text-[15px] font-extrabold ml-2">
               {item.label}
             </ThemedText>
-            {item.isDefault && <Badge label="Default" variant="primary" style={styles.defaultBadge} />}
+            {item.isDefault && <Badge label="Default" variant="primary" className="ml-2" />}
           </View>
-          <View style={styles.actionIcons}>
-            <Pressable onPress={() => openEditModal(item)} style={styles.iconButton}>
+          <View className="flex-row gap-3">
+            <Pressable onPress={() => openEditModal(item)} className="p-1">
               <Edit2 size={16} color={theme.text} />
             </Pressable>
             <Pressable
               onPress={() => handleDeleteAddress(item.id, item.isDefault)}
-              style={styles.iconButton}
+              className="p-1"
             >
               <Trash2 size={16} color={theme.danger} />
             </Pressable>
           </View>
         </View>
 
-        <View style={styles.cardBody}>
-          <ThemedText type="smallBold" style={styles.recipientName}>
+        <View className="gap-1">
+          <ThemedText type="smallBold" className="text-sm font-bold">
             {item.recipientName}
           </ThemedText>
-          <ThemedText style={styles.phoneNumber} themeColor="textSecondary">
+          <ThemedText className="text-[13px]" themeColor="textSecondary">
             {item.phoneNumber}
           </ThemedText>
-          <ThemedText style={styles.fullAddress}>
+          <ThemedText className="text-sm leading-5 mt-1">
             {item.fullAddress}, {item.city}, {item.postalCode}
           </ThemedText>
         </View>
@@ -265,9 +265,9 @@ export default function AddressManagementScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <MapPin size={48} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           Belum ada alamat pengiriman. Silakan tambah alamat untuk memudahkan checkout.
         </ThemedText>
       </View>
@@ -276,9 +276,9 @@ export default function AddressManagementScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil daftar alamat Anda...
         </ThemedText>
       </ThemedView>
@@ -286,12 +286,13 @@ export default function AddressManagementScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={addresses}
         renderItem={renderAddressCard}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[styles.listContent, { paddingBottom: 136 + insets.bottom }]}
+        contentContainerClassName="p-4 pb-20"
+        contentContainerStyle={{ paddingBottom: 136 + insets.bottom }}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -303,12 +304,12 @@ export default function AddressManagementScreen() {
         }
       />
 
-      <View style={[styles.fabContainer, { bottom: 68 + insets.bottom }]}>
+      <View className="absolute left-4 right-4" style={{ bottom: 68 + insets.bottom }}>
         <Button
           label="Tambah Alamat Baru"
           leftIcon={<Plus size={20} color="#FFFFFF" />}
           onPress={openAddModal}
-          style={styles.fabButton}
+          className="rounded-full h-[52px] shadow-sm elevation-5"
         />
       </View>
 
@@ -319,22 +320,22 @@ export default function AddressManagementScreen() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
+        <View className="flex-1 bg-black/50 justify-end">
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ width: '100%' }}
           >
-            <ThemedView type="backgroundElement" style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+            <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[85%]">
+              <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
+                <ThemedText type="smallBold" className="text-[18px]">
                   {editingAddress ? 'Ubah Alamat' : 'Tambah Alamat Baru'}
                 </ThemedText>
-                <Pressable onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                <Pressable onPress={() => setModalVisible(false)} className="p-1">
                   <X size={20} color={theme.text} />
                 </Pressable>
               </View>
 
-              <ScrollView contentContainerStyle={styles.formScroll}>
+              <ScrollView contentContainerClassName="p-4 pb-6">
                 <Input
                   label="Label Alamat"
                   placeholder="Contoh: Rumah, Kantor, Kosan"
@@ -368,17 +369,17 @@ export default function AddressManagementScreen() {
                   error={errors.fullAddress}
                   multiline
                   numberOfLines={3}
-                  inputStyle={{ height: 80, textAlignVertical: 'top', paddingTop: Spacing.two }}
+                  inputStyle={{ height: 80, textAlignVertical: 'top', paddingTop: 8 }}
                 />
 
-                <View style={styles.rowInputs}>
+                <View className="flex-row justify-between">
                   <Input
                     label="Kota/Kabupaten"
                     placeholder="Contoh: Jakarta"
                     value={city}
                     onChangeText={setCity}
                     error={errors.city}
-                    containerStyle={{ flex: 1, marginRight: Spacing.two }}
+                    containerStyle={{ flex: 1, marginRight: 8 }}
                   />
                   <Input
                     label="Kode Pos"
@@ -393,10 +394,10 @@ export default function AddressManagementScreen() {
 
                 {/* Switch for Is Default (Lock to true if only address) */}
                 {addresses.length > 0 && (!editingAddress || !editingAddress.isDefault) && (
-                  <View style={styles.switchRow}>
-                    <View style={{ flex: 1 }}>
+                  <View className="flex-row items-center my-2 py-2 border-t border-b border-black/5 dark:border-white/5">
+                    <View className="flex-1">
                       <ThemedText type="smallBold">Jadikan Alamat Default</ThemedText>
-                      <ThemedText style={{ fontSize: 12, marginTop: 2 }} themeColor="textSecondary">
+                      <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                         Gunakan alamat ini sebagai tujuan utama saat checkout.
                       </ThemedText>
                     </View>
@@ -413,7 +414,7 @@ export default function AddressManagementScreen() {
                   label={editingAddress ? 'Update Alamat' : 'Simpan Alamat'}
                   onPress={handleSaveAddress}
                   loading={submitting}
-                  style={{ marginTop: Spacing.three }}
+                  className="mt-3"
                 />
               </ScrollView>
             </ThemedView>
@@ -423,125 +424,3 @@ export default function AddressManagementScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: 80, // Space for FAB
-  },
-  addressCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  addressLabel: {
-    fontSize: 15,
-    fontWeight: '800',
-    marginLeft: Spacing.two,
-  },
-  defaultBadge: {
-    marginLeft: Spacing.two,
-  },
-  actionIcons: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-  },
-  iconButton: {
-    padding: Spacing.one,
-  },
-  cardBody: {
-    gap: Spacing.one,
-  },
-  recipientName: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  phoneNumber: {
-    fontSize: 13,
-  },
-  fullAddress: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginTop: Spacing.one / 2,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-  fabContainer: {
-    position: 'absolute',
-    bottom: Spacing.four,
-    left: Spacing.four,
-    right: Spacing.four,
-  },
-  fabButton: {
-    borderRadius: 99,
-    height: 52,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '85%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.four,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-  },
-  closeButton: {
-    padding: Spacing.one,
-  },
-  formScroll: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.six,
-  },
-  rowInputs: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  switchRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: Spacing.two,
-    paddingVertical: Spacing.two,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
-  },
-});

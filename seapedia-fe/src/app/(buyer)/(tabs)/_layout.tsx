@@ -1,7 +1,7 @@
 import { Tabs, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { Home, ShoppingBag, MapPin, BarChart3, ShoppingCart } from 'lucide-react-native';
-import { Pressable } from 'react-native';
+import { Pressable, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function BuyerTabsLayout() {
@@ -18,8 +18,8 @@ export default function BuyerTabsLayout() {
           backgroundColor: theme.backgroundElement,
           borderTopWidth: 1,
           borderTopColor: theme.border,
-          height: 60 + insets.bottom,
-          paddingBottom: 8 + insets.bottom,
+          height: Platform.OS === 'android' ? 65 : 60 + insets.bottom,
+          paddingBottom: Platform.OS === 'android' ? 10 : Math.max(insets.bottom, 8),
           paddingTop: 8,
         },
         headerStyle: {
@@ -34,10 +34,7 @@ export default function BuyerTabsLayout() {
         headerRight: () => (
           <Pressable
             onPress={() => router.push('/(buyer)/cart' as any)}
-            style={({ pressed }) => ({
-              marginRight: 16,
-              opacity: pressed ? 0.7 : 1,
-            })}
+            className="mr-4 active:opacity-70"
           >
             <ShoppingCart size={24} color={theme.primary} />
           </Pressable>

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -17,7 +16,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 interface Transaction {
@@ -126,25 +124,25 @@ export default function WalletHistoryScreen() {
     }).format(balance);
 
     return (
-      <View style={styles.header}>
+      <View className="mb-3">
         {/* Wallet Balance Card */}
-        <Card style={styles.walletCard}>
-          <View style={styles.walletRow}>
+        <Card className="mb-3 p-4">
+          <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText style={styles.walletLabel} themeColor="textSecondary">
+              <ThemedText className="text-[12px] font-semibold uppercase tracking-wider" themeColor="textSecondary">
                 Saldo Anda Saat Ini
               </ThemedText>
-              <ThemedText style={styles.walletAmount}>{formattedBalance}</ThemedText>
+              <ThemedText className="text-[26px] font-black text-[#0D9488] mt-1">{formattedBalance}</ThemedText>
             </View>
-            <View style={[styles.walletIconContainer, { backgroundColor: `${theme.primary}20` }]}>
+            <View className="w-[52px] h-[52px] rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}20` }}>
               <Wallet size={28} color={theme.primary} />
             </View>
           </View>
         </Card>
 
         {/* Topup Form Section */}
-        <Card style={styles.topupCard}>
-          <ThemedText type="smallBold" style={{ fontSize: 16, marginBottom: Spacing.two }}>
+        <Card className="p-4 mb-4">
+          <ThemedText type="smallBold" className="text-base mb-2">
             Isi Ulang Saldo (Dummy)
           </ThemedText>
           <Input
@@ -159,7 +157,7 @@ export default function WalletHistoryScreen() {
           />
 
           {/* Quick Selection Chips */}
-          <View style={styles.chipsRow}>
+          <View className="flex-row justify-between my-2 gap-2">
             {quickAmounts.map((amount) => (
               <Pressable
                 key={amount}
@@ -167,15 +165,10 @@ export default function WalletHistoryScreen() {
                   setTopupAmount(amount.toString());
                   setAmountError(null);
                 }}
-                style={[
-                  styles.chip,
-                  {
-                    backgroundColor: theme.background,
-                    borderColor: topupAmount === amount.toString() ? theme.primary : theme.border,
-                  },
-                ]}
+                className={`flex-1 h-[38px] rounded-lg border-[1.5px] items-center justify-center ${topupAmount === amount.toString() ? 'border-primary' : 'border-border'}`}
+                style={{ backgroundColor: theme.background }}
               >
-                <ThemedText style={{ fontSize: 12, fontWeight: '700' }}>
+                <ThemedText className="text-[12px] font-bold">
                   {(amount / 1000).toLocaleString('id-ID')}k
                 </ThemedText>
               </Pressable>
@@ -188,11 +181,11 @@ export default function WalletHistoryScreen() {
             onPress={handleTopup}
             loading={submitting}
             disabled={!topupAmount}
-            style={styles.topupButton}
+            className="mt-3 h-12"
           />
         </Card>
 
-        <ThemedText type="smallBold" style={styles.historyTitle}>
+        <ThemedText type="smallBold" className="text-base font-bold mb-2">
           Riwayat Transaksi Dompet
         </ThemedText>
       </View>
@@ -209,14 +202,14 @@ export default function WalletHistoryScreen() {
     const isPositive = item.type === 'TOPUP' || item.type === 'REFUND';
 
     return (
-      <Card style={styles.txRow}>
-        <View style={styles.txLeft}>
+      <Card className="flex-row justify-between items-center mb-2 p-3">
+        <View className="flex-row items-center flex-1">
           {getTxTypeBadge(item.type)}
-          <View style={styles.txDetails}>
+          <View className="ml-3 flex-1 pr-2">
             <ThemedText type="smallBold" numberOfLines={1}>
               {item.description || 'Transaksi Dompet'}
             </ThemedText>
-            <ThemedText style={{ fontSize: 11, marginTop: 2 }} themeColor="textSecondary">
+            <ThemedText className="text-[11px] mt-[2px]" themeColor="textSecondary">
               {new Date(item.createdAt).toLocaleDateString('id-ID', {
                 day: 'numeric',
                 month: 'long',
@@ -227,7 +220,7 @@ export default function WalletHistoryScreen() {
             </ThemedText>
           </View>
         </View>
-        <ThemedText style={[styles.txAmount, { color: isPositive ? theme.success : theme.danger }]}>
+        <ThemedText className={`text-[14px] font-extrabold ${isPositive ? 'text-success' : 'text-danger'}`}>
           {isPositive ? '+' : '-'} {formattedAmount}
         </ThemedText>
       </Card>
@@ -237,8 +230,8 @@ export default function WalletHistoryScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <Card style={styles.emptyCard}>
-        <ThemedText style={{ color: theme.textSecondary }}>
+      <Card className="items-center justify-center py-5">
+        <ThemedText themeColor="textSecondary">
           Belum ada riwayat transaksi dompet.
         </ThemedText>
       </Card>
@@ -247,9 +240,9 @@ export default function WalletHistoryScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-4" themeColor="textSecondary">
           Mengambil data saldo & riwayat dompet...
         </ThemedText>
       </ThemedView>
@@ -257,14 +250,14 @@ export default function WalletHistoryScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={transactions}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="p-4 pb-5"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -277,102 +270,3 @@ export default function WalletHistoryScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  header: {
-    marginBottom: Spacing.three,
-  },
-  walletCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  walletRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  walletLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  walletAmount: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: '#0D9488', // Teal accent
-    marginTop: Spacing.one,
-  },
-  walletIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topupCard: {
-    padding: Spacing.four,
-    marginBottom: Spacing.four,
-  },
-  chipsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: Spacing.two,
-    gap: Spacing.two,
-  },
-  chip: {
-    flex: 1,
-    height: 38,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topupButton: {
-    marginTop: Spacing.three,
-    height: 48,
-  },
-  historyTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: Spacing.two,
-  },
-  txRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.two,
-    padding: Spacing.three,
-  },
-  txLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  txDetails: {
-    marginLeft: Spacing.three,
-    flex: 1,
-    paddingRight: Spacing.two,
-  },
-  txAmount: {
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  emptyCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.five,
-  },
-});

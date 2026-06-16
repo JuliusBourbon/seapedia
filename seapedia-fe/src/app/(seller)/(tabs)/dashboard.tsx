@@ -93,9 +93,9 @@ export default function SellerDashboardScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Memuat dasbor toko Anda...
         </ThemedText>
       </ThemedView>
@@ -103,9 +103,9 @@ export default function SellerDashboardScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerClassName="p-4 pb-5"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -116,16 +116,16 @@ export default function SellerDashboardScreen() {
         }
       >
         {/* Welcome Shop Banner */}
-        <Card style={styles.bannerCard}>
-          <View style={styles.bannerHeader}>
-            <View style={[styles.storeIconBox, { backgroundColor: `${theme.primary}15` }]}>
+        <Card className="mb-3 p-4">
+          <View className="flex-row items-center">
+            <View className="w-[60px] h-[60px] rounded-[14px] items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
               <Store size={36} color={theme.primary} />
             </View>
-            <View style={styles.bannerText}>
-              <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+            <View className="ml-4 flex-1">
+              <ThemedText type="smallBold" className="text-[18px]">
                 Toko: {summary?.storeName}
               </ThemedText>
-              <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+              <ThemedText className="text-[13px]" themeColor="textSecondary">
                 Pemilik: {user?.name} (@{user?.username})
               </ThemedText>
             </View>
@@ -138,24 +138,24 @@ export default function SellerDashboardScreen() {
               size="small"
               leftIcon={<RefreshCcw size={16} color={theme.primary} />}
               onPress={() => router.push('/(public)/select-role')}
-              style={{ marginTop: Spacing.three }}
+              className="mt-3"
             />
           )}
         </Card>
 
         {/* Dashboard Metrics Grid */}
-        <View style={styles.metricsRow}>
+        <View className="flex-row gap-3 mb-4">
           <Pressable
-            style={styles.metricItem}
+            className="flex-1"
             onPress={() => router.push('/(seller)/(tabs)/products')}
           >
-            <Card style={styles.metricCard}>
+            <Card className="flex-row items-center p-3">
               <ShoppingBag size={24} color={theme.primary} />
-              <View style={styles.metricInfo}>
-                <ThemedText type="subtitle" style={styles.metricCount}>
+              <View className="ml-3 flex-1">
+                <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6">
                   {summary?.totalProducts ?? 0}
                 </ThemedText>
-                <ThemedText style={styles.metricLabel} themeColor="textSecondary">
+                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                   Total Produk
                 </ThemedText>
               </View>
@@ -163,16 +163,16 @@ export default function SellerDashboardScreen() {
           </Pressable>
 
           <Pressable
-            style={styles.metricItem}
+            className="flex-1"
             onPress={() => router.push('/(seller)/(tabs)/orders')}
           >
-            <Card style={styles.metricCard}>
+            <Card className="flex-row items-center p-3">
               <ClipboardList size={24} color={theme.warning} />
-              <View style={styles.metricInfo}>
-                <ThemedText type="subtitle" style={styles.metricCount}>
+              <View className="ml-3 flex-1">
+                <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6">
                   {summary?.pendingOrders ?? 0}
                 </ThemedText>
-                <ThemedText style={styles.metricLabel} themeColor="textSecondary">
+                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                   Order Baru
                 </ThemedText>
               </View>
@@ -181,20 +181,20 @@ export default function SellerDashboardScreen() {
         </View>
 
         {/* Sales Revenue Note (Calculated starting Level 6) */}
-        <Card style={styles.infoCard}>
-          <View style={styles.infoTitleRow}>
+        <Card className="p-4 mb-4">
+          <View className="flex-row items-center">
             <Info size={20} color={theme.primary} />
-            <ThemedText type="smallBold" style={{ marginLeft: Spacing.two }}>
+            <ThemedText type="smallBold" className="ml-2">
               Informasi Finansial
             </ThemedText>
           </View>
-          <ThemedText style={styles.infoDesc} themeColor="textSecondary">
+          <ThemedText className="text-[13px] leading-[18px] mt-2" themeColor="textSecondary">
             {summary?.note || 'Data pendapatan penjualan toko nelayan Anda akan mulai dihitung secara real-time pada Level 6.'}
           </ThemedText>
         </Card>
 
         {/* Store settings quick links */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-[14px] uppercase font-bold tracking-wider mb-2 mt-2">
           Navigasi Toko
         </ThemedText>
         
@@ -202,14 +202,14 @@ export default function SellerDashboardScreen() {
           label="Kelola Daftar Produk Jualan"
           leftIcon={<ShoppingBag size={20} color="#FFFFFF" />}
           onPress={() => router.push('/(seller)/(tabs)/products')}
-          style={styles.actionBtn}
+          className="mb-3 h-[50px]"
         />
 
         <Button
           label="Lihat Pesanan Masuk"
           leftIcon={<ClipboardList size={20} color="#FFFFFF" />}
           onPress={() => router.push('/(seller)/(tabs)/orders')}
-          style={styles.actionBtn}
+          className="mb-3 h-[50px]"
         />
 
         {/* Logout */}
@@ -219,97 +219,9 @@ export default function SellerDashboardScreen() {
           leftIcon={<LogOut size={20} color="#FFFFFF" />}
           onPress={handleLogout}
           loading={loggingOut}
-          style={styles.logoutBtn}
+          className="mt-2 h-[50px]"
         />
       </ScrollView>
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  bannerCard: {
-    marginBottom: Spacing.three,
-  },
-  bannerHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  storeIconBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  bannerText: {
-    marginLeft: Spacing.four,
-    flex: 1,
-  },
-  metricsRow: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-    marginBottom: Spacing.four,
-  },
-  metricItem: {
-    flex: 1,
-  },
-  metricCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.three,
-  },
-  metricInfo: {
-    marginLeft: Spacing.three,
-    flex: 1,
-  },
-  metricCount: {
-    fontSize: 20,
-    fontWeight: '800',
-    lineHeight: 24,
-  },
-  metricLabel: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  infoCard: {
-    padding: Spacing.four,
-    marginBottom: Spacing.four,
-  },
-  infoTitleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  infoDesc: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: Spacing.two,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.two,
-    marginTop: Spacing.two,
-  },
-  actionBtn: {
-    marginBottom: Spacing.three,
-    height: 50,
-  },
-  logoutBtn: {
-    marginTop: Spacing.two,
-    height: 50,
-  },
-});

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
   TextInput,
   TextInputProps,
   View,
@@ -10,7 +9,6 @@ import {
 } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '../themed-text';
-import { Spacing } from '@/constants/theme';
 import { Eye, EyeOff } from 'lucide-react-native';
 
 export interface InputProps extends TextInputProps {
@@ -20,6 +18,8 @@ export interface InputProps extends TextInputProps {
   inputStyle?: TextStyle;
   labelStyle?: TextStyle;
   leftIcon?: React.ReactNode;
+  containerClasses?: string;
+  inputClasses?: string;
 }
 
 export function Input({
@@ -32,6 +32,8 @@ export function Input({
   leftIcon,
   onFocus,
   onBlur,
+  containerClasses,
+  inputClasses,
   ...props
 }: InputProps) {
   const theme = useTheme();
@@ -54,47 +56,39 @@ export function Input({
   // Process error message
   const errorMsg = Array.isArray(error) ? error[0] : error;
 
+  let borderColorClass = 'border-border';
+  if (errorMsg) borderColorClass = 'border-danger';
+  else if (isFocused) borderColorClass = 'border-primary';
+
   return (
-    <View style={[styles.container, containerStyle]}>
+    <View style={containerStyle} className={`mb-4 self-stretch ${containerClasses || ''}`}>
       {label && (
         <ThemedText
           type="smallBold"
-          style={[styles.label, { color: theme.textSecondary }, labelStyle]}
+          className="mb-1 text-textSecondary"
+          style={labelStyle}
         >
           {label}
         </ThemedText>
       )}
       <View
-        style={[
-          styles.inputContainer,
-          {
-            backgroundColor: theme.backgroundElement,
-            borderColor: errorMsg
-              ? theme.danger
-              : isFocused
-              ? theme.primary
-              : theme.border,
-          },
-        ]}
+        className={`flex-row items-center border-[1.5px] rounded-xl px-4 h-[52px] bg-backgroundElement ${borderColorClass}`}
       >
-        {leftIcon && <View style={styles.leftIconContainer}>{leftIcon}</View>}
+        {leftIcon && <View className="mr-2 justify-center items-center">{leftIcon}</View>}
         
         <TextInput
           placeholderTextColor={theme.placeholder}
           secureTextEntry={shouldHidePassword}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          style={[
-            styles.input,
-            { color: theme.text },
-            inputStyle,
-          ]}
+          className={`flex-1 h-full text-[15px] font-medium text-text p-0 ${inputClasses || ''}`}
+          style={inputStyle}
           {...props}
         />
         {isPassword && (
           <Pressable
             onPress={() => setIsPasswordVisible(!isPasswordVisible)}
-            style={styles.toggleButton}
+            className="p-1 justify-center items-center"
           >
             {isPasswordVisible ? (
               <EyeOff size={20} color={theme.textSecondary} />
@@ -105,50 +99,10 @@ export function Input({
         )}
       </View>
       {errorMsg && (
-        <ThemedText style={[styles.errorText, { color: theme.danger }]}>
+        <ThemedText className="text-xs font-semibold mt-1 text-danger">
           {errorMsg}
         </ThemedText>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: Spacing.three,
-    alignSelf: 'stretch',
-  },
-  label: {
-    marginBottom: Spacing.one,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1.5,
-    borderRadius: 12,
-    paddingHorizontal: Spacing.three,
-    height: 52,
-  },
-  leftIconContainer: {
-    marginRight: Spacing.two,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    height: '100%',
-    fontSize: 15,
-    fontWeight: '500',
-    padding: 0, // Reset default padding for android/ios
-  },
-  toggleButton: {
-    padding: Spacing.one,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  errorText: {
-    fontSize: 12,
-    fontWeight: '600',
-    marginTop: Spacing.one,
-  },
-});

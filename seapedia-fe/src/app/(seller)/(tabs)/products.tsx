@@ -213,33 +213,33 @@ export default function SellerProductsScreen() {
     }).format(item.price);
 
     return (
-      <Card style={styles.productCard}>
-        <View style={styles.cardHeader}>
-          <View style={styles.cardHeaderLeft}>
-            <ThemedText type="smallBold" style={styles.productName} numberOfLines={1}>
+      <Card className="mb-3 p-4">
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center flex-1 gap-2 pr-2">
+            <ThemedText type="smallBold" className="text-[15px] flex-1" numberOfLines={1}>
               {item.name}
             </ThemedText>
             {getStockBadge(item.stock)}
           </View>
-          <View style={styles.actionButtons}>
-            <Pressable onPress={() => openEditModal(item)} style={styles.iconButton}>
+          <View className="flex-row gap-3">
+            <Pressable onPress={() => openEditModal(item)} className="p-1">
               <Edit2 size={16} color={theme.text} />
             </Pressable>
             <Pressable
               onPress={() => handleDeleteProduct(item.id, item.name)}
-              style={styles.iconButton}
+              className="p-1"
             >
               <Trash2 size={16} color={theme.danger} />
             </Pressable>
           </View>
         </View>
 
-        <View style={styles.cardBody}>
-          <ThemedText style={styles.productPrice} themeColor="primary">
+        <View className="gap-1">
+          <ThemedText className="text-[16px] font-extrabold" themeColor="primary">
             {formattedPrice}
           </ThemedText>
           {item.description && (
-            <ThemedText style={styles.productDesc} themeColor="textSecondary" numberOfLines={2}>
+            <ThemedText className="text-[13px] leading-[18px] mt-[2px]" themeColor="textSecondary" numberOfLines={2}>
               {item.description}
             </ThemedText>
           )}
@@ -251,9 +251,9 @@ export default function SellerProductsScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <ShoppingBag size={52} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           Toko Anda belum memiliki produk jualan. Silakan tambah produk baru untuk mulai berjualan.
         </ThemedText>
       </View>
@@ -262,9 +262,9 @@ export default function SellerProductsScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil daftar produk Anda...
         </ThemedText>
       </ThemedView>
@@ -272,12 +272,13 @@ export default function SellerProductsScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={products}
         renderItem={renderProductItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[styles.listContent, { paddingBottom: 136 + insets.bottom }]}
+        contentContainerClassName="p-4 pb-20"
+        contentContainerStyle={{ paddingBottom: 136 + insets.bottom }}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -289,12 +290,12 @@ export default function SellerProductsScreen() {
         }
       />
 
-      <View style={[styles.fabContainer, { bottom: 68 + insets.bottom }]}>
+      <View className="absolute left-4 right-4" style={{ bottom: 68 + insets.bottom }}>
         <Button
           label="Tambah Produk Baru"
           leftIcon={<Plus size={20} color="#FFFFFF" />}
           onPress={openAddModal}
-          style={styles.fabButton}
+          className="rounded-full h-[52px] shadow-sm elevation-5"
         />
       </View>
 
@@ -305,22 +306,22 @@ export default function SellerProductsScreen() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
+        <View className="flex-1 bg-black/50 justify-end">
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ width: '100%' }}
           >
-            <ThemedView type="backgroundElement" style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+            <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[85%]">
+              <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
+                <ThemedText type="smallBold" className="text-[18px]">
                   {editingProduct ? 'Ubah Informasi Produk' : 'Tambah Produk Baru'}
                 </ThemedText>
-                <Pressable onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                <Pressable onPress={() => setModalVisible(false)} className="p-1">
                   <X size={20} color={theme.text} />
                 </Pressable>
               </View>
 
-              <ScrollView contentContainerStyle={styles.formScroll}>
+              <ScrollView contentContainerClassName="p-4 pb-6">
                 <Input
                   label="Nama Produk"
                   placeholder="Contoh: Ikan Kakap Merah Segar"
@@ -329,7 +330,7 @@ export default function SellerProductsScreen() {
                   error={errors.name}
                 />
 
-                <View style={styles.rowInputs}>
+                <View className="flex-row justify-between">
                   <Input
                     label="Harga (Rp)"
                     placeholder="Contoh: 75000"
@@ -337,7 +338,7 @@ export default function SellerProductsScreen() {
                     onChangeText={setPrice}
                     keyboardType="numeric"
                     error={errors.price}
-                    containerStyle={{ flex: 1.2, marginRight: Spacing.two }}
+                    containerStyle={{ flex: 1.2, marginRight: 8 }}
                   />
                   <Input
                     label="Stok Barang"
@@ -358,14 +359,14 @@ export default function SellerProductsScreen() {
                   error={errors.description}
                   multiline
                   numberOfLines={4}
-                  inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: Spacing.two }}
+                  inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: 8 }}
                 />
 
                 <Button
                   label={editingProduct ? 'Simpan Perubahan' : 'Publish Produk Jualan'}
                   onPress={handleSaveProduct}
                   loading={submitting}
-                  style={{ marginTop: Spacing.three }}
+                  className="mt-3"
                 />
               </ScrollView>
             </ThemedView>
@@ -375,111 +376,3 @@ export default function SellerProductsScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: 80, // Space for FAB
-  },
-  productCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  cardHeaderLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-    gap: Spacing.two,
-    paddingRight: Spacing.two,
-  },
-  productName: {
-    fontSize: 15,
-    flex: 1,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-  },
-  iconButton: {
-    padding: Spacing.one,
-  },
-  cardBody: {
-    gap: Spacing.one,
-  },
-  productPrice: {
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  productDesc: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: Spacing.one / 2,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-  fabContainer: {
-    position: 'absolute',
-    bottom: Spacing.four,
-    left: Spacing.four,
-    right: Spacing.four,
-  },
-  fabButton: {
-    borderRadius: 99,
-    height: 52,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 12,
-    elevation: 5,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '85%',
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.four,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-  },
-  closeButton: {
-    padding: Spacing.one,
-  },
-  formScroll: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.six,
-  },
-  rowInputs: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-});

@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   Pressable,
   PressableProps,
-  StyleSheet,
   ViewStyle,
   TextStyle,
 } from 'react-native';
@@ -14,7 +13,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '../themed-text';
-import { Spacing } from '@/constants/theme';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
@@ -29,6 +27,8 @@ export interface ButtonProps extends Omit<PressableProps, 'style'> {
   rightIcon?: React.ReactNode;
   style?: ViewStyle;
   labelStyle?: TextStyle;
+  className?: string;
+  labelClasses?: string;
 }
 
 export function Button({
@@ -40,6 +40,8 @@ export function Button({
   rightIcon,
   style,
   labelStyle,
+  className,
+  labelClasses,
   disabled,
   ...props
 }: ButtonProps) {
@@ -64,80 +66,37 @@ export function Button({
     };
   });
 
-  const getVariantStyles = () => {
+  const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
-        return {
-          container: { backgroundColor: theme.primary },
-          text: { color: '#FFFFFF' },
-        };
+        return { container: 'bg-primary', text: 'text-white' };
       case 'secondary':
-        return {
-          container: { backgroundColor: theme.secondary },
-          text: { color: '#FFFFFF' },
-        };
+        return { container: 'bg-secondary', text: 'text-white' };
       case 'outline':
-        return {
-          container: {
-            backgroundColor: 'transparent',
-            borderWidth: 1.5,
-            borderColor: theme.primary,
-          },
-          text: { color: theme.primary },
-        };
+        return { container: 'bg-transparent border-[1.5px] border-primary', text: 'text-primary' };
       case 'danger':
-        return {
-          container: { backgroundColor: theme.danger },
-          text: { color: '#FFFFFF' },
-        };
+        return { container: 'bg-danger', text: 'text-white' };
       case 'warning':
-        return {
-          container: { backgroundColor: theme.warning },
-          text: { color: '#FFFFFF' },
-        };
+        return { container: 'bg-warning', text: 'text-white' };
       default:
-        return {
-          container: { backgroundColor: theme.primary },
-          text: { color: '#FFFFFF' },
-        };
+        return { container: 'bg-primary', text: 'text-white' };
     }
   };
 
-  const getSizeStyles = () => {
+  const getSizeClasses = () => {
     switch (size) {
       case 'small':
-        return {
-          container: {
-            paddingVertical: Spacing.one * 1.5,
-            paddingHorizontal: Spacing.three,
-            borderRadius: 8,
-          },
-          text: { fontSize: 13, fontWeight: '600' as const },
-        };
+        return { container: 'py-[6px] px-4 rounded-lg', text: 'text-[13px] font-semibold' };
       case 'large':
-        return {
-          container: {
-            paddingVertical: Spacing.three,
-            paddingHorizontal: Spacing.five,
-            borderRadius: 14,
-          },
-          text: { fontSize: 17, fontWeight: '700' as const },
-        };
+        return { container: 'py-4 px-8 rounded-[14px]', text: 'text-[17px] font-bold' };
       case 'medium':
       default:
-        return {
-          container: {
-            paddingVertical: Spacing.two * 1.5,
-            paddingHorizontal: Spacing.four,
-            borderRadius: 12,
-          },
-          text: { fontSize: 15, fontWeight: '600' as const },
-        };
+        return { container: 'py-3 px-6 rounded-xl', text: 'text-[15px] font-semibold' };
     }
   };
 
-  const variantStyle = getVariantStyles();
-  const sizeStyle = getSizeStyles();
+  const variantClass = getVariantClasses();
+  const sizeClass = getSizeClasses();
 
   const isDisabled = disabled || loading;
 
@@ -146,14 +105,8 @@ export function Button({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={isDisabled}
-      style={[
-        styles.baseButton,
-        variantStyle.container,
-        sizeStyle.container,
-        isDisabled && styles.disabled,
-        style,
-        animatedStyle,
-      ]}
+      className={`flex-row items-center justify-center gap-2 shadow-sm ${variantClass.container} ${sizeClass.container} ${isDisabled ? 'opacity-50' : ''} ${className || ''}`}
+      style={[style, animatedStyle]}
       {...props}
     >
       {!loading && leftIcon}
@@ -164,12 +117,8 @@ export function Button({
         />
       ) : (
         <ThemedText
-          style={[
-            styles.label,
-            variantStyle.text,
-            sizeStyle.text,
-            labelStyle,
-          ]}
+          className={`text-center ${variantClass.text} ${sizeClass.text} ${labelClasses || ''}`}
+          style={labelStyle}
         >
           {label}
         </ThemedText>
@@ -178,23 +127,3 @@ export function Button({
     </AnimatedPressable>
   );
 }
-
-const styles = StyleSheet.create({
-  baseButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: Spacing.two,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  label: {
-    textAlign: 'center',
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-});

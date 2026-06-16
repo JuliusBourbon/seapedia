@@ -210,50 +210,54 @@ export default function AdminDiscountScreen() {
     const displayValue = item.type === 'PERCENTAGE' ? `${item.value}%` : formatCurrency(item.value);
 
     return (
-      <Card style={[styles.discountCard, !item.isActive && { opacity: 0.65 }]}>
-        <View style={styles.cardHeader}>
-          <View style={styles.codeRow}>
+      <Card className={`mb-3 p-4 ${!item.isActive ? 'opacity-65' : ''}`}>
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center gap-2">
             <Percent size={18} color={theme.primary} />
-            <ThemedText type="smallBold" style={styles.codeText}>
+            <ThemedText type="smallBold" className="text-[15px]">
               {item.code}
             </ThemedText>
           </View>
           <Badge label={item.isActive ? 'Aktif' : 'Nonaktif'} variant={item.isActive ? 'success' : 'neutral'} />
         </View>
 
-        <View style={styles.cardBody}>
-          <View style={styles.infoRow}>
-            <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+        <View className="gap-2">
+          <View className="flex-row justify-between items-center">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               Potongan Diskon:
             </ThemedText>
-            <ThemedText type="smallBold" style={{ fontSize: 14 }}>
+            <ThemedText type="smallBold" className="text-[14px]">
               {displayValue} ({item.type})
             </ThemedText>
           </View>
 
-          <View style={styles.infoRow}>
-            <Calendar size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
-              Kadaluarsa: {formattedDate}
-            </ThemedText>
+          <View className="flex-row justify-between items-center">
+            <View className="flex-row items-center gap-2">
+              <Calendar size={14} color={theme.textSecondary} />
+              <ThemedText className="text-[13px]" themeColor="textSecondary">
+                Kadaluarsa: {formattedDate}
+              </ThemedText>
+            </View>
           </View>
 
           {activeTab === 'VOUCHER' && (
-            <View style={styles.infoRow}>
-              <UserCheck size={14} color={theme.textSecondary} />
-              <ThemedText style={styles.infoText} themeColor="textSecondary">
-                Pemakaian: {item.usedCount ?? 0} / {item.usageLimit}
-              </ThemedText>
+            <View className="flex-row justify-between items-center">
+              <View className="flex-row items-center gap-2">
+                <UserCheck size={14} color={theme.textSecondary} />
+                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                  Pemakaian: {item.usedCount ?? 0} / {item.usageLimit}
+                </ThemedText>
+              </View>
             </View>
           )}
 
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <View className="h-[1px] my-1" style={{ backgroundColor: theme.border }} />
 
           <Pressable
             onPress={() => handleToggleStatus(item)}
-            style={styles.toggleContainer}
+            className="flex-row justify-between items-center pt-1"
           >
-            <ThemedText style={styles.toggleLabel}>
+            <ThemedText className="text-[13.5px] font-semibold">
               Status Aktif
             </ThemedText>
             {item.isActive ? (
@@ -270,9 +274,9 @@ export default function AdminDiscountScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <Percent size={52} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           Belum ada {activeTab === 'VOUCHER' ? 'voucher belanja' : 'promo global aplikasi'} yang terdaftar.
         </ThemedText>
       </View>
@@ -281,9 +285,9 @@ export default function AdminDiscountScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil data potongan diskon...
         </ThemedText>
       </ThemedView>
@@ -293,33 +297,29 @@ export default function AdminDiscountScreen() {
   const activeData = activeTab === 'VOUCHER' ? vouchers : promos;
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       {/* Tab Vouchers vs Promos */}
-      <View style={[styles.tabContainer, { borderBottomColor: theme.border }]}>
+      <View className="flex-row border-b h-12" style={{ borderBottomColor: theme.border }}>
         <Pressable
-          style={[styles.tabItem, activeTab === 'VOUCHER' && { borderBottomColor: theme.primary }]}
+          className={`flex-1 items-center justify-center border-b-[2.5px] ${activeTab === 'VOUCHER' ? '' : 'border-transparent'}`}
+          style={activeTab === 'VOUCHER' ? { borderBottomColor: theme.primary } : {}}
           onPress={() => setActiveTab('VOUCHER')}
         >
           <ThemedText
-            style={[
-              styles.tabLabel,
-              { color: activeTab === 'VOUCHER' ? theme.primary : theme.textSecondary },
-              activeTab === 'VOUCHER' && { fontWeight: '700' },
-            ]}
+            className={`text-[13.5px] font-medium ${activeTab === 'VOUCHER' ? 'font-bold' : ''}`}
+            style={{ color: activeTab === 'VOUCHER' ? theme.primary : theme.textSecondary }}
           >
             Voucher Belanja
           </ThemedText>
         </Pressable>
         <Pressable
-          style={[styles.tabItem, activeTab === 'PROMO' && { borderBottomColor: theme.primary }]}
+          className={`flex-1 items-center justify-center border-b-[2.5px] ${activeTab === 'PROMO' ? '' : 'border-transparent'}`}
+          style={activeTab === 'PROMO' ? { borderBottomColor: theme.primary } : {}}
           onPress={() => setActiveTab('PROMO')}
         >
           <ThemedText
-            style={[
-              styles.tabLabel,
-              { color: activeTab === 'PROMO' ? theme.primary : theme.textSecondary },
-              activeTab === 'PROMO' && { fontWeight: '700' },
-            ]}
+            className={`text-[13.5px] font-medium ${activeTab === 'PROMO' ? 'font-bold' : ''}`}
+            style={{ color: activeTab === 'PROMO' ? theme.primary : theme.textSecondary }}
           >
             Promo Aplikasi
           </ThemedText>
@@ -330,7 +330,8 @@ export default function AdminDiscountScreen() {
         data={activeData}
         renderItem={renderDiscountItem}
         keyExtractor={(item) => item.code}
-        contentContainerStyle={[styles.listContent, { paddingBottom: 136 + insets.bottom }]}
+        contentContainerClassName="p-4"
+        contentContainerStyle={{ paddingBottom: 136 + insets.bottom }}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -348,7 +349,16 @@ export default function AdminDiscountScreen() {
           setFormType(activeTab);
           setIsModalOpen(true);
         }}
-        style={[styles.fab, { backgroundColor: theme.primary, bottom: 68 + insets.bottom }]}
+        className="absolute w-14 h-14 rounded-full items-center justify-center right-4"
+        style={{
+          backgroundColor: theme.primary,
+          bottom: 68 + insets.bottom,
+          elevation: 6,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.2,
+          shadowRadius: 6,
+        }}
       >
         <Plus size={24} color="#FFFFFF" />
       </Pressable>
@@ -360,18 +370,18 @@ export default function AdminDiscountScreen() {
         transparent={true}
         onRequestClose={() => setIsModalOpen(false)}
       >
-        <View style={styles.modalOverlay}>
-          <ThemedView style={[styles.modalContent, { backgroundColor: theme.background }]}>
-            <View style={styles.modalHeader}>
-              <ThemedText type="smallBold" style={{ fontSize: 16 }}>
+        <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
+          <ThemedView className="rounded-t-3xl max-h-[85%] p-4" style={{ backgroundColor: theme.background }}>
+            <View className="flex-row justify-between items-center border-b-[1.5px] border-black/5 dark:border-white/5 pb-3 mb-3">
+              <ThemedText type="smallBold" className="text-[16px]">
                 Tambah {formType === 'VOUCHER' ? 'Voucher Belanja' : 'Promo Aplikasi'} Baru
               </ThemedText>
-              <Pressable onPress={() => setIsModalOpen(false)} style={styles.closeModalBtn}>
-                <ThemedText style={{ color: theme.textSecondary, fontWeight: '700' }}>Tutup</ThemedText>
+              <Pressable onPress={() => setIsModalOpen(false)} className="p-1">
+                <ThemedText className="font-bold" themeColor="textSecondary">Tutup</ThemedText>
               </Pressable>
             </View>
 
-            <ScrollView contentContainerStyle={styles.modalFormScroll}>
+            <ScrollView contentContainerClassName="pb-5">
               {/* Form Input fields */}
               <Input
                 label="Kode Kupon Diskon"
@@ -383,30 +393,32 @@ export default function AdminDiscountScreen() {
               />
 
               {/* Type Switcher */}
-              <ThemedText type="smallBold" style={styles.fieldLabel} themeColor="textSecondary">
+              <ThemedText type="smallBold" className="text-[12px] mb-1" themeColor="textSecondary">
                 Tipe Potongan Harga
               </ThemedText>
-              <View style={styles.toggleRow}>
+              <View className="flex-row gap-2 mb-3">
                 <Pressable
                   onPress={() => setDiscountType('PERCENTAGE')}
+                  className="flex-1 h-11 rounded-lg border-[1.5px] items-center justify-center"
                   style={[
-                    styles.toggleButton,
+                    { borderColor: 'rgba(0,0,0,0.15)' },
                     discountType === 'PERCENTAGE' && { backgroundColor: theme.primary, borderColor: theme.primary },
                   ]}
                 >
-                  <ThemedText style={[styles.toggleText, discountType === 'PERCENTAGE' && { color: '#FFFFFF' }]}>
+                  <ThemedText className={`text-[13px] font-bold ${discountType === 'PERCENTAGE' ? 'text-white' : ''}`}>
                     Persentase (%)
                   </ThemedText>
                 </Pressable>
 
                 <Pressable
                   onPress={() => setDiscountType('FLAT')}
+                  className="flex-1 h-11 rounded-lg border-[1.5px] items-center justify-center"
                   style={[
-                    styles.toggleButton,
+                    { borderColor: 'rgba(0,0,0,0.15)' },
                     discountType === 'FLAT' && { backgroundColor: theme.primary, borderColor: theme.primary },
                   ]}
                 >
-                  <ThemedText style={[styles.toggleText, discountType === 'FLAT' && { color: '#FFFFFF' }]}>
+                  <ThemedText className={`text-[13px] font-bold ${discountType === 'FLAT' ? 'text-white' : ''}`}>
                     Nominal Flat (Rp)
                   </ThemedText>
                 </Pressable>
@@ -444,7 +456,7 @@ export default function AdminDiscountScreen() {
                 label={`Tambah ${formType === 'VOUCHER' ? 'Voucher' : 'Promo'}`}
                 loading={submitLoading}
                 onPress={handleCreateDiscount}
-                style={styles.submitBtn}
+                className="mt-4 h-[52px]"
               />
             </ScrollView>
           </ThemedView>
@@ -453,153 +465,3 @@ export default function AdminDiscountScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    height: 48,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderBottomWidth: 2.5,
-    borderBottomColor: 'transparent',
-  },
-  tabLabel: {
-    fontSize: 13.5,
-    fontWeight: '500',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  discountCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  codeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  codeText: {
-    fontSize: 15,
-  },
-  cardBody: {
-    gap: Spacing.two,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  infoText: {
-    fontSize: 13,
-  },
-  divider: {
-    height: 1,
-    marginVertical: Spacing.one,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: Spacing.half,
-  },
-  toggleLabel: {
-    fontSize: 13.5,
-    fontWeight: '600',
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-  fab: {
-    position: 'absolute',
-    right: Spacing.four,
-    bottom: Spacing.four,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '85%',
-    padding: Spacing.four,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1.5,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-    paddingBottom: Spacing.three,
-    marginBottom: Spacing.three,
-  },
-  closeModalBtn: {
-    padding: Spacing.one,
-  },
-  modalFormScroll: {
-    paddingBottom: Spacing.five,
-  },
-  fieldLabel: {
-    fontSize: 12,
-    marginBottom: Spacing.one,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    gap: Spacing.two,
-    marginBottom: Spacing.three,
-  },
-  toggleButton: {
-    flex: 1,
-    height: 44,
-    borderRadius: 10,
-    borderWidth: 1.5,
-    borderColor: 'rgba(0,0,0,0.15)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  toggleText: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  submitBtn: {
-    marginTop: Spacing.four,
-    height: 52,
-  },
-});

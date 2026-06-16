@@ -171,52 +171,53 @@ export default function SellerOrdersScreen() {
     }
 
     return (
-      <Card style={styles.orderCard}>
-        <View style={styles.cardHeader}>
-          <View style={styles.buyerContainer}>
+      <Card className="mb-3 p-4">
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center gap-2 flex-1 pr-2">
             <User size={16} color={theme.textSecondary} />
-            <ThemedText type="smallBold" style={styles.buyerName}>
+            <ThemedText type="smallBold" className="text-[14px]">
               {item.buyer.name} (@{item.buyer.username})
             </ThemedText>
           </View>
           {getStatusBadge(item.status)}
         </View>
 
-        <View style={styles.cardBody}>
-          <View style={styles.infoRow}>
+        <View className="gap-2">
+          <View className="flex-row items-center gap-2">
             <Calendar size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
+            <ThemedText className="text-[13px] flex-1" themeColor="textSecondary">
               {formattedDate}
             </ThemedText>
           </View>
 
-          <View style={styles.infoRow}>
+          <View className="flex-row items-center gap-2">
             <Package size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary" numberOfLines={1}>
+            <ThemedText className="text-[13px] flex-1" themeColor="textSecondary" numberOfLines={1}>
               {itemsSummary}
             </ThemedText>
           </View>
 
-          <ThemedText style={styles.orderIdText} themeColor="textSecondary">
+          <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
             ID: {item.id}
           </ThemedText>
 
-          <View style={styles.footerRow}>
+          <View className="flex-row justify-between items-end mt-2">
             <View>
-              <ThemedText style={{ fontSize: 11 }} themeColor="textSecondary">
+              <ThemedText className="text-[11px]" themeColor="textSecondary">
                 Total Pendapatan
               </ThemedText>
-              <ThemedText style={styles.totalPrice}>
+              <ThemedText className="text-[16px] font-extrabold text-[#0D9488] mt-[2px]">
                 {formattedTotal}
               </ThemedText>
             </View>
 
-            <View style={styles.actionRow}>
+            <View className="flex-row items-center gap-2">
               <Pressable
                 onPress={() => router.push(`/(seller)/orders/${item.id}` as any)}
-                style={[styles.detailBtn, { backgroundColor: `${theme.primary}10` }]}
+                className="flex-row items-center py-1.5 px-3 rounded-lg gap-1"
+                style={{ backgroundColor: `${theme.primary}10` }}
               >
-                <ThemedText style={{ color: theme.primary, fontSize: 13, fontWeight: '700' }}>
+                <ThemedText className="text-[13px] font-bold" style={{ color: theme.primary }}>
                   Rincian
                 </ThemedText>
                 <ArrowRight size={14} color={theme.primary} />
@@ -231,7 +232,7 @@ export default function SellerOrdersScreen() {
               size="small"
               loading={processingId === item.id}
               onPress={() => handleProcessOrder(item.id)}
-              style={styles.processBtn}
+              className="mt-3 h-10"
             />
           )}
         </View>
@@ -242,9 +243,9 @@ export default function SellerOrdersScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <ClipboardList size={52} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           {error ? error : 'Tidak ada pesanan masuk untuk filter ini.'}
         </ThemedText>
       </View>
@@ -253,9 +254,9 @@ export default function SellerOrdersScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil daftar pesanan masuk...
         </ThemedText>
       </ThemedView>
@@ -263,13 +264,13 @@ export default function SellerOrdersScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       {/* Horizontally Scrollable Filter Tabs */}
-      <View style={[styles.tabContainer, { borderBottomColor: theme.border }]}>
+      <View className="border-b" style={{ borderBottomColor: theme.border }}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.tabScrollContent}
+          contentContainerClassName="px-4 h-12 items-center"
         >
           {filterTabs.map((tab) => {
             const isActive = activeTab === tab.key;
@@ -277,17 +278,12 @@ export default function SellerOrdersScreen() {
               <Pressable
                 key={tab.key}
                 onPress={() => setActiveTab(tab.key)}
-                style={[
-                  styles.tabItem,
-                  isActive && { borderBottomColor: theme.primary },
-                ]}
+                className={`px-3 h-full justify-center border-b-2 ${isActive ? 'border-primary' : 'border-transparent'}`}
+                style={isActive ? { borderBottomColor: theme.primary } : {}}
               >
                 <ThemedText
-                  style={[
-                    styles.tabLabel,
-                    { color: isActive ? theme.primary : theme.textSecondary },
-                    isActive && { fontWeight: '700' },
-                  ]}
+                  className={`text-[13px] ${isActive ? 'font-bold' : 'font-medium'}`}
+                  style={{ color: isActive ? theme.primary : theme.textSecondary }}
                 >
                   {tab.label}
                 </ThemedText>
@@ -301,7 +297,7 @@ export default function SellerOrdersScreen() {
         data={filteredOrders}
         renderItem={renderOrderItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="p-4 pb-5"
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -315,111 +311,3 @@ export default function SellerOrdersScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  tabContainer: {
-    borderBottomWidth: 1,
-  },
-  tabScrollContent: {
-    paddingHorizontal: Spacing.four,
-    height: 48,
-    alignItems: 'center',
-  },
-  tabItem: {
-    paddingHorizontal: Spacing.three,
-    height: '100%',
-    justifyContent: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent',
-  },
-  tabLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  orderCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  buyerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-    flex: 1,
-    paddingRight: Spacing.two,
-  },
-  buyerName: {
-    fontSize: 14,
-  },
-  cardBody: {
-    gap: Spacing.two,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  infoText: {
-    fontSize: 13,
-    flex: 1,
-  },
-  orderIdText: {
-    fontSize: 11,
-    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace' }),
-  },
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginTop: Spacing.two,
-  },
-  totalPrice: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#0D9488',
-    marginTop: 2,
-  },
-  actionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  detailBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.one * 1.5,
-    paddingHorizontal: Spacing.three,
-    borderRadius: 8,
-    gap: Spacing.one,
-  },
-  processBtn: {
-    marginTop: Spacing.three,
-    height: 40,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-});

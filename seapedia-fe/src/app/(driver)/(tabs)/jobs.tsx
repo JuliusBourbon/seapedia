@@ -135,71 +135,71 @@ export default function DriverJobsScreen() {
     const deliveryMethodLabel = DELIVERY_METHODS[item.order.deliveryMethod]?.label || item.order.deliveryMethod;
 
     return (
-      <Card style={styles.jobCard}>
-        <View style={styles.cardHeader}>
-          <View style={styles.methodContainer}>
+      <Card className="mb-3 p-4">
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center gap-2">
             <Navigation size={16} color={theme.primary} />
-            <ThemedText type="smallBold" style={styles.methodLabel}>
+            <ThemedText type="smallBold" className="text-[14px]">
               {deliveryMethodLabel}
             </ThemedText>
           </View>
           <Badge label="Tersedia" variant="success" />
         </View>
 
-        <View style={styles.cardBody}>
+        <View className="gap-3">
           {/* Pickup */}
-          <View style={styles.routeRow}>
-            <Store size={16} color={theme.textSecondary} style={{ marginTop: 2 }} />
-            <View style={styles.routeDetails}>
-              <ThemedText style={styles.routeRole} themeColor="textSecondary">
+          <View className="flex-row items-start gap-3">
+            <Store size={16} color={theme.textSecondary} className="mt-[2px]" />
+            <View className="flex-1">
+              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                 Penjemputan (Toko)
               </ThemedText>
-              <ThemedText type="smallBold" style={styles.routeText}>
+              <ThemedText type="smallBold" className="text-[14px] mt-[1px]">
                 {item.order.store.name}
               </ThemedText>
             </View>
           </View>
 
           {/* Destination */}
-          <View style={styles.routeRow}>
-            <MapPin size={16} color={theme.textSecondary} style={{ marginTop: 2 }} />
-            <View style={styles.routeDetails}>
-              <ThemedText style={styles.routeRole} themeColor="textSecondary">
+          <View className="flex-row items-start gap-3">
+            <MapPin size={16} color={theme.textSecondary} className="mt-[2px]" />
+            <View className="flex-1">
+              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                 Tujuan (Kota)
               </ThemedText>
-              <ThemedText type="smallBold" style={styles.routeText}>
+              <ThemedText type="smallBold" className="text-[14px] mt-[1px]">
                 {item.order.address.recipientName} - {item.order.address.city}
               </ThemedText>
             </View>
           </View>
 
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <View className="h-[1px] my-1" style={{ backgroundColor: theme.border }} />
 
-          <View style={styles.footerRow}>
+          <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText style={{ fontSize: 11 }} themeColor="textSecondary">
+              <ThemedText className="text-[11px]" themeColor="textSecondary">
                 Earning Kurir
               </ThemedText>
-              <ThemedText style={styles.earningVal}>
+              <ThemedText className="text-[18px] font-extrabold text-[#0D9488] mt-[2px]">
                 {formatCurrency(item.earning)}
               </ThemedText>
             </View>
 
-            <View style={styles.actions}>
+            <View className="flex-row gap-2">
               <Button
                 label="Ambil"
                 variant="primary"
                 size="small"
                 loading={takingId === item.id}
                 onPress={() => handleTakeJob(item.id)}
-                style={styles.takeBtn}
+                className="px-4 h-9"
               />
               <Button
                 label="Detail"
                 variant="outline"
                 size="small"
                 onPress={() => router.push(`/(driver)/jobs/${item.id}` as any)}
-                style={styles.detailBtn}
+                className="px-3 h-9"
               />
             </View>
           </View>
@@ -211,9 +211,9 @@ export default function DriverJobsScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <ClipboardList size={52} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           {error ? error : 'Saat ini tidak ada lowongan pekerjaan pengiriman yang tersedia.'}
         </ThemedText>
       </View>
@@ -222,9 +222,9 @@ export default function DriverJobsScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mencari lowongan pekerjaan...
         </ThemedText>
       </ThemedView>
@@ -232,12 +232,12 @@ export default function DriverJobsScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={jobs}
         renderItem={renderJobItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="p-4 pb-5"
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -251,92 +251,3 @@ export default function DriverJobsScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  jobCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  methodContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  methodLabel: {
-    fontSize: 14,
-  },
-  cardBody: {
-    gap: Spacing.three,
-  },
-  routeRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.three,
-  },
-  routeDetails: {
-    flex: 1,
-  },
-  routeRole: {
-    fontSize: 11,
-    textTransform: 'uppercase',
-    fontWeight: '600',
-  },
-  routeText: {
-    fontSize: 14,
-    marginTop: 1,
-  },
-  divider: {
-    height: 1,
-    marginVertical: Spacing.one,
-  },
-  footerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  earningVal: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#0D9488',
-    marginTop: 2,
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: Spacing.two,
-  },
-  takeBtn: {
-    paddingHorizontal: Spacing.four,
-    height: 36,
-  },
-  detailBtn: {
-    paddingHorizontal: Spacing.three,
-    height: 36,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-});

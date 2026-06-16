@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   ActivityIndicator,
@@ -18,7 +17,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 interface Address {
@@ -195,9 +193,9 @@ export default function CheckoutScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-4 text-textSecondary">
           Mempersiapkan kalkulasi checkout...
         </ThemedText>
       </ThemedView>
@@ -207,47 +205,47 @@ export default function CheckoutScreen() {
   const isWalletInsufficient = preview && walletBalance < preview.total;
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+    <ThemedView className="flex-1">
+      <ScrollView contentContainerClassName="p-4 pb-8">
         
         {/* Shipping Address Selection Card */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-sm uppercase font-bold tracking-wider mb-2 mt-3">
           Alamat Pengiriman
         </ThemedText>
-        <Card style={styles.addressCard}>
+        <Card className="p-4 rounded-[14px]">
           {selectedAddress ? (
             <View>
-              <View style={styles.addressHeaderRow}>
-                <View style={styles.addressLabelContainer}>
+              <View className="flex-row justify-between items-center">
+                <View className="flex-row items-center gap-[6px]">
                   <MapPin size={18} color={theme.primary} />
-                  <ThemedText type="smallBold" style={styles.addressLabel}>
+                  <ThemedText type="smallBold" className="text-sm font-extrabold">
                     {selectedAddress.label}
                   </ThemedText>
                   {selectedAddress.isDefault && <Badge label="Default" variant="primary" />}
                 </View>
-                <Pressable onPress={() => setAddressModalVisible(true)} style={styles.changeAddressBtn}>
-                  <ThemedText style={{ color: theme.primary, fontSize: 13, fontWeight: '700' }}>
+                <Pressable onPress={() => setAddressModalVisible(true)} className="flex-row items-center p-1">
+                  <ThemedText className="text-[13px] font-bold" themeColor="primary">
                     Ganti
                   </ThemedText>
                   <ChevronRight size={16} color={theme.primary} />
                 </Pressable>
               </View>
-              <View style={styles.addressDetails}>
-                <ThemedText type="smallBold" style={{ fontSize: 14 }}>
+              <View className="mt-3 gap-[2px]">
+                <ThemedText type="smallBold" className="text-sm">
                   {selectedAddress.recipientName}
                 </ThemedText>
-                <ThemedText style={{ fontSize: 13 }} themeColor="textSecondary">
+                <ThemedText className="text-[13px]" themeColor="textSecondary">
                   {selectedAddress.phoneNumber}
                 </ThemedText>
-                <ThemedText style={styles.fullAddressText}>
+                <ThemedText className="text-[13px] leading-[18px] mt-[2px]">
                   {selectedAddress.fullAddress}, {selectedAddress.city}, {selectedAddress.postalCode}
                 </ThemedText>
               </View>
             </View>
           ) : (
-            <View style={styles.noAddressContainer}>
+            <View className="items-center justify-center py-3 gap-2">
               <AlertTriangle size={32} color={theme.danger} />
-              <ThemedText style={styles.noAddressText} themeColor="textSecondary">
+              <ThemedText className="text-[13px] text-center" themeColor="textSecondary">
                 Anda belum menentukan alamat pengiriman.
               </ThemedText>
               <Button
@@ -260,147 +258,132 @@ export default function CheckoutScreen() {
         </Card>
 
         {/* Shipping Method Selection */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-sm uppercase font-bold tracking-wider mb-2 mt-3">
           Pilih Metode Pengiriman
         </ThemedText>
-        <View style={styles.deliveryRow}>
+        <View className="flex-row gap-2">
           <Pressable
             onPress={() => setDeliveryMethod('REGULAR')}
-            style={[
-              styles.deliveryBox,
-              {
-                backgroundColor: theme.backgroundElement,
-                borderColor: deliveryMethod === 'REGULAR' ? theme.primary : theme.border,
-              },
-            ]}
+            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'REGULAR' ? 'border-primary' : 'border-border'}`}
+            style={{ backgroundColor: theme.backgroundElement }}
           >
             <Truck size={20} color={deliveryMethod === 'REGULAR' ? theme.primary : theme.textSecondary} />
-            <ThemedText type="smallBold" style={styles.deliveryLabel}>
+            <ThemedText type="smallBold" className="text-[13px] mt-1">
               Regular
             </ThemedText>
-            <ThemedText style={styles.deliveryFeeText} themeColor="primary">
+            <ThemedText className="text-[13px] font-extrabold mt-[2px]" themeColor="primary">
               {formatCurrency(10000)}
             </ThemedText>
-            <ThemedText style={{ fontSize: 10, marginTop: 2 }} themeColor="textSecondary">
+            <ThemedText className="text-[10px] mt-[2px]" themeColor="textSecondary">
               SLA 72 Jam
             </ThemedText>
           </Pressable>
 
           <Pressable
             onPress={() => setDeliveryMethod('NEXT_DAY')}
-            style={[
-              styles.deliveryBox,
-              {
-                backgroundColor: theme.backgroundElement,
-                borderColor: deliveryMethod === 'NEXT_DAY' ? theme.primary : theme.border,
-              },
-            ]}
+            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'NEXT_DAY' ? 'border-primary' : 'border-border'}`}
+            style={{ backgroundColor: theme.backgroundElement }}
           >
             <Truck size={20} color={deliveryMethod === 'NEXT_DAY' ? theme.primary : theme.textSecondary} />
-            <ThemedText type="smallBold" style={styles.deliveryLabel}>
+            <ThemedText type="smallBold" className="text-[13px] mt-1">
               Next Day
             </ThemedText>
-            <ThemedText style={styles.deliveryFeeText} themeColor="primary">
+            <ThemedText className="text-[13px] font-extrabold mt-[2px]" themeColor="primary">
               {formatCurrency(15000)}
             </ThemedText>
-            <ThemedText style={{ fontSize: 10, marginTop: 2 }} themeColor="textSecondary">
+            <ThemedText className="text-[10px] mt-[2px]" themeColor="textSecondary">
               SLA 24 Jam
             </ThemedText>
           </Pressable>
 
           <Pressable
             onPress={() => setDeliveryMethod('INSTANT')}
-            style={[
-              styles.deliveryBox,
-              {
-                backgroundColor: theme.backgroundElement,
-                borderColor: deliveryMethod === 'INSTANT' ? theme.primary : theme.border,
-              },
-            ]}
+            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'INSTANT' ? 'border-primary' : 'border-border'}`}
+            style={{ backgroundColor: theme.backgroundElement }}
           >
             <Truck size={20} color={deliveryMethod === 'INSTANT' ? theme.primary : theme.textSecondary} />
-            <ThemedText type="smallBold" style={styles.deliveryLabel}>
+            <ThemedText type="smallBold" className="text-[13px] mt-1">
               Instant
             </ThemedText>
-            <ThemedText style={styles.deliveryFeeText} themeColor="primary">
+            <ThemedText className="text-[13px] font-extrabold mt-[2px]" themeColor="primary">
               {formatCurrency(25000)}
             </ThemedText>
-            <ThemedText style={{ fontSize: 10, marginTop: 2 }} themeColor="textSecondary">
+            <ThemedText className="text-[10px] mt-[2px]" themeColor="textSecondary">
               SLA 3 Jam
             </ThemedText>
           </Pressable>
         </View>
 
         {/* Voucher & Promo Code Section */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-sm uppercase font-bold tracking-wider mb-2 mt-3">
           Voucher & Promo Diskon
         </ThemedText>
-        <Card style={styles.discountCard}>
+        <Card className="p-3">
           {appliedCode ? (
-            <View style={styles.appliedCodeRow}>
-              <View style={styles.appliedCodeLeft}>
+            <View className="flex-row justify-between items-center py-1">
+              <View className="flex-row items-center">
                 <Ticket size={20} color={theme.success} />
-                <View style={{ marginLeft: Spacing.two }}>
-                  <ThemedText type="smallBold" style={{ textTransform: 'uppercase' }}>
+                <View className="ml-2">
+                  <ThemedText type="smallBold" className="uppercase">
                     {appliedCode}
                   </ThemedText>
                   {preview && preview.discount.amount > 0 && (
-                    <ThemedText style={{ fontSize: 12 }} themeColor="success">
+                    <ThemedText className="text-xs" themeColor="success">
                       Hemat {formatCurrency(preview.discount.amount)} ({preview.discount.source})
                     </ThemedText>
                   )}
                 </View>
               </View>
-              <Pressable onPress={handleRemoveDiscount} style={styles.removeDiscountBtn}>
-                <ThemedText style={{ color: theme.danger, fontWeight: '700', fontSize: 13 }}>
+              <Pressable onPress={handleRemoveDiscount} className="p-2">
+                <ThemedText className="font-bold text-[13px]" themeColor="danger">
                   Hapus
                 </ThemedText>
               </Pressable>
             </View>
           ) : (
-            <View style={styles.inputDiscountRow}>
+            <View className="flex-row items-center gap-2">
               <Input
                 placeholder="Masukkan kode voucher / promo"
                 value={discountCode}
                 onChangeText={setDiscountCode}
                 leftIcon={<Ticket size={18} color={theme.textSecondary} />}
-                containerStyle={styles.discountInput}
+                containerStyle={{ flex: 1, marginBottom: 0 }}
                 autoCapitalize="characters"
               />
               <Button
                 label="Gunakan"
                 onPress={handleApplyDiscount}
                 disabled={!discountCode.trim()}
-                style={styles.applyBtn}
+                className="h-[52px] w-[90px]"
               />
             </View>
           )}
         </Card>
 
         {/* Wallet Balance Display Card */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-sm uppercase font-bold tracking-wider mb-2 mt-3">
           Metode Pembayaran
         </ThemedText>
-        <Card style={[styles.paymentCard, isWalletInsufficient && { borderColor: theme.danger, borderWidth: 1 }]}>
-          <View style={styles.walletRow}>
-            <View style={styles.walletLeft}>
+        <Card className={`p-4 ${isWalletInsufficient ? 'border border-danger' : ''}`}>
+          <View className="flex-row justify-between items-center">
+            <View className="flex-row items-center">
               <Wallet size={22} color={isWalletInsufficient ? theme.danger : theme.primary} />
-              <ThemedText type="smallBold" style={{ marginLeft: Spacing.two }}>
+              <ThemedText type="smallBold" className="ml-2">
                 Saldo Dompet SEAPEDIA
               </ThemedText>
             </View>
-            <ThemedText style={styles.walletBalanceText}>
+            <ThemedText className="text-base font-extrabold">
               {formatCurrency(walletBalance)}
             </ThemedText>
           </View>
           {isWalletInsufficient && (
-            <View style={[styles.warningBanner, { backgroundColor: `${theme.danger}15` }]}>
+            <View className="flex-row items-center mt-3 p-2 rounded-lg gap-2" style={{ backgroundColor: `${theme.danger}15` }}>
               <AlertTriangle size={18} color={theme.danger} />
-              <ThemedText style={styles.warningText} themeColor="danger">
+              <ThemedText className="text-[11px] font-semibold flex-1" themeColor="danger">
                 Saldo Anda kurang {formatCurrency(preview!.total - walletBalance)}. Silakan top-up.
               </ThemedText>
-              <Pressable onPress={() => router.push('/(buyer)/wallet-history')} style={styles.topupLink}>
-                <ThemedText style={{ color: theme.primary, fontWeight: '700', fontSize: 13 }}>
+              <Pressable onPress={() => router.push('/(buyer)/wallet-history')} className="p-1">
+                <ThemedText className="font-bold text-[13px]" themeColor="primary">
                   Top Up
                 </ThemedText>
               </Pressable>
@@ -409,56 +392,56 @@ export default function CheckoutScreen() {
         </Card>
 
         {/* Billing / Cost Details Box */}
-        <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <ThemedText type="smallBold" className="text-sm uppercase font-bold tracking-wider mb-2 mt-3">
           Rincian Pembayaran
         </ThemedText>
-        <Card style={styles.previewCard}>
+        <Card className="p-4">
           {calculating ? (
-            <View style={styles.calcLoader}>
+            <View className="flex-row items-center justify-center">
               <ActivityIndicator size="small" color={theme.primary} />
-              <ThemedText style={{ marginLeft: Spacing.two }} themeColor="textSecondary">
+              <ThemedText className="ml-2" themeColor="textSecondary">
                 Mengalkulasi ulang rincian...
               </ThemedText>
             </View>
           ) : preview ? (
-            <View style={styles.billingContainer}>
-              <View style={styles.billingRow}>
-                <ThemedText style={{ color: theme.textSecondary }}>Subtotal Barang</ThemedText>
-                <ThemedText style={styles.billingVal}>{formatCurrency(preview.subtotal)}</ThemedText>
+            <View className="gap-2">
+              <View className="flex-row justify-between items-center">
+                <ThemedText themeColor="textSecondary">Subtotal Barang</ThemedText>
+                <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.subtotal)}</ThemedText>
               </View>
 
               {preview.discount.amount > 0 && (
-                <View style={styles.billingRow}>
-                  <ThemedText style={{ color: theme.success }}>
+                <View className="flex-row justify-between items-center">
+                  <ThemedText themeColor="success">
                     Diskon ({preview.discount.code})
                   </ThemedText>
-                  <ThemedText style={[styles.billingVal, { color: theme.success }]}>
+                  <ThemedText className="text-[14px] font-semibold" themeColor="success">
                     -{formatCurrency(preview.discount.amount)}
                   </ThemedText>
                 </View>
               )}
 
-              <View style={styles.billingRow}>
-                <ThemedText style={{ color: theme.textSecondary }}>Ongkos Kirim</ThemedText>
-                <ThemedText style={styles.billingVal}>{formatCurrency(preview.deliveryFee)}</ThemedText>
+              <View className="flex-row justify-between items-center">
+                <ThemedText themeColor="textSecondary">Ongkos Kirim</ThemedText>
+                <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.deliveryFee)}</ThemedText>
               </View>
 
-              <View style={styles.billingRow}>
-                <ThemedText style={{ color: theme.textSecondary }}>PPN (12%)</ThemedText>
-                <ThemedText style={styles.billingVal}>{formatCurrency(preview.ppn)}</ThemedText>
+              <View className="flex-row justify-between items-center">
+                <ThemedText themeColor="textSecondary">PPN (12%)</ThemedText>
+                <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.ppn)}</ThemedText>
               </View>
 
-              <View style={[styles.divider, { backgroundColor: theme.border }]} />
+              <View className="h-[1px] my-2 bg-border" />
 
-              <View style={styles.billingTotalRow}>
+              <View className="flex-row justify-between items-center">
                 <ThemedText type="smallBold">Total Bayar</ThemedText>
-                <ThemedText style={styles.totalAmountText} themeColor="primary">
+                <ThemedText className="text-lg font-black" themeColor="primary">
                   {formatCurrency(preview.total)}
                 </ThemedText>
               </View>
             </View>
           ) : (
-            <ThemedText style={{ color: theme.textSecondary, textAlign: 'center' }}>
+            <ThemedText className="text-center" themeColor="textSecondary">
               Pilih metode pengiriman untuk menampilkan rincian biaya.
             </ThemedText>
           )}
@@ -471,7 +454,7 @@ export default function CheckoutScreen() {
           onPress={handleCheckout}
           loading={submitting}
           disabled={!selectedAddress || isWalletInsufficient || calculating}
-          style={styles.submitBtn}
+          className="mt-5 h-[52px]"
         />
       </ScrollView>
 
@@ -482,13 +465,13 @@ export default function CheckoutScreen() {
         visible={addressModalVisible}
         onRequestClose={() => setAddressModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <ThemedView type="backgroundElement" style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+        <View className="flex-1 bg-black/40 justify-end">
+          <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[70%] pb-5">
+            <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
+              <ThemedText type="smallBold" className="text-[18px]">
                 Pilih Alamat Pengiriman
               </ThemedText>
-              <Pressable onPress={() => setAddressModalVisible(false)} style={styles.closeBtn}>
+              <Pressable onPress={() => setAddressModalVisible(false)} className="p-1">
                 <X size={20} color={theme.text} />
               </Pressable>
             </View>
@@ -496,7 +479,7 @@ export default function CheckoutScreen() {
             <FlatList
               data={addresses}
               keyExtractor={(item) => item.id}
-              contentContainerStyle={styles.addressListContent}
+              contentContainerClassName="p-4 gap-2"
               renderItem={({ item }) => {
                 const isSelected = selectedAddress?.id === item.id;
                 return (
@@ -506,15 +489,15 @@ export default function CheckoutScreen() {
                       setAddressModalVisible(false);
                     }}
                   >
-                    <Card style={[styles.modalAddressCard, isSelected && { borderColor: theme.primary, borderWidth: 1.5 }]}>
-                      <View style={styles.addressHeaderRow}>
+                    <Card className={`p-3 border ${isSelected ? 'border-primary border-[1.5px]' : 'border-border'}`}>
+                      <View className="flex-row justify-between items-center">
                         <ThemedText type="smallBold">{item.label}</ThemedText>
                         {item.isDefault && <Badge label="Default" variant="primary" />}
                       </View>
-                      <ThemedText style={{ fontSize: 13, fontWeight: '700', marginTop: 4 }}>
+                      <ThemedText className="text-[13px] font-bold mt-1">
                         {item.recipientName} ({item.phoneNumber})
                       </ThemedText>
-                      <ThemedText style={{ fontSize: 12, marginTop: 2 }} themeColor="textSecondary">
+                      <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                         {item.fullAddress}, {item.city}, {item.postalCode}
                       </ThemedText>
                     </Card>
@@ -528,217 +511,3 @@ export default function CheckoutScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.six,
-  },
-  sectionTitle: {
-    fontSize: 14,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.two,
-    marginTop: Spacing.three,
-  },
-  addressCard: {
-    padding: Spacing.four,
-    borderRadius: 14,
-  },
-  addressHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  addressLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.one * 1.5,
-  },
-  addressLabel: {
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  changeAddressBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.one,
-  },
-  addressDetails: {
-    marginTop: Spacing.three,
-    gap: Spacing.one / 2,
-  },
-  fullAddressText: {
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 2,
-  },
-  noAddressContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.three,
-    gap: Spacing.two,
-  },
-  noAddressText: {
-    fontSize: 13,
-    textAlign: 'center',
-  },
-  deliveryRow: {
-    flexDirection: 'row',
-    gap: Spacing.two,
-  },
-  deliveryBox: {
-    flex: 1,
-    borderWidth: 1.5,
-    borderRadius: 12,
-    padding: Spacing.three,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  deliveryLabel: {
-    fontSize: 13,
-    marginTop: Spacing.one,
-  },
-  deliveryFeeText: {
-    fontSize: 13,
-    fontWeight: '800',
-    marginTop: Spacing.one / 2,
-  },
-  discountCard: {
-    padding: Spacing.three,
-  },
-  inputDiscountRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  discountInput: {
-    flex: 1,
-    marginBottom: 0,
-  },
-  applyBtn: {
-    height: 52,
-    width: 90,
-  },
-  appliedCodeRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: Spacing.one,
-  },
-  appliedCodeLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  removeDiscountBtn: {
-    padding: Spacing.two,
-  },
-  paymentCard: {
-    padding: Spacing.four,
-  },
-  walletRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  walletLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  walletBalanceText: {
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  warningBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: Spacing.three,
-    padding: Spacing.two,
-    borderRadius: 8,
-    gap: Spacing.two,
-  },
-  warningText: {
-    fontSize: 11,
-    fontWeight: '600',
-    flex: 1,
-  },
-  topupLink: {
-    padding: Spacing.one,
-  },
-  previewCard: {
-    padding: Spacing.four,
-  },
-  calcLoader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  billingContainer: {
-    gap: Spacing.two,
-  },
-  billingRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  billingVal: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  divider: {
-    height: 1,
-    marginVertical: Spacing.two,
-  },
-  billingTotalRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  totalAmountText: {
-    fontSize: 18,
-    fontWeight: '900',
-  },
-  submitBtn: {
-    marginTop: Spacing.five,
-    height: 52,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '70%',
-    paddingBottom: Spacing.five,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.four,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
-  },
-  closeBtn: {
-    padding: Spacing.one,
-  },
-  addressListContent: {
-    padding: Spacing.four,
-    gap: Spacing.two,
-  },
-  modalAddressCard: {
-    padding: Spacing.three,
-    borderWidth: 1,
-  },
-});

@@ -100,44 +100,45 @@ export default function BuyerOrdersScreen() {
     }).format(item.total);
 
     return (
-      <Card style={styles.orderCard}>
-        <View style={styles.cardHeader}>
-          <View style={styles.storeContainer}>
+      <Card className="mb-3 p-4">
+        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+          <View className="flex-row items-center gap-2 flex-1 pr-2">
             <ShoppingBag size={18} color={theme.primary} />
-            <ThemedText type="smallBold" style={styles.storeName}>
+            <ThemedText type="smallBold" className="text-[15px]">
               {item.store.name}
             </ThemedText>
           </View>
           {getStatusBadge(item.status)}
         </View>
 
-        <View style={styles.cardBody}>
-          <View style={styles.infoRow}>
+        <View className="gap-2">
+          <View className="flex-row items-center gap-2">
             <Calendar size={14} color={theme.textSecondary} />
-            <ThemedText style={styles.infoText} themeColor="textSecondary">
+            <ThemedText className="text-[13px]" themeColor="textSecondary">
               {formattedDate}
             </ThemedText>
           </View>
           
-          <ThemedText style={styles.orderIdText} themeColor="textSecondary">
+          <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
             ID: {item.id}
           </ThemedText>
 
-          <View style={styles.priceRow}>
+          <View className="flex-row justify-between items-end mt-2">
             <View>
-              <ThemedText style={{ fontSize: 12 }} themeColor="textSecondary">
+              <ThemedText className="text-[12px]" themeColor="textSecondary">
                 Total Belanja
               </ThemedText>
-              <ThemedText style={styles.totalPrice}>
+              <ThemedText className="text-base font-extrabold text-[#0D9488] mt-[2px]">
                 {formattedTotal}
               </ThemedText>
             </View>
             
             <Pressable
               onPress={() => router.push(`/(buyer)/orders/${item.id}` as any)}
-              style={[styles.detailBtn, { backgroundColor: `${theme.primary}10` }]}
+              className="flex-row items-center py-1 px-3 rounded-lg gap-1"
+              style={{ backgroundColor: `${theme.primary}10` }}
             >
-              <ThemedText style={{ color: theme.primary, fontSize: 13, fontWeight: '700' }}>
+              <ThemedText className="text-[13px] font-bold" themeColor="primary">
                 Rincian
               </ThemedText>
               <ArrowRight size={14} color={theme.primary} />
@@ -151,9 +152,9 @@ export default function BuyerOrdersScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View style={styles.emptyContainer}>
+      <View className="items-center justify-center py-6 px-5">
         <ShoppingBag size={52} color={theme.placeholder} />
-        <ThemedText style={{ color: theme.textSecondary, marginTop: Spacing.three, textAlign: 'center' }}>
+        <ThemedText className="text-center mt-3" themeColor="textSecondary">
           {error ? error : 'Anda belum memiliki riwayat pesanan.'}
         </ThemedText>
       </View>
@@ -162,9 +163,9 @@ export default function BuyerOrdersScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mengambil riwayat belanja Anda...
         </ThemedText>
       </ThemedView>
@@ -172,12 +173,12 @@ export default function BuyerOrdersScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <FlatList
         data={orders}
         renderItem={renderOrderItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.listContent}
+        contentContainerClassName="p-4 pb-5"
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -191,82 +192,3 @@ export default function BuyerOrdersScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  listContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  orderCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
-    paddingBottom: Spacing.two,
-    marginBottom: Spacing.two,
-  },
-  storeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-    flex: 1,
-    paddingRight: Spacing.two,
-  },
-  storeName: {
-    fontSize: 15,
-  },
-  cardBody: {
-    gap: Spacing.two,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  infoText: {
-    fontSize: 13,
-  },
-  orderIdText: {
-    fontSize: 11,
-    fontFamily: Platform.select({ ios: 'Courier New', android: 'monospace' }),
-  },
-  priceRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginTop: Spacing.two,
-  },
-  totalPrice: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#0D9488',
-    marginTop: 2,
-  },
-  detailBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.one,
-    paddingHorizontal: Spacing.three,
-    borderRadius: 8,
-    gap: Spacing.one,
-  },
-  emptyContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.six,
-    paddingHorizontal: Spacing.five,
-  },
-});

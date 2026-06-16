@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
   View,
   Alert,
   Pressable,
@@ -15,7 +14,6 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
 import { useAuthStore } from '@/store/useAuthStore';
 import api from '@/services/api';
 
@@ -81,25 +79,28 @@ export default function LoginScreen() {
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.headerContainer}>
-            <View style={[styles.iconContainer, { backgroundColor: `${theme.primary}15` }]}>
+        <ScrollView contentContainerClassName="flex-grow px-8 justify-center py-8">
+          <View className="items-center mb-8">
+            <View 
+              className="w-20 h-20 rounded-full items-center justify-center mb-4"
+              style={{ backgroundColor: `${theme.primary}15` }}
+            >
               <LogIn size={40} color={theme.primary} />
             </View>
-            <ThemedText type="subtitle" style={styles.title}>
+            <ThemedText type="subtitle" className="text-[28px] font-extrabold text-center">
               Selamat Datang
             </ThemedText>
-            <ThemedText style={styles.subtitle} themeColor="textSecondary">
+            <ThemedText className="text-sm text-center mt-1 px-4" themeColor="textSecondary">
               Silakan masuk untuk mulai bertransaksi di SEAPEDIA
             </ThemedText>
           </View>
 
-          <View style={styles.formContainer}>
+          <View className="w-full">
             <Input
               label="Username"
               placeholder="Masukkan username Anda"
@@ -125,15 +126,15 @@ export default function LoginScreen() {
               label="Masuk Sekarang"
               onPress={handleLogin}
               loading={loading}
-              style={styles.loginButton}
+              className="mt-4 h-[52px]"
             />
 
-            <View style={styles.registerLinkContainer}>
-              <ThemedText style={{ color: theme.textSecondary }}>
+            <View className="flex-row justify-center items-center mt-6">
+              <ThemedText className="text-textSecondary">
                 Belum punya akun?{' '}
               </ThemedText>
               <Pressable onPress={() => router.push('/(public)/register')}>
-                <ThemedText style={{ color: theme.primary, fontWeight: '700' }}>
+                <ThemedText className="text-primary font-bold">
                   Daftar di sini
                 </ThemedText>
               </Pressable>
@@ -144,51 +145,3 @@ export default function LoginScreen() {
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: Spacing.five,
-    justifyContent: 'center',
-    paddingVertical: Spacing.five,
-  },
-  headerContainer: {
-    alignItems: 'center',
-    marginBottom: Spacing.five,
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: Spacing.three,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '800',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: Spacing.one,
-    paddingHorizontal: Spacing.three,
-  },
-  formContainer: {
-    width: '100%',
-  },
-  loginButton: {
-    marginTop: Spacing.three,
-    height: 52,
-  },
-  registerLinkContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: Spacing.four,
-  },
-});

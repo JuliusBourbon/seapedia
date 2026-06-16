@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   ActivityIndicator,
@@ -17,7 +16,6 @@ import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -138,9 +136,9 @@ export default function ProductDetailScreen() {
 
   if (loading) {
     return (
-      <ThemedView style={styles.loadingContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-4 text-textSecondary">
           Memuat rincian tangkapan laut...
         </ThemedText>
       </ThemedView>
@@ -149,10 +147,12 @@ export default function ProductDetailScreen() {
 
   if (error || !product) {
     return (
-      <ThemedView style={styles.errorContainer}>
+      <ThemedView className="flex-1 items-center justify-center p-8">
         <ShieldAlert size={48} color={theme.danger} />
-        <ThemedText style={styles.errorText}>{error || 'Produk tidak ditemukan'}</ThemedText>
-        <Button label="Kembali" onPress={() => router.back()} style={{ marginTop: Spacing.four }} />
+        <ThemedText className="text-base font-semibold mt-4 text-center">
+          {error || 'Produk tidak ditemukan'}
+        </ThemedText>
+        <Button label="Kembali" onPress={() => router.back()} className="mt-6" />
       </ThemedView>
     );
   }
@@ -164,63 +164,68 @@ export default function ProductDetailScreen() {
   }).format(product.price);
 
   return (
-    <ThemedView style={styles.container}>
-      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 100 + insets.bottom }]}>
+    <ThemedView className="flex-1">
+      <ScrollView contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}>
         {/* Product Visual Header */}
         <LinearGradient
           colors={['#0D9488', '#0EA5E9', '#3B82F6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.productBanner}
+          className="h-[220px] items-center justify-center relative"
         >
           <ShoppingBag size={64} color="#FFFFFF" opacity={0.7} />
           {product.stock === 0 ? (
-            <Badge label="Stok Habis" variant="danger" style={styles.bannerBadge} />
+            <Badge label="Stok Habis" variant="danger" className="absolute bottom-4 left-4" />
           ) : product.stock <= 5 ? (
-            <Badge label={`Sisa ${product.stock}`} variant="warning" style={styles.bannerBadge} />
+            <Badge label={`Sisa ${product.stock}`} variant="warning" className="absolute bottom-4 left-4" />
           ) : (
-            <Badge label="Tersedia" variant="success" style={styles.bannerBadge} />
+            <Badge label="Tersedia" variant="success" className="absolute bottom-4 left-4" />
           )}
         </LinearGradient>
 
-        <View style={styles.body}>
+        <View className="p-4">
           {/* Price and Title */}
-          <ThemedText style={styles.productPrice}>{formattedPrice}</ThemedText>
-          <ThemedText type="subtitle" style={styles.productName}>
+          <ThemedText className="text-[26px] font-black text-[#0D9488] mb-1">
+            {formattedPrice}
+          </ThemedText>
+          <ThemedText type="subtitle" className="text-[22px] font-extrabold leading-7">
             {product.name}
           </ThemedText>
 
           {/* Divider */}
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <View className="h-[1.5px] my-4 bg-border" />
 
           {/* Description */}
-          <View style={styles.section}>
-            <ThemedText type="smallBold" style={styles.sectionTitle} themeColor="textSecondary">
+          <View className="w-full">
+            <ThemedText type="smallBold" className="text-xs uppercase font-bold tracking-wider mb-2" themeColor="textSecondary">
               Deskripsi Produk
             </ThemedText>
-            <ThemedText style={styles.descriptionText}>
+            <ThemedText className="text-[15px] leading-[22px]">
               {product.description || 'Tidak ada deskripsi produk.'}
             </ThemedText>
           </View>
 
           {/* Divider */}
-          <View style={[styles.divider, { backgroundColor: theme.border }]} />
+          <View className="h-[1.5px] my-4 bg-border" />
 
           {/* Store Info Card */}
-          <View style={styles.section}>
-            <ThemedText type="smallBold" style={styles.sectionTitle} themeColor="textSecondary">
+          <View className="w-full">
+            <ThemedText type="smallBold" className="text-xs uppercase font-bold tracking-wider mb-2" themeColor="textSecondary">
               Informasi Toko
             </ThemedText>
             <Pressable onPress={() => router.push(`/(public)/store/${product.store.id}` as any)}>
-              <Card style={styles.storeCard}>
-                <View style={[styles.storeIconContainer, { backgroundColor: `${theme.primary}15` }]}>
+              <Card className="flex-row items-center p-3 rounded-xl mt-1 border border-border">
+                <View 
+                  className="w-12 h-12 rounded-xl items-center justify-center"
+                  style={{ backgroundColor: `${theme.primary}15` }}
+                >
                   <StoreIcon size={24} color={theme.primary} />
                 </View>
-                <View style={styles.storeTextContainer}>
-                  <ThemedText type="smallBold" style={styles.storeName}>
+                <View className="flex-1 ml-3">
+                  <ThemedText type="smallBold" className="text-[15px] font-bold">
                     {product.store.name}
                   </ThemedText>
-                  <ThemedText style={styles.storeDescription} numberOfLines={1} themeColor="textSecondary">
+                  <ThemedText className="text-[13px] mt-[2px]" numberOfLines={1} themeColor="textSecondary">
                     {product.store.description || 'Lihat daftar produk di toko ini.'}
                   </ThemedText>
                 </View>
@@ -233,29 +238,26 @@ export default function ProductDetailScreen() {
       {/* Sticky Bottom Actions */}
       <ThemedView
         type="backgroundElement"
-        style={[
-          styles.stickyFooter,
-          {
-            borderTopColor: theme.border,
-            height: 80 + insets.bottom,
-            paddingBottom: Spacing.four + insets.bottom,
-          },
-        ]}
+        className="absolute bottom-0 left-0 right-0 flex-row items-center p-4 border-t border-border"
+        style={{
+          height: 80 + insets.bottom,
+          paddingBottom: 16 + insets.bottom,
+        }}
       >
         {product.stock > 0 && activeRole === 'BUYER' && (
-          <View style={styles.qtyContainer}>
+          <View className="flex-row items-center mr-4 gap-3">
             <Pressable
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
-              style={[styles.qtyBtn, { borderColor: theme.border }]}
+              className="w-8 h-8 rounded-lg border-[1.5px] border-border items-center justify-center active:opacity-70"
             >
-              <ThemedText style={styles.qtyBtnText}>-</ThemedText>
+              <ThemedText className="text-lg font-bold">-</ThemedText>
             </Pressable>
-            <ThemedText style={styles.qtyText}>{quantity}</ThemedText>
+            <ThemedText className="text-base font-bold w-5 text-center">{quantity}</ThemedText>
             <Pressable
               onPress={() => setQuantity(Math.min(product.stock, quantity + 1))}
-              style={[styles.qtyBtn, { borderColor: theme.border }]}
+              className="w-8 h-8 rounded-lg border-[1.5px] border-border items-center justify-center active:opacity-70"
             >
-              <ThemedText style={styles.qtyBtnText}>+</ThemedText>
+              <ThemedText className="text-lg font-bold">+</ThemedText>
             </Pressable>
           </View>
         )}
@@ -273,143 +275,9 @@ export default function ProductDetailScreen() {
           onPress={handleAddToCart}
           loading={addingToCart}
           disabled={product.stock === 0 || (isAuthenticated && activeRole !== 'BUYER')}
-          style={styles.addToCartBtn}
+          className="flex-1 h-12"
         />
       </ThemedView>
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: Spacing.five,
-  },
-  errorText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginTop: Spacing.three,
-    textAlign: 'center',
-  },
-  scrollContent: {
-    paddingBottom: 100, // Space for footer
-  },
-  productBanner: {
-    height: 220,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'relative',
-  },
-  bannerBadge: {
-    position: 'absolute',
-    bottom: Spacing.three,
-    left: Spacing.four,
-  },
-  body: {
-    padding: Spacing.four,
-  },
-  productPrice: {
-    fontSize: 26,
-    fontWeight: '900',
-    color: '#0D9488', // Teal highlight
-    marginBottom: Spacing.one,
-  },
-  productName: {
-    fontSize: 22,
-    fontWeight: '800',
-    lineHeight: 28,
-  },
-  divider: {
-    height: 1.5,
-    marginVertical: Spacing.four,
-  },
-  section: {
-    alignSelf: 'stretch',
-  },
-  sectionTitle: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-    marginBottom: Spacing.two,
-  },
-  descriptionText: {
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  storeCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.three,
-    borderRadius: 12,
-    marginTop: Spacing.one,
-  },
-  storeIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  storeTextContainer: {
-    flex: 1,
-    marginLeft: Spacing.three,
-  },
-  storeName: {
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  storeDescription: {
-    fontSize: 13,
-    marginTop: 2,
-  },
-  stickyFooter: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.four,
-    borderTopWidth: 1,
-    height: 80,
-  },
-  qtyContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: Spacing.four,
-    gap: Spacing.three,
-  },
-  qtyBtn: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  qtyBtnText: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  qtyText: {
-    fontSize: 16,
-    fontWeight: '700',
-    width: 20,
-    textAlign: 'center',
-  },
-  addToCartBtn: {
-    flex: 1,
-    height: 48,
-  },
-});

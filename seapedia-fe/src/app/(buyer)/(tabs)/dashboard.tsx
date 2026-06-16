@@ -113,9 +113,9 @@ export default function BuyerDashboardScreen() {
 
   if (loading && !refreshing) {
     return (
-      <ThemedView style={styles.centerContainer}>
+      <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText style={{ marginTop: Spacing.three, color: theme.textSecondary }}>
+        <ThemedText className="mt-3" themeColor="textSecondary">
           Mempersiapkan dasbor Anda...
         </ThemedText>
       </ThemedView>
@@ -123,9 +123,9 @@ export default function BuyerDashboardScreen() {
   }
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView className="flex-1">
       <ScrollView
-        contentContainerStyle={styles.scrollContent}
+        contentContainerClassName="p-4 pb-5"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -136,16 +136,16 @@ export default function BuyerDashboardScreen() {
         }
       >
         {/* Profile Card & Welcoming */}
-        <Card style={styles.profileCard}>
-          <View style={styles.profileHeader}>
-            <View style={[styles.avatar, { backgroundColor: `${theme.primary}15` }]}>
+        <Card className="mb-3 p-4">
+          <View className="flex-row items-center">
+            <View className="w-[60px] h-[60px] rounded-full items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
               <User size={32} color={theme.primary} />
             </View>
-            <View style={styles.profileText}>
-              <ThemedText type="smallBold" style={styles.profileName}>
+            <View className="ml-4 flex-1">
+              <ThemedText type="smallBold" className="text-lg font-extrabold">
                 {user?.name}
               </ThemedText>
-              <ThemedText style={styles.profileUsername} themeColor="textSecondary">
+              <ThemedText className="text-[13px] mt-[2px]" themeColor="textSecondary">
                 @{user?.username} • Pembeli
               </ThemedText>
             </View>
@@ -158,46 +158,46 @@ export default function BuyerDashboardScreen() {
               size="small"
               leftIcon={<RefreshCcw size={16} color={theme.primary} />}
               onPress={() => router.push('/(public)/select-role')}
-              style={{ marginTop: Spacing.two }}
+              className="mt-2"
             />
           )}
         </Card>
 
         {/* Wallet balance display */}
-        <Card style={styles.walletCard}>
-          <View style={styles.walletRow}>
+        <Card className="mb-3 p-4">
+          <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText style={styles.walletLabel} themeColor="textSecondary">
+              <ThemedText className="text-[12px] font-semibold uppercase tracking-wider" themeColor="textSecondary">
                 Saldo Dompet SEAPEDIA
               </ThemedText>
-              <ThemedText style={styles.walletAmount}>
+              <ThemedText className="text-2xl font-black text-[#0D9488] mt-1">
                 {formattedBalance}
               </ThemedText>
             </View>
-            <View style={[styles.walletIconContainer, { backgroundColor: `${theme.primary}20` }]}>
+            <View className="w-[52px] h-[52px] rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}20` }}>
               <Wallet size={28} color={theme.primary} />
             </View>
           </View>
           <Button
             label="Kelola Dompet & Top-Up"
             onPress={() => router.push('/(buyer)/wallet-history')}
-            style={styles.walletButton}
+            className="mt-3 h-11"
           />
         </Card>
 
         {/* Quick Stats Grid */}
-        <View style={styles.statsContainer}>
+        <View className="flex-row gap-3 mb-4">
           <Pressable
-            style={styles.statBoxPressable}
+            className="flex-1"
             onPress={() => router.push('/(buyer)/(tabs)/orders')}
           >
-            <Card style={styles.statCard}>
+            <Card className="flex-row items-center p-3">
               <ShoppingBag size={24} color={theme.primary} />
-              <View style={styles.statTextContainer}>
-                <ThemedText type="subtitle" style={styles.statCount}>
+              <View className="ml-3 flex-1">
+                <ThemedText type="subtitle" className="text-xl font-extrabold leading-6">
                   {summary?.activeOrders ?? 0}
                 </ThemedText>
-                <ThemedText style={styles.statLabel} themeColor="textSecondary">
+                <ThemedText className="text-xs mt-[2px]" themeColor="textSecondary">
                   Pesanan Aktif
                 </ThemedText>
               </View>
@@ -205,16 +205,16 @@ export default function BuyerDashboardScreen() {
           </Pressable>
 
           <Pressable
-            style={styles.statBoxPressable}
+            className="flex-1"
             onPress={() => router.push('/(buyer)/(tabs)/addresses')}
           >
-            <Card style={styles.statCard}>
+            <Card className="flex-row items-center p-3">
               <MapPin size={24} color={theme.secondary} />
-              <View style={styles.statTextContainer}>
-                <ThemedText type="smallBold" style={{ fontSize: 18 }}>
+              <View className="ml-3 flex-1">
+                <ThemedText type="smallBold" className="text-[18px]">
                   Kelola
                 </ThemedText>
-                <ThemedText style={styles.statLabel} themeColor="textSecondary">
+                <ThemedText className="text-xs mt-[2px]" themeColor="textSecondary">
                   Buku Alamat
                 </ThemedText>
               </View>
@@ -223,8 +223,8 @@ export default function BuyerDashboardScreen() {
         </View>
 
         {/* Recent Transactions List */}
-        <View style={styles.sectionContainer}>
-          <ThemedText type="smallBold" style={styles.sectionTitle}>
+        <View className="mb-4">
+          <ThemedText type="smallBold" className="text-base font-bold mb-3">
             Transaksi Terakhir
           </ThemedText>
           {summary && summary.recentTransactions.length > 0 ? (
@@ -238,14 +238,14 @@ export default function BuyerDashboardScreen() {
               const isPositive = tx.type === 'TOPUP' || tx.type === 'REFUND';
 
               return (
-                <Card key={tx.id} style={styles.txRow}>
-                  <View style={styles.txLeft}>
+                <Card key={tx.id} className="flex-row justify-between items-center mb-2 p-3">
+                  <View className="flex-row items-center flex-1">
                     {getTxTypeBadge(tx.type)}
-                    <View style={styles.txDetails}>
+                    <View className="ml-3 flex-1 pr-2">
                       <ThemedText type="smallBold" numberOfLines={1}>
                         {tx.description || 'Transaksi Dompet'}
                       </ThemedText>
-                      <ThemedText style={{ fontSize: 11, marginTop: 2 }} themeColor="textSecondary">
+                      <ThemedText className="text-[11px] mt-[2px]" themeColor="textSecondary">
                         {new Date(tx.createdAt).toLocaleDateString('id-ID', {
                           day: 'numeric',
                           month: 'short',
@@ -255,15 +255,15 @@ export default function BuyerDashboardScreen() {
                       </ThemedText>
                     </View>
                   </View>
-                  <ThemedText style={[styles.txAmount, { color: isPositive ? theme.success : theme.danger }]}>
+                  <ThemedText className={`text-[14px] font-extrabold ${isPositive ? 'text-success' : 'text-danger'}`}>
                     {isPositive ? '+' : '-'} {txFormatted}
                   </ThemedText>
                 </Card>
               );
             })
           ) : (
-            <Card style={styles.emptyCard}>
-              <ThemedText style={{ color: theme.textSecondary }}>
+            <Card className="items-center justify-center py-4">
+              <ThemedText themeColor="textSecondary">
                 Belum ada transaksi dompet.
               </ThemedText>
             </Card>
@@ -275,7 +275,7 @@ export default function BuyerDashboardScreen() {
           label="Mulai Belanja di Pasar Laut"
           leftIcon={<ShoppingBag size={20} color="#FFFFFF" />}
           onPress={() => router.push('/(public)/(tabs)')}
-          style={styles.actionBtn}
+          className="mb-3 h-[50px]"
         />
 
         {/* Logout Button */}
@@ -285,149 +285,9 @@ export default function BuyerDashboardScreen() {
           leftIcon={<LogOut size={20} color="#FFFFFF" />}
           onPress={handleLogout}
           loading={loggingOut}
-          style={styles.logoutBtn}
+          className="h-[50px]"
         />
       </ScrollView>
     </ThemedView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  scrollContent: {
-    padding: Spacing.four,
-    paddingBottom: Spacing.five,
-  },
-  profileCard: {
-    marginBottom: Spacing.three,
-  },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  profileText: {
-    marginLeft: Spacing.four,
-    flex: 1,
-  },
-  profileName: {
-    fontSize: 18,
-    fontWeight: '800',
-  },
-  profileUsername: {
-    fontSize: 13,
-    marginTop: 2,
-  },
-  walletCard: {
-    marginBottom: Spacing.three,
-    padding: Spacing.four,
-  },
-  walletRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  walletLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  walletAmount: {
-    fontSize: 24,
-    fontWeight: '900',
-    color: '#0D9488', // Teal accent
-    marginTop: Spacing.one,
-  },
-  walletIconContainer: {
-    width: 52,
-    height: 52,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  walletButton: {
-    marginTop: Spacing.three,
-    height: 44,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    gap: Spacing.three,
-    marginBottom: Spacing.four,
-  },
-  statBoxPressable: {
-    flex: 1,
-  },
-  statCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.three,
-  },
-  statTextContainer: {
-    marginLeft: Spacing.three,
-    flex: 1,
-  },
-  statCount: {
-    fontSize: 20,
-    fontWeight: '800',
-    lineHeight: 24,
-  },
-  statLabel: {
-    fontSize: 12,
-    marginTop: 2,
-  },
-  sectionContainer: {
-    marginBottom: Spacing.four,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: Spacing.three,
-  },
-  txRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.two,
-    padding: Spacing.three,
-  },
-  txLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  txDetails: {
-    marginLeft: Spacing.three,
-    flex: 1,
-    paddingRight: Spacing.two,
-  },
-  txAmount: {
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  emptyCard: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: Spacing.four,
-  },
-  actionBtn: {
-    marginBottom: Spacing.three,
-    height: 50,
-  },
-  logoutBtn: {
-    height: 50,
-  },
-});
