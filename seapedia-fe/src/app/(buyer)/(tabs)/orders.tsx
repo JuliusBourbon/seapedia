@@ -101,10 +101,10 @@ export default function BuyerOrdersScreen() {
 
     return (
       <Card className="mb-3 p-4">
-        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+        <View className="flex-row justify-between items-center border-b border-black/5 pb-2 mb-2">
           <View className="flex-row items-center gap-2 flex-1 pr-2">
             <ShoppingBag size={18} color={theme.primary} />
-            <ThemedText type="smallBold" className="text-[15px]">
+            <ThemedText type="smallBold">
               {item.store.name}
             </ThemedText>
           </View>
@@ -118,7 +118,7 @@ export default function BuyerOrdersScreen() {
               {formattedDate}
             </ThemedText>
           </View>
-          
+
           <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
             ID: {item.id}
           </ThemedText>
@@ -132,7 +132,7 @@ export default function BuyerOrdersScreen() {
                 {formattedTotal}
               </ThemedText>
             </View>
-            
+
             <Pressable
               onPress={() => router.push(`/(buyer)/orders/${item.id}` as any)}
               className="flex-row items-center py-1 px-3 rounded-lg gap-1"

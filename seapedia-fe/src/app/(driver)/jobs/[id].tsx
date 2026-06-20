@@ -216,16 +216,19 @@ export default function DriverJobDetailScreen() {
         {/* Status Header Card */}
         <Card className="p-4">
           <View className="flex-row justify-between items-center">
-            <View>
-              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
+            <View className='flex-[7]'>
+              <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
                 ID Job Pengiriman:
               </ThemedText>
-              <ThemedText className="text-[13px] font-extrabold font-mono mt-[2px]">
+              <ThemedText className="font-extrabold font-mono mt-[2px]">
                 {job.id}
               </ThemedText>
             </View>
-            {getStatusBadge(job.status)}
+            <View className="flex-[3] text-center">
+              {getStatusBadge(job.status)}
+            </View>
           </View>
+
           <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
           <View className="flex-row items-center">
             <Truck size={18} color={theme.primary} />
@@ -244,7 +247,7 @@ export default function DriverJobDetailScreen() {
           <View className="flex-row items-start gap-3">
             <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.primary }} />
             <View className="flex-1 gap-[2px]">
-              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
+              <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
                 Penjemputan (Toko Nelayan)
               </ThemedText>
               <ThemedText type="smallBold" className="text-[15px]">
@@ -261,7 +264,7 @@ export default function DriverJobDetailScreen() {
             <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.warning }} />
             <View className="flex-1 gap-[2px]">
               <View className="flex-row justify-between items-center mb-[2px]">
-                <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
+                <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
                   Tujuan (Penerima)
                 </ThemedText>
                 <Badge label={deliveryMethodLabel} variant="neutral" />
@@ -269,7 +272,7 @@ export default function DriverJobDetailScreen() {
               <ThemedText type="smallBold" className="text-[15px]">
                 {job.order.address.recipientName} ({job.order.address.phoneNumber})
               </ThemedText>
-              <ThemedText className="text-[13px] leading-[18px] mt-[2px]" themeColor="textSecondary">
+              <ThemedText className="leading-[18px] mt-[2px]" themeColor="textSecondary">
                 {job.order.address.fullAddress}, {job.order.address.city}, {job.order.address.postalCode}
               </ThemedText>
             </View>
@@ -307,7 +310,7 @@ export default function DriverJobDetailScreen() {
             {job.takenAt && (
               <View className="flex-row items-center">
                 <Calendar size={16} color={theme.textSecondary} />
-                <ThemedText className="text-[13px] ml-2" themeColor="textSecondary">
+                <ThemedText className="ml-2" themeColor="textSecondary">
                   Diambil pada: {new Date(job.takenAt).toLocaleString('id-ID')}
                 </ThemedText>
               </View>
@@ -315,7 +318,7 @@ export default function DriverJobDetailScreen() {
             {job.completedAt && (
               <View className="flex-row items-center mt-2">
                 <CheckCircle2 size={16} color={theme.success} />
-                <ThemedText className="text-[13px] ml-2" themeColor="textSecondary">
+                <ThemedText className="ml-2" themeColor="textSecondary">
                   Selesai pada: {new Date(job.completedAt).toLocaleString('id-ID')}
                 </ThemedText>
               </View>

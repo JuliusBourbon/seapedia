@@ -67,7 +67,7 @@ export default function AdminDashboardScreen() {
   const [summary, setSummary] = useState<SummaryData | null>(null);
   const [usersList, setUsersList] = useState<MonitorUser[]>([]);
   const [storesList, setStoresList] = useState<MonitorStore[]>([]);
-  
+
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -184,7 +184,7 @@ export default function AdminDashboardScreen() {
         { label: 'Total Produk', val: summary?.totalProducts ?? 0, icon: <Package size={20} color={theme.success} />, bg: `${theme.success}10` },
         { label: 'Total Pesanan', val: summary?.totalOrders ?? 0, icon: <ClipboardList size={20} color={theme.warning} />, bg: `${theme.warning}10` },
         { label: 'Total Pengiriman', val: summary?.totalDeliveries ?? 0, icon: <Truck size={20} color={theme.primary} />, bg: `${theme.primary}10` },
-        { label: 'Overdue Kiriman', val: summary?.overdueCount ?? 0, icon: <Info size={20} color={theme.danger} />, bg: `${theme.danger}10` },
+        { label: 'Overdue Kiriman', val: summary?.returnedOrdersCount ?? 0, icon: <Info size={20} color={theme.danger} />, bg: `${theme.danger}10` },
       ];
 
       return (
@@ -232,13 +232,13 @@ export default function AdminDashboardScreen() {
             <ThemedText className="text-[15px] font-bold mt-2">
               {summary?.currentSimulatedTime
                 ? new Date(summary.currentSimulatedTime).toLocaleString('id-ID', {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
                 : 'Memuat waktu...'}
             </ThemedText>
             <Pressable onPress={() => setActiveTab('OVERVIEW')} className="mt-1.5">
@@ -337,7 +337,7 @@ export default function AdminDashboardScreen() {
           contentContainerClassName="p-4 pb-5"
           ListEmptyComponent={
             <ThemedText className="text-center mt-6" themeColor="textSecondary">
-              Tidak ada toko nelayan terdaftar.
+              Tidak ada toko terdaftar.
             </ThemedText>
           }
           renderItem={({ item }) => (
@@ -388,7 +388,7 @@ export default function AdminDashboardScreen() {
             className={`text-[13.5px] font-medium ${activeTab === 'OVERVIEW' ? 'font-bold' : ''}`}
             style={{ color: activeTab === 'OVERVIEW' ? theme.primary : theme.textSecondary }}
           >
-            Ikhtisar
+            Dashbor
           </ThemedText>
         </Pressable>
 
@@ -414,7 +414,7 @@ export default function AdminDashboardScreen() {
             className={`text-[13.5px] font-medium ${activeTab === 'STORES' ? 'font-bold' : ''}`}
             style={{ color: activeTab === 'STORES' ? theme.primary : theme.textSecondary }}
           >
-            Toko Nelayan
+            Toko
           </ThemedText>
         </Pressable>
       </View>

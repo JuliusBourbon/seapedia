@@ -97,14 +97,13 @@ export default function BuyerReportsScreen() {
       >
         {/* Banner Overview */}
         <Card className="p-5 bg-[#0D9488] border-[#0F766E]">
-          <View className="flex-row items-center gap-2">
-            <DollarSign size={24} color="#FFFFFF" />
-            <ThemedText className="text-[rgba(255,255,255,0.85)] text-[13px] font-semibold">Total Pengeluaran Belanja</ThemedText>
+          <View className="flex-row items-center">
+            <ThemedText type='large' className="text-[rgba(255,255,255,0.85)]">Total Pengeluaran Belanja</ThemedText>
           </View>
-          <ThemedText className="text-white text-[30px] font-black mt-2">
+          <ThemedText type='large' className="text-white py-3">
             {formatCurrency(report?.totalSpending ?? 0)}
           </ThemedText>
-          <ThemedText className="text-[rgba(255,255,255,0.7)] text-[13px] mt-1">
+          <ThemedText type='small' className="text-[rgba(255,255,255,0.7)]">
             Dari total {report?.totalOrders ?? 0} pesanan yang dibuat
           </ThemedText>
         </Card>
@@ -115,8 +114,8 @@ export default function BuyerReportsScreen() {
             <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.success}10` }}>
               <Gift size={20} color={theme.success} />
             </View>
-            <ThemedText className="text-[11px]" themeColor="textSecondary">Hemat Voucher</ThemedText>
-            <ThemedText type="smallBold" className="text-[15px]" style={{ color: theme.success }}>
+            <ThemedText type='small' themeColor="textSecondary">Hemat Voucher</ThemedText>
+            <ThemedText type="large" style={{ color: theme.success }}>
               {formatCurrency(report?.totalDiscount ?? 0)}
             </ThemedText>
           </Card>
@@ -125,8 +124,8 @@ export default function BuyerReportsScreen() {
             <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.primary}10` }}>
               <Percent size={20} color={theme.primary} />
             </View>
-            <ThemedText className="text-[11px]" themeColor="textSecondary">Total PPN (12%)</ThemedText>
-            <ThemedText type="smallBold" className="text-[15px]">
+            <ThemedText type='small' themeColor="textSecondary">Total PPN (12%)</ThemedText>
+            <ThemedText type="large">
               {formatCurrency(report?.totalPpn ?? 0)}
             </ThemedText>
           </Card>
@@ -135,8 +134,8 @@ export default function BuyerReportsScreen() {
             <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.secondary}10` }}>
               <Truck size={20} color={theme.secondary} />
             </View>
-            <ThemedText className="text-[11px]" themeColor="textSecondary">Ongkos Kirim</ThemedText>
-            <ThemedText type="smallBold" className="text-[15px]">
+            <ThemedText type='small' themeColor="textSecondary">Ongkos Kirim</ThemedText>
+            <ThemedText type="large">
               {formatCurrency(report?.totalDeliveryFee ?? 0)}
             </ThemedText>
           </Card>
@@ -145,15 +144,15 @@ export default function BuyerReportsScreen() {
             <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.danger}10` }}>
               <TrendingDown size={20} color={theme.danger} />
             </View>
-            <ThemedText className="text-[11px]" themeColor="textSecondary">Refund Pengembalian</ThemedText>
-            <ThemedText type="smallBold" className="text-[15px]" style={{ color: theme.danger }}>
+            <ThemedText type='small' themeColor="textSecondary">Refund</ThemedText>
+            <ThemedText type="large" style={{ color: theme.danger }}>
               {formatCurrency(report?.totalRefunded ?? 0)}
             </ThemedText>
           </Card>
         </View>
 
         {/* Status Breakdown Section */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
+        <ThemedText type="smallBold" className="uppercase font-bold tracking-wider mb-1 mt-2">
           Sebaran Status Pesanan
         </ThemedText>
         <Card className="p-4 gap-3">
@@ -186,8 +185,8 @@ export default function BuyerReportsScreen() {
                           statusKey === 'PESANAN_SELESAI'
                             ? theme.success
                             : statusKey === 'DIKEMBALIKAN'
-                            ? theme.danger
-                            : theme.primary,
+                              ? theme.danger
+                              : theme.primary,
                       }}
                     />
                   </View>

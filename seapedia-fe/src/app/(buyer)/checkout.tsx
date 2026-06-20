@@ -58,10 +58,10 @@ export default function CheckoutScreen() {
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('REGULAR');
   const [discountCode, setDiscountCode] = useState('');
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
-  
+
   // Preview State
   const [preview, setPreview] = useState<PreviewSummary | null>(null);
-  
+
   // Loading States
   const [loading, setLoading] = useState(true);
   const [calculating, setCalculating] = useState(false);
@@ -82,7 +82,7 @@ export default function CheckoutScreen() {
         const defAddr = addrList.find((a: Address) => a.isDefault) || addrList[0] || null;
         setSelectedAddress(defAddr);
       }
-      
+
       if (walletRes.data?.success) {
         setWalletBalance(Number(walletRes.data.data.balance));
       }
@@ -207,7 +207,7 @@ export default function CheckoutScreen() {
   return (
     <ThemedView className="flex-1">
       <ScrollView contentContainerClassName="p-4 pb-8">
-        
+
         {/* Shipping Address Selection Card */}
         <ThemedText type="smallBold" className="text-sm uppercase font-bold tracking-wider mb-2 mt-3">
           Alamat Pengiriman
@@ -264,7 +264,7 @@ export default function CheckoutScreen() {
         <View className="flex-row gap-2">
           <Pressable
             onPress={() => setDeliveryMethod('REGULAR')}
-            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'REGULAR' ? 'border-primary' : 'border-border'}`}
+            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'REGULAR' ? 'border-primary' : 'border-white/20'}`}
             style={{ backgroundColor: theme.backgroundElement }}
           >
             <Truck size={20} color={deliveryMethod === 'REGULAR' ? theme.primary : theme.textSecondary} />
@@ -281,7 +281,7 @@ export default function CheckoutScreen() {
 
           <Pressable
             onPress={() => setDeliveryMethod('NEXT_DAY')}
-            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'NEXT_DAY' ? 'border-primary' : 'border-border'}`}
+            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'NEXT_DAY' ? 'border-primary' : 'border-white/20'}`}
             style={{ backgroundColor: theme.backgroundElement }}
           >
             <Truck size={20} color={deliveryMethod === 'NEXT_DAY' ? theme.primary : theme.textSecondary} />
@@ -298,7 +298,7 @@ export default function CheckoutScreen() {
 
           <Pressable
             onPress={() => setDeliveryMethod('INSTANT')}
-            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'INSTANT' ? 'border-primary' : 'border-border'}`}
+            className={`flex-1 border-[1.5px] rounded-xl p-3 items-center justify-center ${deliveryMethod === 'INSTANT' ? 'border-primary' : 'border-white/20'}`}
             style={{ backgroundColor: theme.backgroundElement }}
           >
             <Truck size={20} color={deliveryMethod === 'INSTANT' ? theme.primary : theme.textSecondary} />
@@ -354,7 +354,6 @@ export default function CheckoutScreen() {
                 label="Gunakan"
                 onPress={handleApplyDiscount}
                 disabled={!discountCode.trim()}
-                className="h-[52px] w-[90px]"
               />
             </View>
           )}
@@ -377,9 +376,9 @@ export default function CheckoutScreen() {
             </ThemedText>
           </View>
           {isWalletInsufficient && (
-            <View className="flex-row items-center mt-3 p-2 rounded-lg gap-2" style={{ backgroundColor: `${theme.danger}15` }}>
+            <View className="flex-row mt-3 p-2 rounded-lg gap-2" style={{ backgroundColor: `${theme.danger}15` }}>
               <AlertTriangle size={18} color={theme.danger} />
-              <ThemedText className="text-[11px] font-semibold flex-1" themeColor="danger">
+              <ThemedText className="text-[11px] font-semibold flex-1">
                 Saldo Anda kurang {formatCurrency(preview!.total - walletBalance)}. Silakan top-up.
               </ThemedText>
               <Pressable onPress={() => router.push('/(buyer)/wallet-history')} className="p-1">
@@ -431,7 +430,7 @@ export default function CheckoutScreen() {
                 <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.ppn)}</ThemedText>
               </View>
 
-              <View className="h-[1px] my-2 bg-border" />
+              <View className="h-[1px] my-2 bg-white/20" />
 
               <View className="flex-row justify-between items-center">
                 <ThemedText type="smallBold">Total Bayar</ThemedText>
@@ -489,7 +488,7 @@ export default function CheckoutScreen() {
                       setAddressModalVisible(false);
                     }}
                   >
-                    <Card className={`p-3 border ${isSelected ? 'border-primary border-[1.5px]' : 'border-border'}`}>
+                    <Card className={`p-3 border ${isSelected ? 'border-primary border-[1.5px]' : 'border-white/20'}`}>
                       <View className="flex-row justify-between items-center">
                         <ThemedText type="smallBold">{item.label}</ThemedText>
                         {item.isDefault && <Badge label="Default" variant="primary" />}

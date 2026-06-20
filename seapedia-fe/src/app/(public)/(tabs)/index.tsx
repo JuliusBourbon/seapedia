@@ -58,45 +58,16 @@ export default function MarketplaceHomeScreen() {
   };
 
   const renderHeader = () => (
-    <View className="w-full pb-4">
-      {/* Ocean Welcome Banner */}
-      <LinearGradient
-        colors={['#0F766E', '#0D9488', '#0EA5E9']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        className="py-8 px-6 rounded-b-[24px] shadow-lg shadow-[#0D9488]/10 elevation-5 mb-6"
-      >
-        <View className="items-center">
-          <Anchor size={40} color="#FFFFFF" className="mb-2" />
-          <ThemedText 
-            className="text-white text-[32px] font-black tracking-widest"
-            style={{ textShadowColor: 'rgba(0, 0, 0, 0.2)', textShadowOffset: { width: 1, height: 2 }, textShadowRadius: 4 }}
-          >
-            SEAPEDIA
-          </ThemedText>
-          <ThemedText className="text-white/90 text-sm font-semibold text-center mt-1">
-            Marketplace Multi-Role Hasil Laut & Maritim Terlengkap
-          </ThemedText>
-        </View>
-      </LinearGradient>
-
-      {/* Fake Search Bar Button */}
-      <Pressable 
-        onPress={handleSearchPress} 
-        className="flex-row items-center mx-6 px-4 h-12 rounded-xl border-[1.5px] mb-6 bg-backgroundElement border-border"
+    <View className="w-full pb-4 py-5">
+      <Pressable
+        onPress={handleSearchPress}
+        className="flex-row items-center mx-6 px-4 h-12 rounded-md border-[1.5px] mb-6 border-white/20"
       >
         <Search size={20} color={theme.textSecondary} />
         <ThemedText className="text-placeholder ml-2">
-          Cari ikan segar, udang, atau toko maritim...
+          Cari
         </ThemedText>
       </Pressable>
-
-      <View className="flex-row items-center px-6 mt-2 mb-2">
-        <Store size={20} color={theme.primary} />
-        <ThemedText type="smallBold" className="text-lg ml-2">
-          Jelajah Katalog Terkini
-        </ThemedText>
-      </View>
     </View>
   );
 
@@ -126,7 +97,7 @@ export default function MarketplaceHomeScreen() {
           renderItem={({ item }) => (
             <ProductCard
               product={item}
-              showAddToCart={false} // Add to cart disabled for guest
+              showAddToCart={false}
             />
           )}
           keyExtractor={(item) => item.id}

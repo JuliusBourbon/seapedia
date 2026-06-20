@@ -63,7 +63,7 @@ export default function ExploreProductsScreen() {
     return (
       <View className="items-center justify-center py-16">
         <ThemedText className="text-textSecondary">
-          {error ? error : 'Produk maritim tidak ditemukan.'}
+          {error ? error : 'Produk tidak ditemukan.'}
         </ThemedText>
       </View>
     );
@@ -85,7 +85,7 @@ export default function ExploreProductsScreen() {
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
           <ThemedText className="mt-4 text-textSecondary">
-            Mencari produk terbaik...
+            Mencari produk...
           </ThemedText>
         </View>
       ) : (

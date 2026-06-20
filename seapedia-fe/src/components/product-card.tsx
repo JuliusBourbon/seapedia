@@ -53,40 +53,24 @@ export function ProductCard({ product, onAddToCart, showAddToCart = true }: Prod
   };
 
   return (
-    <Card className="flex-1 m-[6px] p-0 overflow-hidden" style={{ maxWidth: Platform.OS === 'web' ? 240 : '48%' }}>
+    <Card className="flex-1 m-[6px] p-0 overflow-hidden bg-black/5 dark:bg-white/5" style={{ maxWidth: Platform.OS === 'web' ? 240 : '48%' }}>
       <Pressable onPress={handlePress}>
-        {/* Ocean Theme Premium Gradient as image placeholder */}
-        <LinearGradient
-          colors={['#0D9488', '#0EA5E9', '#3B82F6']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="h-[120px] items-center justify-center relative"
-        >
-          <ShoppingBag color="#FFFFFF" size={36} opacity={0.8} />
-          <View className="absolute top-2 left-2">{getStockBadge()}</View>
-        </LinearGradient>
+        <View className="">{getStockBadge()}</View>
 
-        <View className="p-3">
-          <ThemedText className="text-[11px] uppercase font-bold tracking-wider mb-1" themeColor="textSecondary">
-            {product.store.name}
-          </ThemedText>
-          <ThemedText className="text-[15px] font-bold mb-2" numberOfLines={1}>
+        <View className="p-2">
+          <ThemedText className="font-bold">
             {product.name}
           </ThemedText>
-          <ThemedText className="text-[16px] font-extrabold text-[#0D9488]">
+          <ThemedText className="font-extrabold mb-2">
             {formattedPrice}
+          </ThemedText>
+          <ThemedText type='small' className="font-bold" themeColor="textSecondary">
+            {product.store.name}
           </ThemedText>
         </View>
       </Pressable>
 
       <View className="flex-row p-3 pt-0 gap-2 justify-end">
-        <Pressable
-          onPress={handlePress}
-          className="w-9 h-9 rounded-lg items-center justify-center border"
-          style={{ borderColor: theme.border, backgroundColor: theme.background }}
-        >
-          <Eye size={16} color={theme.text} />
-        </Pressable>
         {showAddToCart && product.stock > 0 && onAddToCart && (
           <Pressable
             onPress={() => onAddToCart(product)}

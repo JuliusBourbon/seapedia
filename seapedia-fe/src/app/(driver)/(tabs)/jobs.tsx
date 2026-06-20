@@ -192,14 +192,14 @@ export default function DriverJobsScreen() {
                 size="small"
                 loading={takingId === item.id}
                 onPress={() => handleTakeJob(item.id)}
-                className="px-4 h-9"
+                className="px-4 h-10"
               />
               <Button
                 label="Detail"
                 variant="outline"
                 size="small"
                 onPress={() => router.push(`/(driver)/jobs/${item.id}` as any)}
-                className="px-3 h-9"
+                className="px-4 h-10"
               />
             </View>
           </View>

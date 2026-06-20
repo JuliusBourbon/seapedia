@@ -198,7 +198,7 @@ export default function DriverDashboardScreen() {
               <User size={36} color={theme.primary} />
             </View>
             <View className="ml-4 flex-1">
-              <ThemedText type="smallBold" className="text-[18px]">
+              <ThemedText type="large" className="font-semibold">
                 {user?.name}
               </ThemedText>
               <ThemedText className="text-[13px]" themeColor="textSecondary">
@@ -223,27 +223,27 @@ export default function DriverDashboardScreen() {
         <View className="flex-row gap-3 mb-2">
           <Card className="flex-1 p-4 items-start gap-1">
             <Wallet size={24} color={theme.primary} />
-            <ThemedText className="text-[12px] mt-1" themeColor="textSecondary">
+            <ThemedText className="mt-1" themeColor="textSecondary">
               Total Pendapatan
             </ThemedText>
-            <ThemedText type="subtitle" className="text-[20px] font-extrabold">
+            <ThemedText type="extraLarge" className="font-extrabold">
               {formatCurrency(summary?.totalEarnings ?? 0)}
             </ThemedText>
           </Card>
 
           <Card className="flex-1 p-4 items-start gap-1">
             <CheckCircle2 size={24} color={theme.success} />
-            <ThemedText className="text-[12px] mt-1" themeColor="textSecondary">
+            <ThemedText className=" mt-1" themeColor="textSecondary">
               Order Selesai
             </ThemedText>
-            <ThemedText type="subtitle" className="text-[20px] font-extrabold">
+            <ThemedText type="extraLarge" className="font-extrabold">
               {summary?.completedJobs ?? 0}
             </ThemedText>
           </Card>
         </View>
 
         {/* Active Job Section */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
+        <ThemedText type="smallBold" className=" uppercase font-bold tracking-wider mb-1 mt-2">
           Tugas Pengantaran Aktif
         </ThemedText>
 
@@ -251,7 +251,7 @@ export default function DriverDashboardScreen() {
           <Card className="p-4">
             <View className="flex-row justify-between items-center">
               <Badge label="Pekerjaan Berlangsung" variant="primary" />
-              <ThemedText className="font-extrabold text-[#0D9488] text-[15px]">
+              <ThemedText className="font-extrabold text-[#0D9488]">
                 Earning: {formatCurrency(activeJob.earning)}
               </ThemedText>
             </View>
@@ -262,10 +262,10 @@ export default function DriverDashboardScreen() {
             <View className="flex-row items-start gap-3">
               <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.primary }} />
               <View className="flex-1 gap-[2px]">
-                <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
-                  Lokasi Penjemputan (Toko Nelayan)
+                <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+                  Lokasi Penjemputan (Toko)
                 </ThemedText>
-                <ThemedText type="smallBold" className="text-[15px]">
+                <ThemedText className='font-semibold'>
                   {activeJob.order.store.name}
                 </ThemedText>
               </View>
@@ -278,20 +278,17 @@ export default function DriverDashboardScreen() {
             <View className="flex-row items-start gap-3">
               <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.warning }} />
               <View className="flex-1 gap-[2px]">
-                <View className="flex-row justify-between items-center">
-                  <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
-                    Lokasi Pengantaran (Pembeli)
-                  </ThemedText>
-                  <Badge 
-                    label={DELIVERY_METHODS[activeJob.order.deliveryMethod]?.label || activeJob.order.deliveryMethod} 
-                    variant="neutral" 
-                    style={{ paddingVertical: 1, paddingHorizontal: 4 }} 
-                  />
-                </View>
-                <ThemedText type="smallBold" className="text-[15px]">
-                  {activeJob.order.address.recipientName} ({activeJob.order.address.phoneNumber})
+                <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+                  Lokasi Pengantaran (Pembeli)
                 </ThemedText>
-                <ThemedText className="text-[13px] leading-[18px] mt-[2px]" themeColor="textSecondary">
+                <Badge label={DELIVERY_METHODS[activeJob.order.deliveryMethod]?.label || activeJob.order.deliveryMethod} variant="neutral" />
+                <ThemedText className="font-semibold">
+                  {activeJob.order.address.recipientName}
+                </ThemedText>
+                <ThemedText className="">
+                  {activeJob.order.address.phoneNumber}
+                </ThemedText>
+                <ThemedText className="mt-[2px]">
                   {activeJob.order.address.fullAddress}, {activeJob.order.address.city}, {activeJob.order.address.postalCode}
                 </ThemedText>
               </View>
@@ -301,20 +298,22 @@ export default function DriverDashboardScreen() {
 
             {/* Items Summary */}
             {activeJob.order.items && activeJob.order.items.length > 0 && (
-              <View className="mb-3">
-                <ThemedText type="smallBold" className="text-[13px] mb-1">
-                  Daftar Barang Bawaan:
+              <View className="">
+                <ThemedText className="font-semibold mb-1">
+                  Daftar Barang:
                 </ThemedText>
                 {activeJob.order.items.map((item) => (
                   <View key={item.id} className="flex-row items-center gap-2 mt-1">
                     <Package size={14} color={theme.textSecondary} />
-                    <ThemedText className="text-[13px]" themeColor="textSecondary">
+                    <ThemedText className="">
                       {item.productName} (x{item.quantity})
                     </ThemedText>
                   </View>
                 ))}
               </View>
             )}
+
+            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
 
             <Button
               label="Selesaikan Pengantaran"

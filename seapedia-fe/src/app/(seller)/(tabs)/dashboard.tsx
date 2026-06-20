@@ -122,10 +122,10 @@ export default function SellerDashboardScreen() {
               <Store size={36} color={theme.primary} />
             </View>
             <View className="ml-4 flex-1">
-              <ThemedText type="smallBold" className="text-[18px]">
+              <ThemedText type="large" className="text-[18px]">
                 Toko: {summary?.storeName}
               </ThemedText>
-              <ThemedText className="text-[13px]" themeColor="textSecondary">
+              <ThemedText type='smallBold' themeColor="textSecondary">
                 Pemilik: {user?.name} (@{user?.username})
               </ThemedText>
             </View>
@@ -155,7 +155,7 @@ export default function SellerDashboardScreen() {
                 <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6">
                   {summary?.totalProducts ?? 0}
                 </ThemedText>
-                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
+                <ThemedText type='small' className="mt-[2px]" themeColor="textSecondary">
                   Total Produk
                 </ThemedText>
               </View>
@@ -172,7 +172,7 @@ export default function SellerDashboardScreen() {
                 <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6">
                   {summary?.pendingOrders ?? 0}
                 </ThemedText>
-                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
+                <ThemedText type='small' className="mt-[2px]" themeColor="textSecondary">
                   Order Baru
                 </ThemedText>
               </View>
@@ -180,26 +180,28 @@ export default function SellerDashboardScreen() {
           </Pressable>
         </View>
 
-        {/* Sales Revenue Note (Calculated starting Level 6) */}
-        <Card className="p-4 mb-4">
-          <View className="flex-row items-center">
-            <Info size={20} color={theme.primary} />
-            <ThemedText type="smallBold" className="ml-2">
-              Informasi Finansial
+        {/* Sales Revenue */}
+        <Card className="flex-row items-center p-3 mb-4">
+          <View className="w-12 h-12 rounded-full items-center justify-center">
+            <ShoppingBag size={24} color={theme.success} />
+          </View>
+          <View className="ml-3 flex-1">
+            <ThemedText className="font-semibold" >
+              Pendapatan Penjualan
+            </ThemedText>
+            <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6 mt-1" style={{ color: theme.success }}>
+              {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(summary?.totalIncome ?? 0)}
             </ThemedText>
           </View>
-          <ThemedText className="text-[13px] leading-[18px] mt-2" themeColor="textSecondary">
-            {summary?.note || 'Data pendapatan penjualan toko nelayan Anda akan mulai dihitung secara real-time pada Level 6.'}
-          </ThemedText>
         </Card>
 
         {/* Store settings quick links */}
         <ThemedText type="smallBold" className="text-[14px] uppercase font-bold tracking-wider mb-2 mt-2">
           Navigasi Toko
         </ThemedText>
-        
+
         <Button
-          label="Kelola Daftar Produk Jualan"
+          label="Kelola Daftar Produk"
           leftIcon={<ShoppingBag size={20} color="#FFFFFF" />}
           onPress={() => router.push('/(seller)/(tabs)/products')}
           className="mb-3 h-[50px]"
@@ -222,6 +224,6 @@ export default function SellerDashboardScreen() {
           className="mt-2 h-[50px]"
         />
       </ScrollView>
-    </ThemedView>
+    </ThemedView >
   );
 }

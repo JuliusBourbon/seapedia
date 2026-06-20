@@ -47,25 +47,6 @@ export function Button({
 }: ButtonProps) {
   const theme = useTheme();
   const scale = useSharedValue(1);
-
-  const handlePressIn = () => {
-    if (!disabled && !loading) {
-      scale.value = withSpring(0.96, { damping: 10, stiffness: 300 });
-    }
-  };
-
-  const handlePressOut = () => {
-    if (!disabled && !loading) {
-      scale.value = withSpring(1, { damping: 10, stiffness: 300 });
-    }
-  };
-
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ scale: scale.value }],
-    };
-  });
-
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary':
@@ -73,7 +54,7 @@ export function Button({
       case 'secondary':
         return { container: 'bg-secondary', text: 'text-white' };
       case 'outline':
-        return { container: 'bg-transparent border-[1.5px] border-primary', text: 'text-primary' };
+        return { container: 'bg-transparent border border-primary', text: 'text-primary' };
       case 'danger':
         return { container: 'bg-danger', text: 'text-white' };
       case 'warning':
@@ -88,10 +69,10 @@ export function Button({
       case 'small':
         return { container: 'py-[6px] px-4 rounded-lg', text: 'text-[13px] font-semibold' };
       case 'large':
-        return { container: 'py-4 px-8 rounded-[14px]', text: 'text-[17px] font-bold' };
+        return { container: 'py-4 px-8 rounded-md', text: 'text-[17px] font-bold' };
       case 'medium':
       default:
-        return { container: 'py-3 px-6 rounded-xl', text: 'text-[15px] font-semibold' };
+        return { container: 'py-3 px-6 rounded-lg', text: 'text-[15px] font-semibold' };
     }
   };
 
@@ -101,12 +82,9 @@ export function Button({
   const isDisabled = disabled || loading;
 
   return (
-    <AnimatedPressable
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+    <Pressable
       disabled={isDisabled}
       className={`flex-row items-center justify-center gap-2 shadow-sm ${variantClass.container} ${sizeClass.container} ${isDisabled ? 'opacity-50' : ''} ${className || ''}`}
-      style={[style, animatedStyle]}
       {...props}
     >
       {!loading && leftIcon}
@@ -124,6 +102,6 @@ export function Button({
         </ThemedText>
       )}
       {!loading && rightIcon}
-    </AnimatedPressable>
+    </Pressable>
   );
 }

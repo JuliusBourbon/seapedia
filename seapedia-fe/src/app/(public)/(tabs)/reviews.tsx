@@ -131,7 +131,7 @@ export default function ApplicationReviewsScreen() {
         <Star
           key={i}
           size={size}
-          color={i <= rating ? theme.warning : theme.border}
+          color={i <= rating ? theme.warning : 'gray'}
           fill={i <= rating ? theme.warning : 'transparent'}
           style={{ marginRight: 2 }}
         />
@@ -147,7 +147,7 @@ export default function ApplicationReviewsScreen() {
         <Pressable key={i} onPress={() => setFormRating(i)} className="p-1">
           <Star
             size={36}
-            color={i <= formRating ? theme.warning : theme.border}
+            color={i <= formRating ? theme.warning : '#fff000'}
             fill={i <= formRating ? theme.warning : 'transparent'}
           />
         </Pressable>
@@ -206,7 +206,7 @@ export default function ApplicationReviewsScreen() {
             renderItem={renderReviewItem}
             keyExtractor={(item) => item.id}
             contentContainerClassName="p-4"
-            contentContainerStyle={{ paddingBottom: 136 + insets.bottom }}
+            contentContainerStyle={{ paddingBottom: 88 }}
             ListEmptyComponent={renderEmpty}
             refreshControl={
               <RefreshControl
@@ -218,12 +218,12 @@ export default function ApplicationReviewsScreen() {
             }
           />
 
-          <View className="absolute left-4 right-4" style={{ bottom: 68 + insets.bottom }}>
+          <View className="p-4">
             <Button
               label="Tulis Review"
               leftIcon={<MessageSquarePlus size={20} color="#FFFFFF" />}
               onPress={() => setModalVisible(true)}
-              className="rounded-full h-[52px] shadow-lg shadow-black/15 elevation-5"
+              className="rounded-full h-[52px] shadow-lg shadow-black/15"
             />
           </View>
         </View>
@@ -241,7 +241,7 @@ export default function ApplicationReviewsScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             className="w-full"
           >
-            <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[85%]">
+            <ThemedView type="backgroundElement" className="rounded-t-[24px]">
               <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
                 <ThemedText type="smallBold" className="text-lg">
                   Tulis Review Aplikasi
@@ -276,7 +276,6 @@ export default function ApplicationReviewsScreen() {
                   error={formErrors.comment}
                   multiline
                   numberOfLines={4}
-                  inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: 8 }}
                 />
 
                 <Button

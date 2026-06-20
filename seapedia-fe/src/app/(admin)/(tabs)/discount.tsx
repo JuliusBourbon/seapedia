@@ -25,7 +25,7 @@ import api from '@/services/api';
 
 interface DiscountItem {
   code: string;
-  type: 'PERCENTAGE' | 'FLAT';
+  type: 'PERCENTAGE' | 'FIXED';
   value: number;
   expiryDate: string;
   isActive: boolean;
@@ -49,7 +49,7 @@ export default function AdminDiscountScreen() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formType, setFormType] = useState<ModeTab>('VOUCHER');
   const [code, setCode] = useState('');
-  const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FLAT'>('PERCENTAGE');
+  const [discountType, setDiscountType] = useState<'PERCENTAGE' | 'FIXED'>('PERCENTAGE');
   const [value, setValue] = useState('');
   const [expiryDate, setExpiryDate] = useState('2026-12-31');
   const [usageLimit, setUsageLimit] = useState('100');
@@ -411,14 +411,14 @@ export default function AdminDiscountScreen() {
                 </Pressable>
 
                 <Pressable
-                  onPress={() => setDiscountType('FLAT')}
+                  onPress={() => setDiscountType('FIXED')}
                   className="flex-1 h-11 rounded-lg border-[1.5px] items-center justify-center"
                   style={[
                     { borderColor: 'rgba(0,0,0,0.15)' },
-                    discountType === 'FLAT' && { backgroundColor: theme.primary, borderColor: theme.primary },
+                    discountType === 'FIXED' && { backgroundColor: theme.primary, borderColor: theme.primary },
                   ]}
                 >
-                  <ThemedText className={`text-[13px] font-bold ${discountType === 'FLAT' ? 'text-white' : ''}`}>
+                  <ThemedText className={`text-[13px] font-bold ${discountType === 'FIXED' ? 'text-white' : ''}`}>
                     Nominal Flat (Rp)
                   </ThemedText>
                 </Pressable>

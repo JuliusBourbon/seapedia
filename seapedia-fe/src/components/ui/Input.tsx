@@ -56,9 +56,12 @@ export function Input({
   // Process error message
   const errorMsg = Array.isArray(error) ? error[0] : error;
 
-  let borderColorClass = 'border-border';
-  if (errorMsg) borderColorClass = 'border-danger';
-  else if (isFocused) borderColorClass = 'border-primary';
+  let borderColorClass = 'border-white/20';
+  if (errorMsg) {
+    borderColorClass = 'border-danger'
+  } else if (isFocused) {
+    borderColorClass = 'border-primary'
+  }
 
   return (
     <View style={containerStyle} className={`mb-4 self-stretch ${containerClasses || ''}`}>
@@ -72,16 +75,16 @@ export function Input({
         </ThemedText>
       )}
       <View
-        className={`flex-row items-center border-[1.5px] rounded-xl px-4 h-[52px] bg-backgroundElement ${borderColorClass}`}
+        className={`flex-row items-center border-[1px] rounded-xl px-4 h-[52px] bg-black-10 ${borderColorClass}`}
       >
         {leftIcon && <View className="mr-2 justify-center items-center">{leftIcon}</View>}
-        
+
         <TextInput
           placeholderTextColor={theme.placeholder}
           secureTextEntry={shouldHidePassword}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={`flex-1 h-full text-[15px] font-medium text-text p-0 ${inputClasses || ''}`}
+          className={`flex-1 h-full text-[15px] font-medium text-white p-0 ${inputClasses || ''}`}
           style={inputStyle}
           {...props}
         />
@@ -99,7 +102,7 @@ export function Input({
         )}
       </View>
       {errorMsg && (
-        <ThemedText className="text-xs font-semibold mt-1 text-danger">
+        <ThemedText type='smallBold' className="mt-1" style={{ color: theme.danger }}>
           {errorMsg}
         </ThemedText>
       )}

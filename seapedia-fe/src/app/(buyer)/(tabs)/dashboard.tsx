@@ -81,7 +81,6 @@ export default function BuyerDashboardScreen() {
           try {
             await api.post('/auth/logout');
           } catch (err) {
-            // Silently ignore logout API errors and clear auth locally anyway
           } finally {
             clearAuth();
             setLoggingOut(false);
@@ -161,32 +160,27 @@ export default function BuyerDashboardScreen() {
               className="mt-2"
             />
           )}
-        </Card>
 
-        {/* Wallet balance display */}
-        <Card className="mb-3 p-4">
-          <View className="flex-row justify-between items-center">
+          {/* Wallet */}
+          <View className="flex-row justify-between items-center mt-5">
             <View>
-              <ThemedText className="text-[12px] font-semibold uppercase tracking-wider" themeColor="textSecondary">
-                Saldo Dompet SEAPEDIA
+              <ThemedText className="text-[12px] font-semibold tracking-wider" themeColor="textSecondary">
+                Saldo Dompet
               </ThemedText>
               <ThemedText className="text-2xl font-black text-[#0D9488] mt-1">
                 {formattedBalance}
               </ThemedText>
             </View>
-            <View className="w-[52px] h-[52px] rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}20` }}>
-              <Wallet size={28} color={theme.primary} />
-            </View>
           </View>
           <Button
-            label="Kelola Dompet & Top-Up"
+            label="Top-Up Wallet"
             onPress={() => router.push('/(buyer)/wallet-history')}
             className="mt-3 h-11"
           />
         </Card>
 
         {/* Quick Stats Grid */}
-        <View className="flex-row gap-3 mb-4">
+        <View className="grid grid-cols-2 gap-2 mb-4">
           <Pressable
             className="flex-1"
             onPress={() => router.push('/(buyer)/(tabs)/orders')}
@@ -194,32 +188,32 @@ export default function BuyerDashboardScreen() {
             <Card className="flex-row items-center p-3">
               <ShoppingBag size={24} color={theme.primary} />
               <View className="ml-3 flex-1">
-                <ThemedText type="subtitle" className="text-xl font-extrabold leading-6">
+                <ThemedText type="subtitle" className="text-[18px]">
                   {summary?.activeOrders ?? 0}
                 </ThemedText>
-                <ThemedText className="text-xs mt-[2px]" themeColor="textSecondary">
+                <ThemedText className="mt-[2px]" themeColor="textSecondary">
                   Pesanan Aktif
                 </ThemedText>
               </View>
             </Card>
           </Pressable>
 
-          <Pressable
+          {/* <Pressable
             className="flex-1"
             onPress={() => router.push('/(buyer)/(tabs)/addresses')}
           >
             <Card className="flex-row items-center p-3">
               <MapPin size={24} color={theme.secondary} />
               <View className="ml-3 flex-1">
-                <ThemedText type="smallBold" className="text-[18px]">
-                  Kelola
+                <ThemedText type="subtitle" className="text-[18px]">
+                  Alamat
                 </ThemedText>
                 <ThemedText className="text-xs mt-[2px]" themeColor="textSecondary">
                   Buku Alamat
                 </ThemedText>
               </View>
             </Card>
-          </Pressable>
+          </Pressable> */}
         </View>
 
         {/* Recent Transactions List */}
@@ -234,13 +228,15 @@ export default function BuyerDashboardScreen() {
                 currency: 'IDR',
                 minimumFractionDigits: 0,
               }).format(tx.amount);
-              
+
               const isPositive = tx.type === 'TOPUP' || tx.type === 'REFUND';
 
               return (
                 <Card key={tx.id} className="flex-row justify-between items-center mb-2 p-3">
                   <View className="flex-row items-center flex-1">
-                    {getTxTypeBadge(tx.type)}
+                    <ThemedText>
+                      {getTxTypeBadge(tx.type)}
+                    </ThemedText>
                     <View className="ml-3 flex-1 pr-2">
                       <ThemedText type="smallBold" numberOfLines={1}>
                         {tx.description || 'Transaksi Dompet'}
@@ -269,14 +265,6 @@ export default function BuyerDashboardScreen() {
             </Card>
           )}
         </View>
-
-        {/* Quick Action Marketplace Catalog Link */}
-        <Button
-          label="Mulai Belanja di Pasar Laut"
-          leftIcon={<ShoppingBag size={20} color="#FFFFFF" />}
-          onPress={() => router.push('/(public)/(tabs)')}
-          className="mb-3 h-[50px]"
-        />
 
         {/* Logout Button */}
         <Button

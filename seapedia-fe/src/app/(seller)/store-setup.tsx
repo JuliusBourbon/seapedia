@@ -42,7 +42,7 @@ export default function StoreSetupScreen() {
     setLoading(true);
     try {
       const response = await api.post('/seller/store', { name, description });
-      
+
       if (response.data?.success) {
         Alert.alert(
           'Toko Dibuka',
@@ -100,14 +100,14 @@ export default function StoreSetupScreen() {
               Buka Toko Seapedia
             </ThemedText>
             <ThemedText className="text-sm text-center mt-1 px-4" themeColor="textSecondary">
-              Mulai jual hasil tangkapan laut segar Anda langsung ke pembeli maritim.
+              Mulai jual produkmu di Seapedia
             </ThemedText>
           </View>
 
           <View className="w-full">
             <Input
               label="Nama Toko"
-              placeholder="Contoh: Toko Nelayan Bahari"
+              placeholder="Contoh: Toko Jaya Abadi"
               value={name}
               onChangeText={setName}
               leftIcon={<Store size={20} color={theme.textSecondary} />}
@@ -116,12 +116,11 @@ export default function StoreSetupScreen() {
 
             <Input
               label="Deskripsi Toko (Opsional)"
-              placeholder="Jelaskan jenis hasil laut yang Anda pasarkan..."
+              placeholder="Jelaskan produk yang toko anda tawarkan"
               value={description}
               onChangeText={setDescription}
               multiline
               numberOfLines={4}
-              inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: 8 }}
             />
 
             <Button

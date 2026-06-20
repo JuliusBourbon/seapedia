@@ -53,15 +53,15 @@ export default function RootLayout() {
           segments[1] === 'register' ||
           (segments[1] === '(tabs)' && segments[2] === 'login');
 
-        if (inLoginOrRegister || inSelectRole) {
+        if (inLoginOrRegister) {
           if (activeRole === 'BUYER') {
-            router.replace('/(buyer)/(tabs)/dashboard' as any);
+            router.replace('/(public)/(tabs)');
           } else if (activeRole === 'SELLER') {
-            router.replace('/(seller)/dashboard' as any);
+            router.replace('/(seller)/(tabs)/dashboard');
           } else if (activeRole === 'DRIVER') {
-            router.replace('/(driver)/dashboard' as any);
+            router.replace('/(driver)/(tabs)/dashboard');
           } else if (activeRole === 'ADMIN') {
-            router.replace('/(admin)/dashboard' as any);
+            router.replace('/(admin)/(tabs)/dashboard');
           }
         }
       }

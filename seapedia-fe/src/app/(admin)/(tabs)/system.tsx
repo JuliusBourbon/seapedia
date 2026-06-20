@@ -9,7 +9,7 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import { Clock, ShieldAlert, CheckCircle2, Play, Calendar, AlertTriangle, User, Store } from 'lucide-react-native';
+import { Clock, ShieldAlert, CheckCircle2, Play, Calendar, AlertTriangle, User, Store, RefreshCcw } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -65,6 +65,7 @@ export default function AdminSystemScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [runningCheck, setRunningCheck] = useState(false);
   const [simulating, setSimulating] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   const fetchOverdueData = async () => {
     try {
@@ -94,7 +95,7 @@ export default function AdminSystemScreen() {
     try {
       const res = await api.post('/admin/overdue/run');
       if (res.data?.success) {
-        const count = res.data.data?.returnedCount ?? 0;
+        const count = res.data.data?.totalProcessed ?? 0;
         Alert.alert(
           'Checker Berhasil',
           `Pengecekan selesai. Sebanyak ${count} pesanan telah diidentifikasi melewati SLA dan otomatis statusnya diubah menjadi DIKEMBALIKAN (dana direfund ke wallet pembeli).`
@@ -122,8 +123,8 @@ export default function AdminSystemScreen() {
               const res = await api.post('/admin/simulate-next-day');
               if (res.data?.success) {
                 const checkResult = res.data.data?.overdueCheck || {};
-                const returnedCount = checkResult.returnedCount ?? 0;
-                
+                const returnedCount = checkResult.totalProcessed ?? 0;
+
                 Alert.alert(
                   'Simulasi Sukses',
                   `Waktu dimajukan +24 Jam.\n\nHasil Pengecekan SLA:\n- ${returnedCount} order diproses kedaluwarsa (dana dikembalikan ke buyer, stok produk dipulihkan).`
@@ -134,6 +135,34 @@ export default function AdminSystemScreen() {
               Alert.alert('Gagal', err.response?.data?.message || 'Gagal memajukan waktu simulasi.');
             } finally {
               setSimulating(false);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleSimulateReset = async () => {
+    Alert.alert(
+      'Reset Simulasi Waktu',
+      'Apakah Anda yakin ingin mengembalikan waktu simulasi ke waktu nyata? Ini tidak akan membatalkan order yang sudah terlanjur dioverdue.',
+      [
+        { text: 'Batal', style: 'cancel' },
+        {
+          text: 'Ya, Reset',
+          style: 'destructive',
+          onPress: async () => {
+            setResetting(true);
+            try {
+              const res = await api.post('/admin/simulate-reset');
+              if (res.data?.success) {
+                Alert.alert('Sukses', 'Waktu simulasi berhasil di-reset ke waktu nyata.');
+                fetchOverdueData();
+              }
+            } catch (err: any) {
+              Alert.alert('Gagal', err.response?.data?.message || 'Gagal mereset waktu simulasi.');
+            } finally {
+              setResetting(false);
             }
           },
         },
@@ -162,13 +191,13 @@ export default function AdminSystemScreen() {
 
   const simulatedTimeFormatted = data?.currentSimulatedTime
     ? new Date(data.currentSimulatedTime).toLocaleString('id-ID', {
-        weekday: 'long',
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      })
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
     : 'Tidak diketahui';
 
   return (
@@ -215,6 +244,15 @@ export default function AdminSystemScreen() {
               style={{ flex: 0.8 }}
             />
           </View>
+          <Button
+            label="Reset Ke Waktu Nyata"
+            variant="danger"
+            size="small"
+            loading={resetting}
+            leftIcon={<RefreshCcw size={16} color="#FFFFFF" />}
+            onPress={handleSimulateReset}
+            className="mt-2"
+          />
         </Card>
 
         {/* SLA Rules display */}
@@ -301,11 +339,15 @@ export default function AdminSystemScreen() {
         ) : (
           data?.returnedOrders.map((item) => (
             <Card key={item.id} className="mb-2 p-4">
-              <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
-                <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
-                  ID: {item.id}
-                </ThemedText>
-                <Badge label="Dikembalikan" variant="neutral" />
+              <View className="flex-row gap-2 justify-between items-center border-b border-black/5 pb-2 mb-2">
+                <View className='flex-1'>
+                  <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
+                    ID: {item.id}
+                  </ThemedText>
+                </View>
+                <View className='flex-shrink'>
+                  <Badge label="Dikembalikan" variant="neutral" />
+                </View>
               </View>
 
               <View className="gap-1.5">

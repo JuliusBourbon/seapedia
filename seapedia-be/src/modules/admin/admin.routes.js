@@ -17,5 +17,6 @@ router.get('/overdue', authenticate, requireActiveRole('ADMIN'), controller.getO
 // Overdue handling triggers
 router.post('/overdue/run', authenticate, requireActiveRole('ADMIN'), controller.runOverdue);
 router.post('/simulate-next-day', authenticate, requireActiveRole('ADMIN'), controller.simulateNextDay);
+router.post('/simulate-reset', authenticate, requireActiveRole('ADMIN'), controller.simulateReset);
 
 module.exports = router;

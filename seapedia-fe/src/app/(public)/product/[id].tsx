@@ -101,7 +101,6 @@ export default function ProductDetailScreen() {
       }
     } catch (err: any) {
       if (err.response?.status === 409) {
-        // Single store checkout rule conflict!
         Alert.alert(
           'Konflik Keranjang',
           'Keranjang Anda berisi produk dari toko lain. Kosongkan keranjang untuk membeli produk dari toko ini?',
@@ -139,7 +138,7 @@ export default function ProductDetailScreen() {
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
         <ThemedText className="mt-4 text-textSecondary">
-          Memuat rincian tangkapan laut...
+          Memuat rincian produk...
         </ThemedText>
       </ThemedView>
     );
@@ -166,56 +165,40 @@ export default function ProductDetailScreen() {
   return (
     <ThemedView className="flex-1">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}>
-        {/* Product Visual Header */}
-        <LinearGradient
-          colors={['#0D9488', '#0EA5E9', '#3B82F6']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          className="h-[220px] items-center justify-center relative"
-        >
-          <ShoppingBag size={64} color="#FFFFFF" opacity={0.7} />
-          {product.stock === 0 ? (
-            <Badge label="Stok Habis" variant="danger" className="absolute bottom-4 left-4" />
-          ) : product.stock <= 5 ? (
-            <Badge label={`Sisa ${product.stock}`} variant="warning" className="absolute bottom-4 left-4" />
-          ) : (
-            <Badge label="Tersedia" variant="success" className="absolute bottom-4 left-4" />
-          )}
-        </LinearGradient>
-
         <View className="p-4">
-          {/* Price and Title */}
-          <ThemedText className="text-[26px] font-black text-[#0D9488] mb-1">
-            {formattedPrice}
-          </ThemedText>
-          <ThemedText type="subtitle" className="text-[22px] font-extrabold leading-7">
+          <ThemedText type="subtitle">
             {product.name}
           </ThemedText>
 
-          {/* Divider */}
-          <View className="h-[1.5px] my-4 bg-border" />
-
-          {/* Description */}
-          <View className="w-full">
-            <ThemedText type="smallBold" className="text-xs uppercase font-bold tracking-wider mb-2" themeColor="textSecondary">
-              Deskripsi Produk
-            </ThemedText>
-            <ThemedText className="text-[15px] leading-[22px]">
+          <View className="w-full mb-10">
+            <ThemedText type='small' className=''>
               {product.description || 'Tidak ada deskripsi produk.'}
             </ThemedText>
           </View>
 
+          <View className="flex-row items-center gap-3">
+            <ThemedText type='large'>
+              {formattedPrice}
+            </ThemedText>
+            <ThemedText type='large'>
+              {product.stock === 0 ? (
+                <Badge label="Stok Habis" variant="danger" />
+              ) : product.stock <= 5 ? (
+                <Badge label={`Tersedia ${product.stock}`} variant="warning" />
+              ) : (
+                <Badge label={`Tersedia ${product.stock}`} variant="success" />
+              )}
+            </ThemedText>
+          </View>
+
           {/* Divider */}
-          <View className="h-[1.5px] my-4 bg-border" />
+          <View className="h-[1.5px] my-4 bg-white/20" />
 
           {/* Store Info Card */}
           <View className="w-full">
-            <ThemedText type="smallBold" className="text-xs uppercase font-bold tracking-wider mb-2" themeColor="textSecondary">
-              Informasi Toko
-            </ThemedText>
             <Pressable onPress={() => router.push(`/(public)/store/${product.store.id}` as any)}>
-              <Card className="flex-row items-center p-3 rounded-xl mt-1 border border-border">
-                <View 
+              <Card className="flex-row items-center p-3 rounded-xl mt-1 border border-white/20">
+                <View
                   className="w-12 h-12 rounded-xl items-center justify-center"
                   style={{ backgroundColor: `${theme.primary}15` }}
                 >
@@ -238,7 +221,7 @@ export default function ProductDetailScreen() {
       {/* Sticky Bottom Actions */}
       <ThemedView
         type="backgroundElement"
-        className="absolute bottom-0 left-0 right-0 flex-row items-center p-4 border-t border-border"
+        className="absolute bottom-0 left-0 right-0 flex-row items-center p-4 border-t border-white/20"
         style={{
           height: 80 + insets.bottom,
           paddingBottom: 16 + insets.bottom,
@@ -248,29 +231,29 @@ export default function ProductDetailScreen() {
           <View className="flex-row items-center mr-4 gap-3">
             <Pressable
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-8 h-8 rounded-lg border-[1.5px] border-border items-center justify-center active:opacity-70"
+              className="w-8 h-8 rounded-lg border-[1.5px] border-white/20 items-center justify-center active:opacity-70"
             >
               <ThemedText className="text-lg font-bold">-</ThemedText>
             </Pressable>
             <ThemedText className="text-base font-bold w-5 text-center">{quantity}</ThemedText>
             <Pressable
               onPress={() => setQuantity(Math.min(product.stock, quantity + 1))}
-              className="w-8 h-8 rounded-lg border-[1.5px] border-border items-center justify-center active:opacity-70"
+              className="w-8 h-8 rounded-lg border-[1.5px] border-white/20 items-center justify-center active:opacity-70"
             >
               <ThemedText className="text-lg font-bold">+</ThemedText>
             </Pressable>
           </View>
         )}
-        
+
         <Button
           label={
             !isAuthenticated
               ? 'Login untuk Membeli'
               : activeRole !== 'BUYER'
-              ? 'Peran Pembeli Diperlukan'
-              : product.stock === 0
-              ? 'Stok Habis'
-              : 'Tambah ke Keranjang'
+                ? 'Peran Pembeli Diperlukan'
+                : product.stock === 0
+                  ? 'Stok Habis'
+                  : 'Tambah ke Keranjang'
           }
           onPress={handleAddToCart}
           loading={addingToCart}

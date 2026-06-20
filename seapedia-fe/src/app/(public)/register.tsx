@@ -46,7 +46,7 @@ export default function RegisterScreen() {
     const tempErrors: Record<string, string> = {};
     if (!u) tempErrors.username = 'Username wajib diisi';
     else if (u.length < 3) tempErrors.username = 'Username minimal 3 karakter';
-    
+
     if (!e) tempErrors.email = 'Email wajib diisi';
     else if (!/\S+@\S+\.\S+/.test(e)) tempErrors.email = 'Format email tidak valid';
 
@@ -64,13 +64,11 @@ export default function RegisterScreen() {
   };
 
   const handleRegister = async () => {
-    // Sanitasi input sisi klien
     const cleanUsername = username.trim().toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 20);
     const cleanName = name.trim().slice(0, 50);
     const cleanEmail = email.trim().slice(0, 100);
     const cleanPassword = password.trim().slice(0, 50);
 
-    // Update state agar sinkron dengan UI
     setUsername(cleanUsername);
     setName(cleanName);
     setEmail(cleanEmail);
@@ -99,10 +97,9 @@ export default function RegisterScreen() {
       }
     } catch (err: any) {
       if (err.response?.data?.errors) {
-        // Map backend errors
         const beErrors: Record<string, string> = {};
         const errorsData = err.response.data.errors;
-        
+
         if (typeof errorsData === 'object' && errorsData !== null) {
           Object.keys(errorsData).forEach((key) => {
             const val = errorsData[key];
@@ -126,7 +123,7 @@ export default function RegisterScreen() {
     return (
       <Pressable
         onPress={() => toggleRole(role)}
-        className={`flex-row items-center border-[1.5px] rounded-xl p-4 mb-2 ${isSelected ? 'border-primary' : 'border-border'} bg-backgroundElement`}
+        className={`flex-row items-center border-[1.5px] rounded-xl p-4 mb-2 ${isSelected ? 'border-primary' : 'border-textSecondary'}`}
       >
         {isSelected ? (
           <CheckSquare size={24} color={theme.primary} />
@@ -157,7 +154,7 @@ export default function RegisterScreen() {
               Daftar Akun Baru
             </ThemedText>
             <ThemedText className="text-sm text-center mt-1" themeColor="textSecondary">
-              Bergabunglah dengan SEAPEDIA dan pilih peran Anda
+              Bergabunglah dengan SEAPEDIA
             </ThemedText>
           </View>
 
@@ -207,7 +204,7 @@ export default function RegisterScreen() {
               <ThemedText type="smallBold" className="mb-2 text-textSecondary">
                 Pilih Peran Akun (Dapat memilih lebih dari satu)
               </ThemedText>
-              
+
               {renderRoleCheckbox(
                 'BUYER',
                 'Pembeli (Buyer)',
@@ -242,7 +239,7 @@ export default function RegisterScreen() {
                 Sudah memiliki akun?{' '}
               </ThemedText>
               <Pressable onPress={() => router.replace('/(public)/(tabs)/login')}>
-                <ThemedText className="text-primary font-bold">
+                <ThemedText themeColor="primary" className="font-bold">
                   Masuk di sini
                 </ThemedText>
               </Pressable>

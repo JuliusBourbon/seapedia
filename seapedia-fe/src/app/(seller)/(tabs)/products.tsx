@@ -47,7 +47,7 @@ export default function SellerProductsScreen() {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
-  
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -97,7 +97,7 @@ export default function SellerProductsScreen() {
   const validateForm = (nm: string, prc: string, stk: string) => {
     const tempErrors: Record<string, string> = {};
     if (!nm) tempErrors.name = 'Nama produk wajib diisi';
-    
+
     const priceNum = Number(prc);
     if (!prc) {
       tempErrors.price = 'Harga wajib diisi';
@@ -278,7 +278,7 @@ export default function SellerProductsScreen() {
         renderItem={renderProductItem}
         keyExtractor={(item) => item.id}
         contentContainerClassName="p-4 pb-20"
-        contentContainerStyle={{ paddingBottom: 136 + insets.bottom }}
+        contentContainerStyle={{ paddingBottom: 88 }}
         ListEmptyComponent={renderEmpty}
         refreshControl={
           <RefreshControl
@@ -290,7 +290,7 @@ export default function SellerProductsScreen() {
         }
       />
 
-      <View className="absolute left-4 right-4" style={{ bottom: 68 + insets.bottom }}>
+      <View className="absolute left-4 right-4" style={{ bottom: 20 }}>
         <Button
           label="Tambah Produk Baru"
           leftIcon={<Plus size={20} color="#FFFFFF" />}
@@ -311,7 +311,7 @@ export default function SellerProductsScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ width: '100%' }}
           >
-            <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[85%]">
+            <ThemedView type="backgroundElement" className="rounded-t-[24px]">
               <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
                 <ThemedText type="smallBold" className="text-[18px]">
                   {editingProduct ? 'Ubah Informasi Produk' : 'Tambah Produk Baru'}
@@ -359,11 +359,10 @@ export default function SellerProductsScreen() {
                   error={errors.description}
                   multiline
                   numberOfLines={4}
-                  inputStyle={{ height: 100, textAlignVertical: 'top', paddingTop: 8 }}
                 />
 
                 <Button
-                  label={editingProduct ? 'Simpan Perubahan' : 'Publish Produk Jualan'}
+                  label={editingProduct ? 'Simpan Perubahan' : 'Tambah Produk'}
                   onPress={handleSaveProduct}
                   loading={submitting}
                   className="mt-3"

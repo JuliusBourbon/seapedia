@@ -18,9 +18,9 @@ export function Badge({ label, variant = 'neutral', style, textStyle, className,
     switch (variant) {
       case 'primary': return { container: 'bg-primary/10', text: 'text-primary' };
       case 'secondary': return { container: 'bg-secondary/10', text: 'text-secondary' };
-      case 'success': return { container: 'bg-success/10', text: 'text-success' };
-      case 'danger': return { container: 'bg-danger/10', text: 'text-danger' };
-      case 'warning': return { container: 'bg-warning/10', text: 'text-warning' };
+      case 'success': return { container: 'bg-primary/40', text: 'text-success' };
+      case 'danger': return { container: 'bg-red-500/50', text: 'text-danger' };
+      case 'warning': return { container: 'bg-yellow-500/50', text: 'text-warning' };
       case 'neutral':
       default: return { container: 'bg-textSecondary/10', text: 'text-textSecondary' };
     }
@@ -29,13 +29,14 @@ export function Badge({ label, variant = 'neutral', style, textStyle, className,
   const badgeClass = getVariantClasses();
 
   return (
-    <View 
+    <View
       style={style}
-      className={`py-[2px] px-[10px] rounded-full self-start items-center justify-center ${badgeClass.container} ${className || ''}`}
+      className={`py-[2px] px-[10px] rounded-md self-start items-center justify-center ${badgeClass.container} ${className || ''}`}
     >
-      <ThemedText 
+      <ThemedText
+        type='small'
         style={textStyle}
-        className={`text-[11px] font-bold uppercase ${badgeClass.text} ${textClasses || ''}`}
+        className={`font-bold uppercase text-center ${badgeClass.text} ${textClasses || ''}`}
       >
         {label}
       </ThemedText>

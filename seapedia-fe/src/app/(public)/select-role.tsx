@@ -26,10 +26,10 @@ export default function SelectRoleScreen() {
     setLoading(true);
     try {
       const response = await api.post('/auth/select-role', { role: selectedRole });
-      
+
       if (response.data?.success) {
         const { token, activeRole, roles: updatedRoles } = response.data.data;
-        
+
         // Save final credentials
         setAuth(token, activeRole, updatedRoles);
 
@@ -41,6 +41,17 @@ export default function SelectRoleScreen() {
           }
         } catch (profileErr) {
           // Profile fetch failed but auth succeeded
+        }
+
+        // Navigate based on selected role
+        if (activeRole === 'BUYER') {
+          router.replace('/(public)/(tabs)');
+        } else if (activeRole === 'SELLER') {
+          router.replace('/(seller)/(tabs)/dashboard');
+        } else if (activeRole === 'DRIVER') {
+          router.replace('/(driver)/(tabs)/dashboard');
+        } else if (activeRole === 'ADMIN') {
+          router.replace('/(admin)/(tabs)/dashboard');
         }
       }
     } catch (err: any) {
@@ -89,10 +100,9 @@ export default function SelectRoleScreen() {
     return (
       <Pressable key={role} onPress={() => setSelectedRole(role)}>
         <Card
-          variant={isSelected ? 'glass' : 'default'}
-          className={`flex-row items-center p-4 border-[1.5px] rounded-2xl ${isSelected ? 'border-primary bg-primary' : 'border-border bg-backgroundElement'}`}
+          className={`flex-row items-center p-4 border-[1.5px] rounded-2xl ${isSelected ? 'border-primary bg-primary' : 'border-border'}`}
         >
-          <View 
+          <View
             className="w-[52px] h-[52px] rounded-xl items-center justify-center"
             style={{ backgroundColor: isSelected ? 'rgba(255, 255, 255, 0.2)' : `${theme.primary}15` }}
           >
@@ -141,7 +151,7 @@ export default function SelectRoleScreen() {
             disabled={!selectedRole}
             className="w-full h-[52px]"
           />
-          
+
           <Pressable
             onPress={() => {
               clearAuth();

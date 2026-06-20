@@ -1,61 +1,50 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
-import { BarChart3, Percent, Settings } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform } from 'react-native';
+import { useState } from 'react';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { AdminNavBar } from '@/components/admin-nav-bar';
 
 export default function AdminTabsLayout() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const [profileVisible, setProfileVisible] = useState(false);
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: theme.primary,
-        tabBarInactiveTintColor: theme.textSecondary,
-        tabBarStyle: {
-          backgroundColor: theme.backgroundElement,
-          borderTopWidth: 1,
-          borderTopColor: theme.border,
-          height: Platform.OS === 'android' ? 65 : 60 + insets.bottom,
-          paddingBottom: Platform.OS === 'android' ? 10 : Math.max(insets.bottom, 8),
-          paddingTop: 8,
-        },
-        headerStyle: {
-          backgroundColor: theme.backgroundElement,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.border,
-        },
-        headerTintColor: theme.text,
-        headerTitleStyle: {
-          fontWeight: '700',
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: 'Dasbor Admin',
-          tabBarLabel: 'Dasbor',
-          tabBarIcon: ({ color, size }) => <BarChart3 size={size} color={color} />,
-        }}
+    <>
+      <ProfileDropdown
+        visible={profileVisible}
+        onClose={() => setProfileVisible(false)}
+        role="ADMIN"
       />
-      <Tabs.Screen
-        name="discount"
-        options={{
-          title: 'Kelola Diskon',
-          tabBarLabel: 'Diskon',
-          tabBarIcon: ({ color, size }) => <Percent size={size} color={color} />,
+      <Tabs
+        backBehavior="none"
+        tabBar={() => (
+          <AdminNavBar onProfilePress={() => setProfileVisible(true)} />
+        )}
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: theme.backgroundElement,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.border,
+          },
+          headerTintColor: theme.text,
+          headerTitleStyle: {
+            fontWeight: '700',
+          },
         }}
-      />
-      <Tabs.Screen
-        name="system"
-        options={{
-          title: 'Sistem & Simulasi',
-          tabBarLabel: 'Sistem',
-          tabBarIcon: ({ color, size }) => <Settings size={size} color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="dashboard"
+          options={{ title: 'Dasbor Admin' }}
+        />
+        <Tabs.Screen
+          name="discount"
+          options={{ title: 'Voucher' }}
+        />
+        <Tabs.Screen
+          name="system"
+          options={{ title: 'Sistem & Simulasi' }}
+        />
+      </Tabs>
+    </>
   );
 }

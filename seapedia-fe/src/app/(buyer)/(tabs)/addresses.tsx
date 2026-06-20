@@ -13,7 +13,7 @@ import {
   ScrollView,
   Switch,
 } from 'react-native';
-import { MapPin, Plus, Edit2, Trash2, X, Check } from 'lucide-react-native';
+import { MapPin, Plus, Edit2, Trash2, X, Check, ChevronDown } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -54,7 +54,7 @@ export default function AddressManagementScreen() {
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [isDefault, setIsDefault] = useState(false);
-  
+  const [isLabelDropdownOpen, setIsLabelDropdownOpen] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -89,7 +89,8 @@ export default function AddressManagementScreen() {
     setFullAddress('');
     setCity('');
     setPostalCode('');
-    setIsDefault(addresses.length === 0); // Force true if first address
+    setIsDefault(addresses.length === 0);
+    setIsLabelDropdownOpen(false);
     setErrors({});
     setModalVisible(true);
   };
@@ -103,6 +104,7 @@ export default function AddressManagementScreen() {
     setCity(addr.city);
     setPostalCode(addr.postalCode);
     setIsDefault(addr.isDefault);
+    setIsLabelDropdownOpen(false);
     setErrors({});
     setModalVisible(true);
   };
@@ -111,7 +113,7 @@ export default function AddressManagementScreen() {
     const tempErrors: Record<string, string> = {};
     if (!lbl) tempErrors.label = 'Label alamat wajib diisi (misal: Rumah)';
     if (!rec) tempErrors.recipientName = 'Nama penerima wajib diisi';
-    
+
     if (!phone) {
       tempErrors.phoneNumber = 'No telepon wajib diisi';
     } else if (phone.length < 9 || phone.length > 15) {
@@ -325,7 +327,7 @@ export default function AddressManagementScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ width: '100%' }}
           >
-            <ThemedView type="backgroundElement" className="rounded-t-[24px] max-h-[85%]">
+            <ThemedView type="backgroundElement" className="rounded-t-[24px]">
               <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
                 <ThemedText type="smallBold" className="text-[18px]">
                   {editingAddress ? 'Ubah Alamat' : 'Tambah Alamat Baru'}
@@ -336,13 +338,42 @@ export default function AddressManagementScreen() {
               </View>
 
               <ScrollView contentContainerClassName="p-4 pb-6">
-                <Input
-                  label="Label Alamat"
-                  placeholder="Contoh: Rumah, Kantor, Kosan"
-                  value={label}
-                  onChangeText={setLabel}
-                  error={errors.label}
-                />
+                <View className="mb-4">
+                  <ThemedText className="text-[13px] font-semibold mb-[6px]">Label Alamat</ThemedText>
+                  <Pressable
+                    onPress={() => setIsLabelDropdownOpen(!isLabelDropdownOpen)}
+                    className="flex-row items-center justify-between px-4 rounded-xl border border-black/10 dark:border-white/10"
+                    style={{ backgroundColor: `${theme.text}05`, height: 48 }}
+                  >
+                    <ThemedText style={{ color: label ? theme.text : theme.textSecondary }}>
+                      {label || 'Pilih Label Alamat'}
+                    </ThemedText>
+                    <ChevronDown size={20} color={theme.textSecondary} />
+                  </Pressable>
+                  {errors.label && (
+                    <ThemedText className="text-[12px] mt-1" themeColor="danger">
+                      {errors.label}
+                    </ThemedText>
+                  )}
+                  {isLabelDropdownOpen && (
+                    <View className="mt-2 rounded-xl border border-black/10 dark:border-white/10 overflow-hidden" style={{ backgroundColor: theme.backgroundElement }}>
+                      {['Rumah', 'Kantor', 'Kosan', 'Apartemen', 'Toko'].map((item) => (
+                        <Pressable
+                          key={item}
+                          onPress={() => {
+                            setLabel(item);
+                            setIsLabelDropdownOpen(false);
+                            if (errors.label) setErrors((prev) => ({ ...prev, label: '' }));
+                          }}
+                          className="px-4 py-3 border-b border-black/5 dark:border-white/5 flex-row justify-between items-center"
+                        >
+                          <ThemedText>{item}</ThemedText>
+                          {label === item && <Check size={16} color={theme.primary} />}
+                        </Pressable>
+                      ))}
+                    </View>
+                  )}
+                </View>
 
                 <Input
                   label="Nama Penerima"
@@ -369,7 +400,6 @@ export default function AddressManagementScreen() {
                   error={errors.fullAddress}
                   multiline
                   numberOfLines={3}
-                  inputStyle={{ height: 80, textAlignVertical: 'top', paddingTop: 8 }}
                 />
 
                 <View className="flex-row justify-between">
@@ -396,7 +426,7 @@ export default function AddressManagementScreen() {
                 {addresses.length > 0 && (!editingAddress || !editingAddress.isDefault) && (
                   <View className="flex-row items-center my-2 py-2 border-t border-b border-black/5 dark:border-white/5">
                     <View className="flex-1">
-                      <ThemedText type="smallBold">Jadikan Alamat Default</ThemedText>
+                      <ThemedText type="smallBold">Jadikan Alamat Utama</ThemedText>
                       <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
                         Gunakan alamat ini sebagai tujuan utama saat checkout.
                       </ThemedText>

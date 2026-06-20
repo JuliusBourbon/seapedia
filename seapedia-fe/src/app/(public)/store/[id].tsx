@@ -62,26 +62,20 @@ export default function StoreDetailScreen() {
   const renderHeader = () => {
     if (!store) return null;
     return (
-      <View className="w-full pb-2">
-        <LinearGradient
-          colors={['#0F766E', '#0D9488']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          className="flex-row items-center py-6 px-4 rounded-b-[20px] mb-3"
-        >
-          <View className="w-[60px] h-[60px] rounded-full items-center justify-center bg-white/20">
-            <Store size={36} color="#FFFFFF" />
-          </View>
-          <View className="flex-1 ml-4">
+      <View className='bg-white/5 mb-4'>
+        <View className="w-full px-4 py-4 flex-row items-center gap-4">
+          <Store size={36} color="#FFFFFF" />
+          <View className="flex-1">
             <ThemedText className="text-white text-xl font-extrabold">{store.name}</ThemedText>
             <ThemedText className="text-white/85 text-[13px] mt-[2px]">
               {store.description || 'Nelayan / Toko Maritim Terpercaya'}
             </ThemedText>
           </View>
-        </LinearGradient>
 
-        <View className="px-4 py-2">
-          <ThemedText type="smallBold" className="text-base">
+        </View>
+
+        <View className="px-4 pb-4 flex items-end">
+          <ThemedText className='font-semibold'>
             Produk Toko ({store.products?.length || 0})
           </ThemedText>
         </View>

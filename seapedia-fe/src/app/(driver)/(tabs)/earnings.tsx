@@ -91,12 +91,12 @@ export default function DriverEarningsScreen() {
   const renderHistoryItem = ({ item }: { item: CompletedJob }) => {
     const formattedDate = item.completedAt
       ? new Date(item.completedAt).toLocaleDateString('id-ID', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
       : 'Selesai';
 
     return (
@@ -104,11 +104,11 @@ export default function DriverEarningsScreen() {
         <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
           <View className="flex-row items-center gap-2">
             <ShieldCheck size={16} color={theme.success} />
-            <ThemedText type="smallBold" className="text-[13px]" themeColor="success">
+            <ThemedText className="font-semibold" themeColor="success">
               Pengiriman Selesai
             </ThemedText>
           </View>
-          <ThemedText className="font-extrabold text-[#10B981] text-[15px]">
+          <ThemedText className="font-extrabold">
             +{formatCurrency(item.earning)}
           </ThemedText>
         </View>
@@ -116,26 +116,26 @@ export default function DriverEarningsScreen() {
         <View className="gap-2">
           <View className="flex-row items-center gap-2">
             <Store size={14} color={theme.textSecondary} />
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
+            <ThemedText type='small' className="" themeColor="textSecondary">
               Pickup: {item.order.store.name}
             </ThemedText>
           </View>
 
           <View className="flex-row items-center gap-2">
             <MapPin size={14} color={theme.textSecondary} />
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
+            <ThemedText type='small' className="" themeColor="textSecondary">
               Tujuan: {item.order.address.recipientName} ({item.order.address.city})
             </ThemedText>
           </View>
 
           <View className="flex-row items-center gap-2">
             <Calendar size={14} color={theme.textSecondary} />
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
+            <ThemedText type='small' className="" themeColor="textSecondary">
               Waktu Selesai: {formattedDate}
             </ThemedText>
           </View>
 
-          <ThemedText className="text-[10px] font-mono mt-1" themeColor="textSecondary">
+          <ThemedText type='small' className="font-mono mt-1" themeColor="textSecondary">
             ID Job: {item.id}
           </ThemedText>
         </View>
@@ -169,32 +169,32 @@ export default function DriverEarningsScreen() {
   return (
     <ThemedView className="flex-1">
       {/* Earnings Overview Header */}
-      <View className="flex-row items-center py-4 px-4 border-b shadow-sm elevation-2" style={{ backgroundColor: theme.backgroundElement, borderBottomColor: theme.border }}>
-        <View className="flex-[1.3] flex-row items-center gap-3">
+      <View className="flex-col py-4 px-4 border-b shadow-sm gap-4" style={{ backgroundColor: theme.backgroundElement, borderBottomColor: theme.border }}>
+        <Card className="flex flex-row items-center gap-3">
           <Wallet size={28} color={theme.primary} />
-          <View className="gap-[2px]">
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
-              Akumulasi Saldo Mitra
+          <View className="flex-col">
+            <ThemedText className="" themeColor="textSecondary">
+              Akumulasi Saldo
             </ThemedText>
-            <ThemedText type="title" className="text-[20px] font-black text-[#0D9488]">
+            <ThemedText type="extraLarge" className="text-[20px] font-black text-[#0D9488]">
               {formatCurrency(summary?.totalEarnings ?? 0)}
             </ThemedText>
           </View>
-        </View>
+        </Card>
 
-        <View className="w-[1.5px] h-10 mx-2" style={{ backgroundColor: theme.border }} />
+        {/* <View className="w-[1.5px] h-10 mx-2" style={{ backgroundColor: theme.border }} /> */}
 
-        <View className="flex-[0.8] flex-row items-center gap-3 pl-2">
+        <Card className="flex flex-row items-center gap-3">
           <CheckCircle2 size={28} color={theme.success} />
           <View className="gap-[2px]">
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
-              Total Order
+            <ThemedText className="" themeColor="textSecondary">
+              Total Order Selesai
             </ThemedText>
-            <ThemedText type="subtitle" className="text-[16px] font-extrabold">
+            <ThemedText type="extraLarge" className="font-extrabold">
               {summary?.totalCompletedJobs ?? 0} Job
             </ThemedText>
           </View>
-        </View>
+        </Card>
       </View>
 
       <FlatList

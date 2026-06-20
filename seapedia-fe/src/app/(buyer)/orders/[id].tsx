@@ -179,16 +179,18 @@ export default function BuyerOrderDetailScreen() {
       >
         {/* Order Status Header Card */}
         <Card className="p-4">
-          <View className="flex-row justify-between items-center">
-            <View>
-              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
+          <View className="flex-row justify-between items-start gap-2">
+            <View className="flex-1">
+              <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
                 ID Pesanan:
               </ThemedText>
-              <ThemedText className="text-[13px] font-extrabold font-mono mt-[2px]">
+              <ThemedText className="font-mono mt-[2px]">
                 {order.id}
               </ThemedText>
             </View>
-            {getStatusBadge(order.status)}
+            <View className="flex-shrink items-end">
+              {getStatusBadge(order.status)}
+            </View>
           </View>
           <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
           <View className="flex-row items-center">

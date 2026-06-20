@@ -209,7 +209,7 @@ export default function SellerOrderDetailScreen() {
   return (
     <ThemedView className="flex-1">
       <ScrollView
-        contentContainerClassName="p-4 pb-5 gap-3"
+        contentContainerClassName="p-4 pb-20 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -221,16 +221,18 @@ export default function SellerOrderDetailScreen() {
       >
         {/* Order Status Header Card */}
         <Card className="p-4">
-          <View className="flex-row justify-between items-center">
-            <View>
+          <View className="flex-row justify-between items-start gap-2">
+            <View className="flex-1">
               <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
                 ID Pesanan:
               </ThemedText>
-              <ThemedText className="text-[13px] font-extrabold font-mono mt-[2px]">
+              <ThemedText className="font-mono mt-[2px]">
                 {order.id}
               </ThemedText>
             </View>
-            {getStatusBadge(order.status)}
+            <View className="flex-shrink items-end">
+              {getStatusBadge(order.status)}
+            </View>
           </View>
           <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
           <View className="flex-row items-center">
@@ -332,11 +334,11 @@ export default function SellerOrderDetailScreen() {
                   <ThemedText type="smallBold" className="text-[14px]">
                     {item.productName}
                   </ThemedText>
-                  <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
+                  <ThemedText className="mt-[2px]" themeColor="textSecondary">
                     {item.quantity} x {formatCurrency(item.price)}
                   </ThemedText>
                 </View>
-                <ThemedText type="smallBold" className="text-[14px] font-bold">
+                <ThemedText type="large" className="font-bold">
                   {formatCurrency(item.subtotal)}
                 </ThemedText>
               </View>
@@ -345,14 +347,14 @@ export default function SellerOrderDetailScreen() {
         </Card>
 
         {/* Financial billing details */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
+        <ThemedText type="smallBold" className="uppercase font-bold tracking-wider mb-1 mt-2">
           Rincian Transaksi Keuangan
         </ThemedText>
         <Card className="p-4">
           <View className="gap-2">
             <View className="flex-row justify-between items-center">
               <ThemedText style={{ color: theme.textSecondary }}>Subtotal Belanja</ThemedText>
-              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.subtotal)}</ThemedText>
+              <ThemedText className="font-semibold">{formatCurrency(order.subtotal)}</ThemedText>
             </View>
 
             {order.discountAmount > 0 && (
@@ -360,20 +362,20 @@ export default function SellerOrderDetailScreen() {
                 <ThemedText style={{ color: theme.success }}>
                   Diskon Voucher ({order.discountCode})
                 </ThemedText>
-                <ThemedText className="text-[14px] font-semibold" style={{ color: theme.success }}>
+                <ThemedText className="font-semibold" style={{ color: theme.success }}>
                   -{formatCurrency(order.discountAmount)}
                 </ThemedText>
               </View>
             )}
 
             <View className="flex-row justify-between items-center">
-              <ThemedText style={{ color: theme.textSecondary }}>Layanan Pengiriman ({deliveryMethodLabel})</ThemedText>
-              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.deliveryFee)}</ThemedText>
+              <ThemedText style={{ color: theme.textSecondary }} className='max-w-[70%]'>Layanan Pengiriman ({deliveryMethodLabel})</ThemedText>
+              <ThemedText className="font-semibold">{formatCurrency(order.deliveryFee)}</ThemedText>
             </View>
 
             <View className="flex-row justify-between items-center">
               <ThemedText style={{ color: theme.textSecondary }}>PPN (12%)</ThemedText>
-              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.ppn)}</ThemedText>
+              <ThemedText className="font-semibold">{formatCurrency(order.ppn)}</ThemedText>
             </View>
 
             <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />

@@ -168,7 +168,7 @@ export default function CartScreen() {
               <>
                 <Pressable
                   onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity - 1)}
-                  className="w-7 h-7 rounded-md border-[1.5px] border-border items-center justify-center active:opacity-70"
+                  className="w-7 h-7 rounded-md border-[1.5px] border-white/20 items-center justify-center active:opacity-70"
                 >
                   <ThemedText className="text-[15px] font-bold">-</ThemedText>
                 </Pressable>
@@ -176,7 +176,7 @@ export default function CartScreen() {
                 <Pressable
                   onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity + 1)}
                   disabled={item.quantity >= item.stock}
-                  className={`w-7 h-7 rounded-md border-[1.5px] border-border items-center justify-center active:opacity-70 ${item.quantity >= item.stock ? 'opacity-40' : ''}`}
+                  className={`w-7 h-7 rounded-md border-[1.5px] border-white/20 items-center justify-center active:opacity-70 ${item.quantity >= item.stock ? 'opacity-40' : ''}`}
                 >
                   <ThemedText className="text-[15px] font-bold">+</ThemedText>
                 </Pressable>
@@ -184,7 +184,7 @@ export default function CartScreen() {
             )}
           </View>
         </View>
-        
+
         {item.quantity >= item.stock && (
           <ThemedText className="text-[11px] mt-1 font-semibold" themeColor="warning">
             Maksimum stok tercapai ({item.stock} item)
@@ -215,7 +215,7 @@ export default function CartScreen() {
           Keranjang Belanja Kosong
         </ThemedText>
         <ThemedText className="text-[14px] text-center mt-2 px-3" themeColor="textSecondary">
-          Yuk, jelajahi produk hasil laut terbaik nelayan kami dan isi keranjang belanja Anda!
+          Yuk, jelajahi produk kami dan isi keranjang belanja Anda!
         </ThemedText>
         <Button
           label="Mulai Belanja"
@@ -262,7 +262,7 @@ export default function CartScreen() {
       {hasItems && (
         <ThemedView
           type="backgroundElement"
-          className="absolute bottom-0 left-0 right-0 border-t border-border p-4"
+          className="absolute bottom-0 left-0 right-0 border-t border-white/20 p-4"
           style={{
             height: 84 + insets.bottom,
             paddingBottom: 16 + insets.bottom,
@@ -281,18 +281,16 @@ export default function CartScreen() {
                 }).format(cart.summary.subtotal)}
               </ThemedText>
             </View>
-            <View className="flex-row items-center gap-4">
+            <View className="flex-row items-center justify-center gap-4">
               <Pressable onPress={handleClearCart} className="py-2 px-1 active:opacity-70">
-                <ThemedText className="text-danger text-[13px] font-bold">
-                  Kosongkan
-                </ThemedText>
+                <Trash2 size={24} color={theme.danger} />
               </Pressable>
-              
+
               <Button
                 label="Checkout"
                 rightIcon={<ArrowRight size={16} color="#FFFFFF" />}
                 onPress={() => router.push('/(buyer)/checkout')}
-                className="h-11 w-[140px]"
+                className="h-12 w-[120px]"
               />
             </View>
           </View>

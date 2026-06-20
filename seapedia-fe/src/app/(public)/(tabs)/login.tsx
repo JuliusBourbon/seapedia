@@ -41,7 +41,7 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const response = await api.post('/auth/login', { username, password });
-      
+
       if (response.data?.success) {
         const { requiresRoleSelection, token, preAuthToken, roles, activeRole } = response.data.data;
 
@@ -52,7 +52,7 @@ export default function LoginScreen() {
         } else {
           // Single-role or admin user, direct login
           setAuth(token, activeRole, roles);
-          
+
           // Fetch profile details
           try {
             const profileResponse = await api.get('/auth/me');
@@ -86,7 +86,7 @@ export default function LoginScreen() {
       >
         <ScrollView contentContainerClassName="flex-grow px-8 justify-center py-8">
           <View className="items-center mb-8">
-            <View 
+            <View
               className="w-20 h-20 rounded-full items-center justify-center mb-4"
               style={{ backgroundColor: `${theme.primary}15` }}
             >
@@ -94,9 +94,6 @@ export default function LoginScreen() {
             </View>
             <ThemedText type="subtitle" className="text-[28px] font-extrabold text-center">
               Selamat Datang
-            </ThemedText>
-            <ThemedText className="text-sm text-center mt-1 px-4" themeColor="textSecondary">
-              Silakan masuk untuk mulai bertransaksi di SEAPEDIA
             </ThemedText>
           </View>
 
@@ -134,7 +131,7 @@ export default function LoginScreen() {
                 Belum punya akun?{' '}
               </ThemedText>
               <Pressable onPress={() => router.push('/(public)/register')}>
-                <ThemedText className="text-primary font-bold">
+                <ThemedText themeColor="primary" className="font-bold">
                   Daftar di sini
                 </ThemedText>
               </Pressable>

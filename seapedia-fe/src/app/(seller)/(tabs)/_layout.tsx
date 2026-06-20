@@ -1,69 +1,56 @@
 import { Tabs } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
-import { Store, ShoppingBag, ClipboardList, BarChart3 } from 'lucide-react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Platform } from 'react-native';
+import { useState } from 'react';
+import { ProfileDropdown } from '@/components/profile-dropdown';
+import { SellerNavBar } from '@/components/seller-nav-bar';
 
 export default function SellerTabsLayout() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
+  const [profileVisible, setProfileVisible] = useState(false);
 
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: theme.primary,
-        tabBarInactiveTintColor: theme.textSecondary,
-        tabBarStyle: {
-          backgroundColor: theme.backgroundElement,
-          borderTopWidth: 1,
-          borderTopColor: theme.border,
-          height: Platform.OS === 'android' ? 65 : 60 + insets.bottom,
-          paddingBottom: Platform.OS === 'android' ? 10 : Math.max(insets.bottom, 8),
-          paddingTop: 8,
-        },
-        headerStyle: {
-          backgroundColor: theme.backgroundElement,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.border,
-        },
-        headerTintColor: theme.text,
-        headerTitleStyle: {
-          fontWeight: '700',
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: 'Dasbor Toko',
-          tabBarLabel: 'Toko Saya',
-          tabBarIcon: ({ color, size }) => <Store size={size} color={color} />,
-        }}
+    <>
+      <ProfileDropdown
+        visible={profileVisible}
+        onClose={() => setProfileVisible(false)}
+        role="SELLER"
       />
-      <Tabs.Screen
-        name="products"
-        options={{
-          title: 'Kelola Produk',
-          tabBarLabel: 'Produk',
-          tabBarIcon: ({ color, size }) => <ShoppingBag size={size} color={color} />,
+      <Tabs
+        // "none": Tombol back hardware tidak ditangkap Tab navigator,
+        // langsung diteruskan ke Stack (kembali ke halaman sebelumnya / public).
+        backBehavior="none"
+        tabBar={() => (
+          <SellerNavBar onProfilePress={() => setProfileVisible(true)} />
+        )}
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: theme.backgroundElement,
+            borderBottomWidth: 1,
+            borderBottomColor: theme.border,
+          },
+          headerTintColor: theme.text,
+          headerTitleStyle: {
+            fontWeight: '700',
+          },
         }}
-      />
-      <Tabs.Screen
-        name="orders"
-        options={{
-          title: 'Pesanan Masuk',
-          tabBarLabel: 'Order Masuk',
-          tabBarIcon: ({ color, size }) => <ClipboardList size={size} color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="reports"
-        options={{
-          title: 'Laporan Penjualan',
-          tabBarLabel: 'Laporan',
-          tabBarIcon: ({ color, size }) => <BarChart3 size={size} color={color} />,
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="dashboard"
+          options={{ title: 'Dasbor Toko' }}
+        />
+        <Tabs.Screen
+          name="products"
+          options={{ title: 'Kelola Produk' }}
+        />
+        <Tabs.Screen
+          name="orders"
+          options={{ title: 'Pesanan Masuk' }}
+        />
+        <Tabs.Screen
+          name="reports"
+          options={{ title: 'Laporan Penjualan' }}
+        />
+      </Tabs>
+    </>
   );
 }
