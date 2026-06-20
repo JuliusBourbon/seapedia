@@ -217,6 +217,7 @@ const getSellerOrders = async (sellerId) => {
             items: true,
             statusHistory: { orderBy: { createdAt: 'asc' } },
             buyer: { select: { id: true, name: true, username: true } },
+            address: true,
             delivery: { include: { driver: { select: { id: true, name: true, username: true } } } },
         },
         orderBy: { createdAt: 'desc' },

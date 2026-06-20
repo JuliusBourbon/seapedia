@@ -1,6 +1,7 @@
 const adminService = require('./admin.service');
 const { runOverdueCheck } = require('../overdue/overdue.service');
 const { success } = require('../../utils/responseFormatter');
+const prisma = require('../../config/db');
 
 const getSummary = async (req, res, next) => {
     try {
@@ -83,6 +84,19 @@ const simulateNextDay = async (req, res, next) => {
     }
 };
 
+const simulateReset = async (req, res, next) => {
+    try {
+        await prisma.systemSetting.upsert({
+            where: { id: 'singleton' },
+            update: { timeOffsetMs: 0 },
+            create: { id: 'singleton', timeOffsetMs: 0 },
+        });
+        return success(res, 200, 'Time simulation reset to real time', { timeOffsetMs: 0 });
+    } catch (err) {
+        return next(err);
+    }
+};
+
 module.exports = {
     getSummary,
     getUsers,
@@ -93,4 +107,5 @@ module.exports = {
     getOverdue,
     runOverdue,
     simulateNextDay,
+    simulateReset
 };

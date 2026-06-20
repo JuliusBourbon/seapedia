@@ -47,14 +47,20 @@ router.get('/seller/summary', authenticate, requireActiveRole('SELLER'), async (
             ? await prisma.order.count({ where: { storeId: store.id, status: 'SEDANG_DIKEMAS' } })
             : 0;
 
+        const completedOrders = store
+            ? await prisma.order.findMany({ where: { storeId: store.id, status: 'PESANAN_SELESAI' } })
+            : [];
+
+        const totalIncome = completedOrders.reduce((acc, order) => acc + Number(order.subtotal), 0);
+
         return success(res, 200, 'Seller dashboard summary', {
             hasStore: !!store,
             storeId: store ? store.id : null,
             storeName: store ? store.name : null,
             totalProducts: store ? store.products.length : 0,
             pendingOrders,
-            totalIncome: 0,
-            note: 'Income data will be available starting Level 6',
+            totalIncome,
+            note: 'Income data calculated from completed orders',
         });
     } catch (err) {
         return next(err);
