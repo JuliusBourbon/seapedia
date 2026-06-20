@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { View, ViewStyle, TextStyle } from 'react-native';
 import { ThemedText } from '../themed-text';
 

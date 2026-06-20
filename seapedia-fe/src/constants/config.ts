@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-export const API_BASE_URL = "http://192.168.1.15:3000/api/v1";
+export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL;
 
 export const DELIVERY_METHODS = {
   INSTANT: {
