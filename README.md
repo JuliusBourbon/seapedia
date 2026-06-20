@@ -1,6 +1,6 @@
 # SEAPEDIA
 
-SEAPEDIA is a comprehensive marketplace application designed to facilitate transactions between buyers and multiple sellers, specifically tailored for maritime and seafood products. The system is equipped with robust features including multi-role user management, order processing, delivery tracking, and administrative monitoring.
+SEAPEDIA is a comprehensive marketplace application designed to facilitate transactions between buyers and multiple sellers. The system is equipped with robust features including multi-role user management, order processing, delivery tracking, and administrative monitoring.
 
 This project consists of two main components:
 - **Backend**: A RESTful API built with Node.js, Express, and Prisma ORM using PostgreSQL.
@@ -115,12 +115,6 @@ Start the Expo development server:
 ```bash
 npx expo start -c
 ```
-
-You can run the application on:
-- **iOS Simulator**: Press `i` in the terminal.
-- **Android Emulator**: Press `a` in the terminal.
-- **Physical Device**: Scan the generated QR code using the Expo Go app.
-- **Web Browser**: Press `w` in the terminal.
 
 ---
 
