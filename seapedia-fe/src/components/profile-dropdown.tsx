@@ -31,7 +31,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 interface ProfileDropdownProps {
   visible: boolean;
   onClose: () => void;
-  /** Role yang sedang aktif. Default: diambil dari store jika tidak diberikan. */
   role?: 'BUYER' | 'SELLER' | 'DRIVER' | 'ADMIN' | string;
 }
 
@@ -49,7 +48,6 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
   const insets = useSafeAreaInsets();
   const { roles, clearAuth, activeRole } = useAuthStore();
 
-  // Prioritaskan prop, fallback ke store
   const role = roleProp ?? activeRole ?? 'BUYER';
 
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
@@ -100,7 +98,6 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
     }, 300);
   };
 
-  // ── Menu items berdasarkan role ──────────────────────────────────────────────
 
   const buyerMenuItems: MenuItem[] = [
     {
@@ -200,13 +197,12 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
 
   const roleMenuItems =
     role === 'SELLER' ? sellerMenuItems :
-    role === 'DRIVER' ? driverMenuItems :
-    role === 'ADMIN'  ? adminMenuItems  :
-    buyerMenuItems;
+      role === 'DRIVER' ? driverMenuItems :
+        role === 'ADMIN' ? adminMenuItems :
+          buyerMenuItems;
 
   const menuItems: MenuItem[] = [
     ...roleMenuItems,
-    // Opsi pindah peran jika multi-role
     ...(roles.length > 1
       ? [
         {
@@ -235,7 +231,6 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={onClose}>
-        {/* Overlay */}
         <View className="flex-1 bg-black/35">
           <TouchableWithoutFeedback>
             <Animated.View
@@ -251,14 +246,12 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
                 elevation: 16,
               }}
             >
-              {/* Menu Items */}
               {menuItems.map((item, index) => (
                 <React.Fragment key={index}>
                   <Pressable
                     onPress={item.onPress}
-                    className={`flex-row items-center px-5 py-[11px] active:opacity-70 ${
-                      index !== menuItems.length - 1 ? 'my-2' : ''
-                    }`}
+                    className={`flex-row items-center px-5 py-[11px] active:opacity-70 ${index !== menuItems.length - 1 ? 'my-2' : ''
+                      }`}
                   >
                     {/* Icon Wrap */}
                     <View

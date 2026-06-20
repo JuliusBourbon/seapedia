@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Home, Compass, Star, User } from 'lucide-react-native';
+import { Home, Compass, Star, User, Search } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -23,7 +23,7 @@ export function BuyerNavBar({ onProfilePress }: BuyerNavBarProps) {
     },
     {
       label: 'Cari',
-      Icon: Compass,
+      Icon: Search,
       onPress: () => router.replace('/(public)/(tabs)/explore' as any),
     },
     {

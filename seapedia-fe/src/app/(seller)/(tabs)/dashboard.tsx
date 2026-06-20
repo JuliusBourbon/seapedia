@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   RefreshControl,
   ActivityIndicator,
   Pressable,
   Alert,
+  Modal,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Store, ShoppingBag, ClipboardList, RefreshCcw, LogOut, Info } from 'lucide-react-native';
+import { Store, ShoppingBag, ClipboardList, RefreshCcw, LogOut, Pencil, X } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
+import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/store/useAuthStore';
 import api from '@/services/api';
 
@@ -23,6 +26,7 @@ interface SummaryData {
   hasStore: boolean;
   storeId: string | null;
   storeName: string | null;
+  storeDescription?: string | null;
   totalProducts: number;
   pendingOrders: number;
   totalIncome: number;
@@ -39,6 +43,13 @@ export default function SellerDashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
+
+  // Store profile edit modal state
+  const [editModalVisible, setEditModalVisible] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
+  const [saving, setSaving] = useState(false);
 
   const fetchSummary = async () => {
     try {
@@ -91,6 +102,60 @@ export default function SellerDashboardScreen() {
     ]);
   };
 
+  // --- Store Profile Edit ---
+  const openEditModal = async () => {
+    // Pre-fill from summary, and also fetch full store detail for description
+    setEditName(summary?.storeName || '');
+    setEditDescription('');
+    setEditErrors({});
+
+    try {
+      const res = await api.get('/seller/store');
+      if (res.data?.success && res.data.data) {
+        setEditName(res.data.data.name || '');
+        setEditDescription(res.data.data.description || '');
+      }
+    } catch {
+      // Fallback to summary data
+    }
+
+    setEditModalVisible(true);
+  };
+
+  const validateEdit = () => {
+    const tempErrors: Record<string, string> = {};
+    if (!editName.trim()) tempErrors.name = 'Nama toko wajib diisi';
+    else if (editName.trim().length < 3) tempErrors.name = 'Nama toko minimal 3 karakter';
+    setEditErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleSaveStoreProfile = async () => {
+    if (!validateEdit()) return;
+
+    setSaving(true);
+    try {
+      const response = await api.put('/seller/store', {
+        name: editName.trim(),
+        description: editDescription.trim() || undefined,
+      });
+
+      if (response.data?.success) {
+        setEditModalVisible(false);
+        Alert.alert('Berhasil', 'Profil toko berhasil diperbarui.');
+        fetchSummary();
+      }
+    } catch (err: any) {
+      if (err.response?.status === 409) {
+        setEditErrors({ name: err.response?.data?.message || 'Nama toko sudah digunakan.' });
+      } else {
+        Alert.alert('Gagal', err.response?.data?.message || 'Gagal memperbarui profil toko.');
+      }
+    } finally {
+      setSaving(false);
+    }
+  };
+
   if (loading && !refreshing) {
     return (
       <ThemedView className="flex-1 items-center justify-center">
@@ -129,6 +194,13 @@ export default function SellerDashboardScreen() {
                 Pemilik: {user?.name} (@{user?.username})
               </ThemedText>
             </View>
+            <Pressable
+              onPress={openEditModal}
+              className="w-10 h-10 rounded-xl items-center justify-center active:opacity-60"
+              style={{ backgroundColor: `${theme.primary}15` }}
+            >
+              <Pencil size={18} color={theme.primary} />
+            </Pressable>
           </View>
 
           {roles.length > 1 && (
@@ -224,6 +296,74 @@ export default function SellerDashboardScreen() {
           className="mt-2 h-[50px]"
         />
       </ScrollView>
-    </ThemedView >
+
+      {/* Store Profile Edit Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={editModalVisible}
+        onRequestClose={() => setEditModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setEditModalVisible(false)}>
+          <View className="flex-1 bg-black/40 justify-end">
+            <TouchableWithoutFeedback>
+              <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+              >
+                <ThemedView type="backgroundElement" className="rounded-t-[24px] pb-6">
+                  {/* Modal Header */}
+                  <View className="flex-row justify-between items-center p-4 border-b border-white/10">
+                    <ThemedText type="smallBold" className="text-[18px]">
+                      Edit Profil Toko
+                    </ThemedText>
+                    <Pressable
+                      onPress={() => setEditModalVisible(false)}
+                      className="p-1"
+                    >
+                      <X size={20} color={theme.text} />
+                    </Pressable>
+                  </View>
+
+                  {/* Modal Body */}
+                  <View className="px-4 pt-4">
+                    <Input
+                      label="Nama Toko"
+                      placeholder="Masukkan nama toko"
+                      value={editName}
+                      onChangeText={setEditName}
+                      leftIcon={<Store size={20} color={theme.textSecondary} />}
+                      error={editErrors.name}
+                    />
+
+                    <Input
+                      label="Deskripsi Toko (Opsional)"
+                      placeholder="Jelaskan produk yang toko Anda tawarkan"
+                      value={editDescription}
+                      onChangeText={setEditDescription}
+                      multiline
+                      numberOfLines={4}
+                    />
+
+                    <Button
+                      label="Simpan Perubahan"
+                      onPress={handleSaveStoreProfile}
+                      loading={saving}
+                      className="h-[52px]"
+                    />
+
+                    <Button
+                      label="Batal"
+                      variant="outline"
+                      onPress={() => setEditModalVisible(false)}
+                      className="mt-2 h-[48px]"
+                    />
+                  </View>
+                </ThemedView>
+              </KeyboardAvoidingView>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </ThemedView>
   );
 }
