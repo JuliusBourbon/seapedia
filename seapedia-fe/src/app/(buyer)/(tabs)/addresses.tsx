@@ -306,7 +306,7 @@ export default function AddressManagementScreen() {
         }
       />
 
-      <View className="absolute left-4 right-4" style={{ bottom: 68 + insets.bottom }}>
+      <View className="absolute left-4 right-4" style={{ bottom: 20 }}>
         <Button
           label="Tambah Alamat Baru"
           leftIcon={<Plus size={20} color="#FFFFFF" />}

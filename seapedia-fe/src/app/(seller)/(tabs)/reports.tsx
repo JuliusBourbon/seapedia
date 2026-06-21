@@ -26,6 +26,7 @@ interface ReportData {
   totalReversedIncome: number;
   returnedOrdersCount: number;
   statusBreakdown: Record<string, number>;
+  monthlyIncome?: { label: string; value: number }[];
 }
 
 export default function SellerReportsScreen() {
@@ -79,19 +80,7 @@ export default function SellerReportsScreen() {
     );
   }
 
-  // Define monthly bars based on the actual income + simulated historical data
-  {/* TODO: USING REAL DATA FROM API */ }
   const baseIncome = report?.totalIncome ?? 0;
-  const chartData = [
-    { label: 'Jan', value: 400000 },
-    { label: 'Feb', value: 550000 },
-    { label: 'Mar', value: 450000 },
-    { label: 'Apr', value: 750000 },
-    { label: 'Mei', value: 900000 },
-    { label: 'Jun', value: baseIncome || 120000 },
-  ];
-  const maxChartValue = Math.max(...chartData.map((d) => d.value), 1);
-
   const statusBreakdown = report?.statusBreakdown || {};
   const statusKeys = Object.keys(statusBreakdown);
   const maxStatusCount = Math.max(...Object.values(statusBreakdown), 1);
@@ -148,47 +137,6 @@ export default function SellerReportsScreen() {
             </ThemedText>
           </Card>
         </View>
-
-        {/* Chart Card */}
-        <Card className="p-4">
-          <View className="flex-col gap-4 mb-10">
-            <View>
-              <ThemedText type="extraLarge" className="font-semibold">
-                Grafik Tren Pendapatan Bulanan
-              </ThemedText>
-            </View>
-            <View className="flex-row items-center px-2 rounded-lg">
-              <TrendingUp size={16} color={theme.success} />
-              <ThemedText className="ml-2" style={{ color: theme.success }}>
-                Sangat Baik
-              </ThemedText>
-            </View>
-          </View>
-
-          {/* Styled Bars */}
-          {/* TODO: USING REAL DATA FROM API */}
-          <View className="flex-row justify-between items-end h-[150px] mt-3 pb-2">
-            {chartData.map((bar, index) => {
-              const barHeightPercent = (bar.value / maxChartValue) * 100;
-              return (
-                <View key={index} className="items-center flex-1">
-                  <View className="h-full w-[14px] rounded-full justify-end overflow-hidden bg-black/5 dark:bg-white/5">
-                    <View
-                      className="w-full rounded-full"
-                      style={{
-                        height: `${barHeightPercent}%`,
-                        backgroundColor: index === chartData.length - 1 ? theme.secondary : theme.primary,
-                      }}
-                    />
-                  </View>
-                  <ThemedText className="text-[10px] mt-2" themeColor="textSecondary">
-                    {bar.label}
-                  </ThemedText>
-                </View>
-              );
-            })}
-          </View>
-        </Card>
 
         {/* Status Breakdown Section */}
         <ThemedText type="large" className="mb-1 mt-2 font-semibold">

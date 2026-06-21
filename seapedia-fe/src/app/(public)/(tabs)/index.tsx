@@ -88,7 +88,7 @@ export default function MarketplaceHomeScreen() {
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
           <ThemedText className="mt-4 text-textSecondary">
-            Menyelam mencari produk maritim...
+            Mencari produk..
           </ThemedText>
         </View>
       ) : (

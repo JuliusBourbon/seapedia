@@ -93,7 +93,7 @@ export default function LoginScreen() {
             <ThemedText type="subtitle" className="text-[28px] font-extrabold text-center">
               Selamat Datang
             </ThemedText>
-            <ThemedText className="text-center">Masuk dan mulai belanja di Seapedia!</ThemedText>
+            <ThemedText className="text-center">Masuk dan mulai bertransaksi di Seapedia!</ThemedText>
           </View>
 
           <View className="w-full">
