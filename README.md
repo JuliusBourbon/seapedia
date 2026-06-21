@@ -1,5 +1,9 @@
 # SEAPEDIA
 
+<p align="center">
+  <img src="seapedia-fe/assets/images/icon.png" alt="SEAPEDIA Icon" width="200"/>
+</p>
+
 SEAPEDIA is a comprehensive marketplace application designed to facilitate transactions between buyers and multiple sellers. The system is equipped with robust features including multi-role user management, order processing, delivery tracking, and administrative monitoring.
 
 This project consists of two main components:
@@ -123,15 +127,30 @@ The API documentation is available in the form of a **Postman Collection** which
 Create a `.env` file in the `seapedia-fe` directory and specify the backend API URL. If you are running the app on a physical device, ensure you use your machine's local IP address instead of `localhost`.
 
 ```env
-EXPO_PUBLIC_API_URL="http://localhost:3000/api/v1"
+EXPO_PUBLIC_API_URL="http://[IP_ADDRESS]:3000/api/v1"
+```
+example:
+```env
+EXPO_PUBLIC_API_URL="http://192.168.1.2:3000/api/v1"
 ```
 
 ### Running the Application
 
+**Option 1: Run Locally via Expo**
 Start the Expo development server:
 ```bash
 npx expo start -c
 ```
+
+**Option 2: Install Released APK**
+If you prefer not to run the frontend development server, you can use the released APK:
+1. Locate or download the compiled `app-release.apk` file.
+2. Transfer the APK to your Android device.
+3. Install the APK (ensure "Install from Unknown Sources" is enabled in your device settings).
+4. Run the SEAPEDIA app directly from your device.
+*(Note: Ensure your device is on the same network as the backend if testing locally, and that the APK was built using the correct API URL).*
+
+There's also more detail information about Backend/API in `seapedia-be/README.md`
 
 ---
 
