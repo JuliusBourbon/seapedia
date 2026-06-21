@@ -1,23 +1,23 @@
 # SEAPEDIA Backend API
 
-SEAPEDIA adalah platform e-commerce multi-seller yang menghubungkan Buyer, Seller, Driver, dan Admin dalam satu marketplace. Repository ini berisi backend API berbasis **Node.js (Express) + PostgreSQL + Prisma ORM**, dengan autentikasi **JWT** dan kontrol akses berbasis **active role**.
+SEAPEDIA is a multi-seller e-commerce platform connecting Buyers, Sellers, Drivers, and Admins in a single marketplace. This repository contains the backend API built with **Node.js (Express) + PostgreSQL + Prisma ORM**, featuring **JWT** authentication and **active role**-based access control.
 
 ---
 
-## Daftar Isi
+## Table of Contents
 
 1. [Tech Stack](#tech-stack)
 2. [Getting Started](#getting-started)
 3. [Demo Accounts](#demo-accounts)
-4. [Konsep Inti](#konsep-inti)
+4. [Core Concepts](#core-concepts)
    - [Active Role & Multi-Role Login](#active-role--multi-role-login)
    - [Single-Store Checkout](#single-store-checkout)
-   - [Voucher & Promo (Diskon)](#voucher--promo-diskon)
-   - [Kalkulasi Checkout (Subtotal, Diskon, PPN, Total)](#kalkulasi-checkout)
+   - [Vouchers & Promos (Discounts)](#vouchers--promos-discounts)
+   - [Checkout Calculation (Subtotal, Discount, VAT, Total)](#checkout-calculation)
    - [Order Status Lifecycle](#order-status-lifecycle)
-   - [Driver Earning Rule](#driver-earning-rule)
+   - [Driver Earning Rules](#driver-earning-rules)
    - [Overdue Handling & Time Simulation](#overdue-handling--time-simulation)
-5. [Keamanan](#keamanan)
+5. [Security](#security)
 6. [API Reference](#api-reference)
    - [Auth](#auth)
    - [Application Review](#application-review)
@@ -41,14 +41,14 @@ SEAPEDIA adalah platform e-commerce multi-seller yang menghubungkan Buyer, Selle
 
 ## Tech Stack
 
-| Layer | Teknologi |
+| Layer | Technology |
 |---|---|
 | Backend Framework | Node.js + Express.js |
 | Database | PostgreSQL |
-| ORM | Prisma (dengan `@prisma/adapter-pg`) |
+| ORM | Prisma (with `@prisma/adapter-pg`) |
 | Auth | JWT (jsonwebtoken) + bcrypt |
-| Validasi | Zod |
-| Sanitasi Input | sanitize-html |
+| Validation | Zod |
+| Input Sanitization | sanitize-html |
 | Background Jobs | node-cron |
 | Security Middleware | helmet, express-rate-limit |
 
@@ -56,28 +56,28 @@ SEAPEDIA adalah platform e-commerce multi-seller yang menghubungkan Buyer, Selle
 
 ## Getting Started
 
-### Prasyarat
+### Prerequisites
 
 - Node.js 18+
-- PostgreSQL (sudah berjalan, database `seapedia` sudah dibuat)
+- PostgreSQL (running locally or remote, `seapedia` database created)
 
-### Instalasi
+### Installation
 
 ```bash
 npm install
 ```
 
-### Konfigurasi `.env`
+### `.env` Configuration
 
 ```env
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/seapedia?schema=public"
-JWT_SECRET="ganti_dengan_secret_panjang_dan_acak"
+JWT_SECRET="replace_with_a_long_random_secret"
 JWT_EXPIRES_IN="7d"
 PREAUTH_EXPIRES_IN="10m"
 PORT=3000
 ```
 
-### Migrasi & Seed Database
+### Database Migration & Seeding
 
 ```bash
 npx prisma generate
@@ -85,19 +85,19 @@ npx prisma migrate dev
 npx prisma db seed
 ```
 
-Output seed akan menampilkan daftar demo account yang siap dipakai (lihat [Demo Accounts](#demo-accounts)).
+The seed output will display a list of ready-to-use demo accounts (see [Demo Accounts](#demo-accounts)).
 
-### Menjalankan Server
+### Running the Server
 
 ```bash
 npm run dev
 ```
 
-Server berjalan di `http://localhost:3000`. Dua background job otomatis berjalan:
-- **Overdue checker** — setiap menit, memeriksa order yang melewati SLA pengiriman.
-- **Token cleanup** — setiap hari jam 00:00, membersihkan token yang sudah revoked & expired.
+The server runs at `http://localhost:3000`. Two background jobs run automatically:
+- **Overdue checker** — every minute, checks orders that have exceeded their delivery SLA.
+- **Token cleanup** — every day at 00:00, cleans up revoked & expired tokens.
 
-### Reset Data (untuk testing ulang dari awal)
+### Data Reset (to retest from scratch)
 
 ```bash
 npx prisma migrate reset
@@ -108,104 +108,104 @@ npx prisma db seed
 
 ## Demo Accounts
 
-| Role | Username | Password | Catatan |
+| Role | Username | Password | Notes |
 |---|---|---|---|
-| Admin | `admin` | `admin123` | Akses penuh `/admin/*` |
-| Seller | `seller1` | `seller123` | Sudah punya toko **"Toko Demo Seapedia"** + 3 produk |
-| Buyer | `buyer1` | `buyer123` | Wallet awal **Rp1.000.000**, sudah ada 1 alamat default |
-| Driver | `driver1` | `driver123` | Belum ada job aktif |
-| Multi-role | `multirole1` | `multi123` | Roles **BUYER + SELLER** — gunakan untuk demo flow pemilihan active role |
+| Admin | `admin` | `admin123` | Full access to `/admin/*` |
+| Seller | `seller1` | `seller123` | Already owns a store **"Toko Demo Seapedia"** + 3 products |
+| Buyer | `buyer1` | `buyer123` | Initial wallet **Rp1,000,000**, 1 default address available |
+| Driver | `driver1` | `driver123` | No active jobs yet |
+| Multi-role | `multirole1` | `multi123` | Roles **BUYER + SELLER** — use to demo the active role selection flow |
 
-**Kode diskon (dari seed):**
+**Discount codes (from seed):**
 
-| Code | Tipe | Nilai | Catatan |
+| Code | Type | Value | Notes |
 |---|---|---|---|
 | `SEAVOUCHER10` | Voucher, PERCENTAGE | 10% | `usageLimit: 100` |
-| `SEAPROMO5K` | Promo, FIXED | Rp5.000 | Tanpa batas pemakaian |
+| `SEAPROMO5K` | Promo, FIXED | Rp5,000 | Unlimited usage |
 
 ---
 
-## Konsep Inti
+## Core Concepts
 
 ### Active Role & Multi-Role Login
 
-Satu username **non-admin** (`username`) dapat memiliki lebih dari satu role sekaligus (`BUYER`, `SELLER`, `DRIVER`). Namun otorisasi di setiap request **selalu mengikuti `activeRole`** yang tersimpan di dalam JWT payload — bukan daftar lengkap role yang dimiliki user.
+A single **non-admin** account (`username`) can have more than one role simultaneously (`BUYER`, `SELLER`, `DRIVER`). However, authorization for every request **always follows the `activeRole`** stored in the JWT payload — not the complete list of roles the user has.
 
-**Alur login:**
+**Login flow:**
 
-1. `POST /auth/login` dengan `username` + `password`.
-2. Jika user adalah `ADMIN`, atau hanya memiliki **1 role**, response langsung berisi:
+1. `POST /auth/login` with `username` + `password`.
+2. If the user is an `ADMIN`, or only has **1 role**, the response immediately returns:
    ```json
    { "requiresRoleSelection": false, "token": "...", "roles": [...], "activeRole": "BUYER" }
    ```
-   Token ini sudah final dan siap dipakai untuk request lain.
-3. Jika user memiliki **>1 role non-admin**, response berisi:
+   This token is final and ready to use for other requests.
+3. If the user has **>1 non-admin role**, the response returns:
    ```json
    { "requiresRoleSelection": true, "preAuthToken": "...", "roles": ["BUYER", "SELLER"] }
    ```
-   `preAuthToken` **belum** memiliki `activeRole` dan hanya berlaku selama `PREAUTH_EXPIRES_IN` (default 10 menit). Frontend wajib menampilkan halaman/modal pemilihan role.
-4. Panggil `POST /auth/select-role` dengan header `Authorization: Bearer <preAuthToken>` dan body `{ "role": "SELLER" }` untuk mendapatkan token final dengan `activeRole` terisi.
+   The `preAuthToken` **does not yet** have an `activeRole` and is only valid for `PREAUTH_EXPIRES_IN` (default 10 minutes). The frontend must display a role selection page/modal.
+4. Call `POST /auth/select-role` with the header `Authorization: Bearer <preAuthToken>` and body `{ "role": "SELLER" }` to get the final token populated with the `activeRole`.
 
-Setiap endpoint privat memvalidasi `activeRole` di backend menggunakan middleware `requireActiveRole(...)`. Jika `activeRole` tidak sesuai dengan role yang dibutuhkan endpoint, server mengembalikan `403`, **terlepas dari role lain yang dimiliki user tersebut**.
+Every private endpoint validates the `activeRole` on the backend using the `requireActiveRole(...)` middleware. If the `activeRole` does not match the required role for the endpoint, the server returns `403`, **regardless of other roles the user might own**.
 
 ---
 
 ### Single-Store Checkout
 
-Karena SEAPEDIA adalah marketplace multi-seller, **satu cart hanya boleh berisi produk dari satu toko**.
+Since SEAPEDIA is a multi-seller marketplace, **a single cart can only contain products from one store**.
 
-- Saat item pertama ditambahkan ke cart, `cart.storeId` otomatis diisi dari `product.storeId`.
-- Jika buyer mencoba menambahkan produk dari toko lain saat `cart.storeId` sudah terisi dan berbeda, server mengembalikan **`409 Conflict`** dengan pesan yang meminta buyer mengosongkan cart terlebih dahulu (`DELETE /buyer/cart`).
-- `cart.storeId` otomatis kembali menjadi `null` saat cart kosong (item terakhir dihapus, atau setelah checkout berhasil).
+- When the first item is added to the cart, `cart.storeId` is automatically populated from `product.storeId`.
+- If the buyer attempts to add a product from a different store when `cart.storeId` is already set and different, the server returns a **`409 Conflict`** with a message asking the buyer to empty their cart first (`DELETE /buyer/cart`).
+- `cart.storeId` automatically reverts to `null` when the cart is empty (the last item is deleted, or after a successful checkout).
 
-**UI wajib menjelaskan perilaku ini** kepada buyer, misalnya melalui modal konfirmasi: *"Cart Anda berisi produk dari toko lain. Kosongkan cart untuk melanjutkan?"*
+**The UI must explain this behavior** to the buyer, for example via a confirmation modal: *"Your cart contains products from another store. Empty your cart to proceed?"*
 
 ---
 
-### Voucher & Promo (Diskon)
+### Vouchers & Promos (Discounts)
 
-Dua jenis kode diskon yang **tidak dapat dikombinasikan** dalam satu checkout — hanya satu `discountCode` yang diterima per request.
+Two types of discount codes that **cannot be combined** in a single checkout — only one `discountCode` is accepted per request.
 
 | | Voucher | Promo |
 |---|---|---|
-| Field unik | `expiryDate`, `usageLimit`, `usedCount` | `expiryDate` |
-| Batas pemakaian | Ya (global, `usedCount < usageLimit`) | Tidak ada |
-| Tipe nilai | `PERCENTAGE` atau `FIXED` | `PERCENTAGE` atau `FIXED` |
+| Unique fields | `expiryDate`, `usageLimit`, `usedCount` | `expiryDate` |
+| Usage limit | Yes (global, `usedCount < usageLimit`) | None |
+| Value type | `PERCENTAGE` or `FIXED` | `PERCENTAGE` or `FIXED` |
 
-**Aturan validasi:**
-- Kode kadaluarsa (`expiryDate < now`) → ditolak.
-- Kode `isActive: false` (dinonaktifkan admin) → ditolak.
-- Voucher dengan `usedCount >= usageLimit` → ditolak.
-- Pencarian kode dilakukan berurutan: **Voucher dulu**, baru **Promo**. Jika kode ditemukan di salah satu tabel, pencarian berhenti.
-- Hasil validasi selalu menyertakan field `source: "VOUCHER"` atau `source: "PROMO"` agar frontend bisa menampilkan label yang sesuai.
+**Validation rules:**
+- Expired codes (`expiryDate < now`) → rejected.
+- Inactive codes `isActive: false` (disabled by admin) → rejected.
+- Vouchers with `usedCount >= usageLimit` → rejected.
+- Code search is sequential: **Voucher first**, then **Promo**. If the code is found in either table, the search stops.
+- Validation results always include the field `source: "VOUCHER"` or `source: "PROMO"` so the frontend can display appropriate labels.
 
 ---
 
-### Kalkulasi Checkout
+### Checkout Calculation
 
-Urutan kalkulasi berikut **konsisten** di seluruh aplikasi (endpoint preview maupun checkout final):
+The following calculation sequence is **consistent** across the application (both for preview and final checkout endpoints):
 
 ```
-1. subtotal           = Σ (harga produk × quantity)
-2. discountAmount     = dihitung dari subtotal berdasarkan type Voucher/Promo
+1. subtotal           = Σ (product price × quantity)
+2. discountAmount     = calculated from subtotal based on Voucher/Promo type
                          - PERCENTAGE: subtotal × value / 100
                          - FIXED: value
-                         (dibatasi maksimal sebesar subtotal, dibulatkan)
+                         (capped at maximum of subtotal, rounded)
 3. discountedSubtotal = subtotal - discountAmount
-4. ppn                = 12% × discountedSubtotal   <-- PPN dihitung SETELAH diskon
-5. deliveryFee        = berdasarkan deliveryMethod
+4. ppn                = 12% × discountedSubtotal   <-- VAT calculated AFTER discount
+5. deliveryFee        = based on deliveryMethod
 6. total              = discountedSubtotal + deliveryFee + ppn
 ```
 
 **Delivery Fee:**
 
-| Metode | Biaya |
+| Method | Fee |
 |---|---|
-| `INSTANT` | Rp25.000 |
-| `NEXT_DAY` | Rp15.000 |
-| `REGULAR` | Rp10.000 |
+| `INSTANT` | Rp25,000 |
+| `NEXT_DAY` | Rp15,000 |
+| `REGULAR` | Rp10,000 |
 
-Gunakan `POST /buyer/checkout/preview` untuk menampilkan ringkasan ini ke buyer **sebelum** konfirmasi checkout (tidak memotong wallet, tidak membuat order).
+Use `POST /buyer/checkout/preview` to display this summary to the buyer **before** checkout confirmation (does not deduct from wallet, does not create an order).
 
 ---
 
@@ -217,260 +217,260 @@ SEDANG_DIKEMAS → MENUNGGU_PENGIRIM → SEDANG_DIKIRIM → PESANAN_SELESAI
                                               DIKEMBALIKAN  (overdue auto-return)
 ```
 
-| Status | Trigger | Aktor |
+| Status | Trigger | Actor |
 |---|---|---|
-| `SEDANG_DIKEMAS` | Checkout berhasil | Buyer |
-| `MENUNGGU_PENGIRIM` | Order diproses, delivery job dibuat (`AVAILABLE`) | Seller |
-| `SEDANG_DIKIRIM` | Driver mengambil job (`take`) | Driver |
-| `PESANAN_SELESAI` | Driver konfirmasi selesai (`complete`) | Driver |
-| `DIKEMBALIKAN` | Order melewati SLA pengiriman (overdue) | Sistem (cron/admin) |
+| `SEDANG_DIKEMAS` (Packing) | Successful checkout | Buyer |
+| `MENUNGGU_PENGIRIM` (Awaiting Driver) | Order processed, delivery job created (`AVAILABLE`) | Seller |
+| `SEDANG_DIKIRIM` (Delivering) | Driver picks up job (`take`) | Driver |
+| `PESANAN_SELESAI` (Completed) | Driver confirms completion (`complete`) | Driver |
+| `DIKEMBALIKAN` (Returned) | Order exceeds delivery SLA (overdue) | System (cron/admin) |
 
-Setiap transisi tercatat di tabel `OrderStatusHistory` dengan timestamp, dapat dilihat melalui field `statusHistory` pada `GET /buyer/orders/:id` dan `GET /seller/orders`.
+Every transition is recorded in the `OrderStatusHistory` table with a timestamp, viewable via the `statusHistory` field on `GET /buyer/orders/:id` and `GET /seller/orders`.
 
-> **Catatan field `status` pada response Delivery vs Order**: endpoint `POST /driver/jobs/:id/take` dan `/complete` mengembalikan objek **Delivery** (`status: "TAKEN"` / `"COMPLETED"`), bukan objek **Order**. Untuk melihat status Order yang sebenarnya (`SEDANG_DIKIRIM` / `PESANAN_SELESAI`), gunakan `GET /buyer/orders/:id` atau `GET /seller/orders`.
+> **Note on the `status` field in Delivery vs Order response**: The endpoints `POST /driver/jobs/:id/take` and `/complete` return a **Delivery** object (`status: "TAKEN"` / `"COMPLETED"`), not an **Order** object. To view the actual Order status (`SEDANG_DIKIRIM` / `PESANAN_SELESAI`), use `GET /buyer/orders/:id` or `GET /seller/orders`.
 
 ---
 
-### Driver Earning Rule
+### Driver Earning Rules
 
 ```
 earning (per job) = order.deliveryFee
 ```
 
-Nilai `earning` disimpan langsung pada record `Delivery` saat job dibuat (saat seller memproses order). Total earning driver dihitung dari penjumlahan `earning` seluruh `Delivery` berstatus `COMPLETED` milik driver tersebut — dapat dilihat melalui `GET /driver/earnings` atau `GET /dashboard/driver/summary`.
+The `earning` value is saved directly on the `Delivery` record when the job is created (when the seller processes the order). A driver's total earnings are calculated by summing the `earning` of all `COMPLETED` `Delivery` records belonging to that driver — viewable via `GET /driver/earnings` or `GET /dashboard/driver/summary`.
 
 ---
 
 ### Overdue Handling & Time Simulation
 
-**SLA pengiriman** (dihitung dari `Order.createdAt`):
+**Delivery SLA** (calculated from `Order.createdAt`):
 
-| Metode | SLA |
+| Method | SLA |
 |---|---|
-| `INSTANT` | 3 jam |
-| `NEXT_DAY` | 24 jam |
-| `REGULAR` | 72 jam (3 hari) |
+| `INSTANT` | 3 hours |
+| `NEXT_DAY` | 24 hours |
+| `REGULAR` | 72 hours (3 days) |
 
-Jika sebuah order **belum** berstatus `PESANAN_SELESAI` saat waktu sekarang melewati `createdAt + SLA`, order otomatis dipindahkan ke status final **`DIKEMBALIKAN`**.
+If an order has **not** reached the `PESANAN_SELESAI` status when the current time exceeds `createdAt + SLA`, the order is automatically moved to the final status **`DIKEMBALIKAN`**.
 
-**Efek auto-return** (dalam satu database transaction, idempotent):
+**Auto-return effects** (within a single database transaction, idempotent):
 
-1. `Order.status` → `DIKEMBALIKAN`, tercatat di `OrderStatusHistory`.
-2. **Refund**: `order.total` dikembalikan penuh ke `Wallet` buyer, tercatat sebagai `WalletTransaction` tipe `REFUND`.
-3. **Stok**: setiap `OrderItem.quantity` dikembalikan ke `Product.stock`.
-4. **Delivery**: job terkait (jika `AVAILABLE`/`TAKEN`) diubah menjadi `CANCELLED`.
-5. Order dengan status `DIKEMBALIKAN` dikeluarkan dari `totalIncome` Seller dan dipindahkan ke `totalReversedIncome`.
+1. `Order.status` → `DIKEMBALIKAN`, recorded in `OrderStatusHistory`.
+2. **Refund**: `order.total` is fully refunded to the buyer's `Wallet`, recorded as a `WalletTransaction` of type `REFUND`.
+3. **Stock**: every `OrderItem.quantity` is returned to `Product.stock`.
+4. **Delivery**: related job (if `AVAILABLE`/`TAKEN`) is changed to `CANCELLED`.
+5. Orders with `DIKEMBALIKAN` status are deducted from the Seller's `totalIncome` and moved to `totalReversedIncome`.
 
-Order yang sudah `DIKEMBALIKAN` atau `PESANAN_SELESAI` **tidak akan diproses ulang** — mencegah double refund/restore.
+Orders already `DIKEMBALIKAN` or `PESANAN_SELESAI` **will not be reprocessed** — preventing double refund/restore.
 
-**Simulasi waktu** (tanpa mengubah jam server):
+**Time simulation** (without changing server time):
 
-- Sistem menyimpan `timeOffsetMs` di tabel `SystemSetting`. Seluruh pengecekan SLA menggunakan `now = Date.now() + timeOffsetMs`.
-- `POST /admin/simulate-next-day` (Admin) menambah offset **+24 jam** dan langsung memicu pengecekan overdue.
-- Selain itu, **cron job berjalan otomatis setiap menit** untuk memeriksa & memproses order overdue tanpa intervensi manual.
+- The system stores `timeOffsetMs` in the `SystemSetting` table. All SLA checks use `now = Date.now() + timeOffsetMs`.
+- `POST /admin/simulate-next-day` (Admin) adds an offset of **+24 hours** and immediately triggers an overdue check.
+- In addition, **a cron job runs automatically every minute** to check & process overdue orders without manual intervention.
 
 ---
 
-## Keamanan
+## Security
 
-| Aspek | Implementasi |
+| Aspect | Implementation |
 |---|---|
-| **SQL Injection** | Seluruh akses database menggunakan Prisma Client (parameterized query secara otomatis). Tidak ada raw query unsafe. |
-| **XSS** | Input teks bebas (review comment, nama/deskripsi produk & toko, field alamat) disanitasi via `sanitize-html` (`allowedTags: []`) sebelum disimpan. |
-| **Security Headers** | `helmet()` dipasang global. |
-| **Validasi Input** | Seluruh body request divalidasi dengan Zod (email, format telepon, rating 1-5, price/stock positif, persentase diskon ≤100%, dll) sebelum masuk service layer. |
-| **Rate Limiting** | `/auth/login` dan `/auth/register` dibatasi 20 request/15 menit per IP. |
-| **Token Expiration** | Token final: 7 hari (`JWT_EXPIRES_IN`). Token pra-pemilihan role: 10 menit (`PREAUTH_EXPIRES_IN`). |
-| **Logout Invalidation** | Setiap token memiliki `jti` unik. Saat logout, `jti` disimpan ke tabel `RevokedToken` — token tersebut langsung ditolak meski signature & `exp` masih valid. |
-| **Active Role Enforcement** | Middleware `requireActiveRole(...)` membaca `activeRole` dari **JWT payload** (server-side), tidak pernah mempercayai informasi role dari body/header request. |
-| **Ownership Checks** | Produk (`storeId`), order Buyer (`buyerId`), order Seller (`storeId`), delivery job (`driverId`), alamat (`userId`) — seluruhnya divalidasi terhadap `req.user.userId` di service layer. |
-| **Admin-Only Endpoints** | Seluruh `/admin/*` memerlukan `activeRole: ADMIN`. |
+| **SQL Injection** | All database access uses Prisma Client (parameterized queries automatically). No unsafe raw queries. |
+| **XSS** | Free text input (review comments, product/store names & descriptions, address fields) are sanitized via `sanitize-html` (`allowedTags: []`) before saving. |
+| **Security Headers** | `helmet()` is applied globally. |
+| **Input Validation** | All request bodies are validated with Zod (email, phone formats, 1-5 ratings, positive price/stock, discount percentage ≤100%, etc.) before entering the service layer. |
+| **Rate Limiting** | `/auth/login` and `/auth/register` are limited to 20 requests/15 minutes per IP. |
+| **Token Expiration** | Final token: 7 days (`JWT_EXPIRES_IN`). Pre-auth role token: 10 minutes (`PREAUTH_EXPIRES_IN`). |
+| **Logout Invalidation** | Every token has a unique `jti`. Upon logout, the `jti` is saved to the `RevokedToken` table — that token is immediately rejected even if its signature & `exp` are still valid. |
+| **Active Role Enforcement** | The `requireActiveRole(...)` middleware reads `activeRole` from the **JWT payload** (server-side), never trusting role info from the request body/header. |
+| **Ownership Checks** | Products (`storeId`), Buyer orders (`buyerId`), Seller orders (`storeId`), delivery jobs (`driverId`), addresses (`userId`) — all are validated against `req.user.userId` in the service layer. |
+| **Admin-Only Endpoints** | All `/admin/*` endpoints require `activeRole: ADMIN`. |
 
 ---
 
 ## API Reference
 
 > Base URL: `http://localhost:3000/api/v1`
-> Format response: `{ "success": boolean, "message": string, "data": object|array|null, "errors": object|null }`
-> Header autentikasi: `Authorization: Bearer <token>`
+> Response format: `{ "success": boolean, "message": string, "data": object|array|null, "errors": object|null }`
+> Authentication header: `Authorization: Bearer <token>`
 
 ### Auth
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| POST | `/auth/register` | - | `{ username, email, password, name, roles: ["BUYER"\|"SELLER"\|"DRIVER", ...] }` | Registrasi user baru (role ADMIN tidak bisa didaftarkan publik) |
-| POST | `/auth/login` | - | `{ username, password }` | Login; lihat [Active Role & Multi-Role Login](#active-role--multi-role-login) |
-| POST | `/auth/select-role` | Bearer `preAuthToken` | `{ role }` | Pilih active role untuk user multi-role |
-| GET | `/auth/me` | Bearer token | - | Profil user saat ini + `activeRole` |
-| POST | `/auth/logout` | Bearer token | - | Revoke token saat ini |
+| POST | `/auth/register` | - | `{ username, email, password, name, roles: ["BUYER"\|"SELLER"\|"DRIVER", ...] }` | Register a new user (ADMIN role cannot be publicly registered) |
+| POST | `/auth/login` | - | `{ username, password }` | Login; see [Active Role & Multi-Role Login](#active-role--multi-role-login) |
+| POST | `/auth/select-role` | Bearer `preAuthToken` | `{ role }` | Select active role for multi-role users |
+| GET | `/auth/me` | Bearer token | - | Current user profile + `activeRole` |
+| POST | `/auth/logout` | Bearer token | - | Revoke current token |
 
 ### Application Review
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| POST | `/reviews` | Opsional | `{ reviewerName, rating (1-5), comment }` | Submit review aplikasi (guest atau user login) |
-| GET | `/reviews` | - | - | List seluruh review, terbaru dulu |
+| POST | `/reviews` | Optional | `{ reviewerName, rating (1-5), comment }` | Submit app review (guest or logged-in user) |
+| GET | `/reviews` | - | - | List all reviews, newest first |
 
 ### Dashboard
 
-| Method | Endpoint | Auth | Deskripsi |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| GET | `/dashboard/buyer/summary` | BUYER | Wallet balance, order aktif, transaksi terakhir |
-| GET | `/dashboard/seller/summary` | SELLER | Info toko, jumlah produk, pending orders |
-| GET | `/dashboard/driver/summary` | DRIVER | Job aktif, jumlah job selesai, total earnings |
-| GET | `/dashboard/admin/summary` | ADMIN | Ringkasan marketplace |
+| GET | `/dashboard/buyer/summary` | BUYER | Wallet balance, active orders, recent transactions |
+| GET | `/dashboard/seller/summary` | SELLER | Store info, product count, pending orders |
+| GET | `/dashboard/driver/summary` | DRIVER | Active jobs, completed jobs count, total earnings |
+| GET | `/dashboard/admin/summary` | ADMIN | Marketplace summary |
 
 ### Seller — Store
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| GET | `/seller/store` | SELLER | - | Toko milik sendiri (`null` jika belum punya) |
-| POST | `/seller/store` | SELLER | `{ name, description? }` | Buat toko (gagal `409` jika nama dipakai/sudah punya toko) |
-| PUT | `/seller/store` | SELLER | `{ name?, description? }` | Update toko sendiri |
+| GET | `/seller/store` | SELLER | - | Own store (`null` if not yet created) |
+| POST | `/seller/store` | SELLER | `{ name, description? }` | Create store (fails `409` if name is taken/already owns a store) |
+| PUT | `/seller/store` | SELLER | `{ name?, description? }` | Update own store |
 
 ### Seller — Products
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| GET | `/seller/products` | SELLER | - | List produk milik toko sendiri |
-| POST | `/seller/products` | SELLER | `{ name, description?, price, stock }` | Buat produk baru |
-| PUT | `/seller/products/:id` | SELLER | sebagian field di atas | Update produk (hanya milik sendiri, `403` jika bukan) |
-| DELETE | `/seller/products/:id` | SELLER | - | Hapus produk (hanya milik sendiri) |
+| GET | `/seller/products` | SELLER | - | List products owned by the store |
+| POST | `/seller/products` | SELLER | `{ name, description?, price, stock }` | Create a new product |
+| PUT | `/seller/products/:id` | SELLER | Partial fields above | Update product (own only, `403` if not) |
+| DELETE | `/seller/products/:id` | SELLER | - | Delete product (own only) |
 
 ### Public Catalog
 
-| Method | Endpoint | Auth | Deskripsi |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| GET | `/products` | - | List seluruh produk + info toko |
-| GET | `/products/:id` | - | Detail produk + info toko |
-| GET | `/stores/:id` | - | Detail toko + daftar produknya |
+| GET | `/products` | - | List all products + store info |
+| GET | `/products/:id` | - | Product details + store info |
+| GET | `/stores/:id` | - | Store details + product list |
 
 ### Buyer — Wallet
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| GET | `/buyer/wallet` | BUYER | - | Saldo wallet |
-| POST | `/buyer/wallet/topup` | BUYER | `{ amount }` | Top-up dummy |
-| GET | `/buyer/wallet/transactions` | BUYER | - | Riwayat transaksi (`TOPUP`, `PAYMENT`, `REFUND`) |
+| GET | `/buyer/wallet` | BUYER | - | Wallet balance |
+| POST | `/buyer/wallet/topup` | BUYER | `{ amount }` | Dummy top-up |
+| GET | `/buyer/wallet/transactions` | BUYER | - | Transaction history (`TOPUP`, `PAYMENT`, `REFUND`) |
 
 ### Buyer — Addresses
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| GET | `/buyer/addresses` | BUYER | - | List alamat |
-| POST | `/buyer/addresses` | BUYER | `{ label, recipientName, phoneNumber, fullAddress, city, postalCode, isDefault? }` | Tambah alamat (pertama otomatis default) |
-| PUT | `/buyer/addresses/:id` | BUYER | sebagian field di atas | Update alamat sendiri |
-| DELETE | `/buyer/addresses/:id` | BUYER | - | Hapus alamat sendiri |
+| GET | `/buyer/addresses` | BUYER | - | List addresses |
+| POST | `/buyer/addresses` | BUYER | `{ label, recipientName, phoneNumber, fullAddress, city, postalCode, isDefault? }` | Add address (first is default) |
+| PUT | `/buyer/addresses/:id` | BUYER | Partial fields above | Update own address |
+| DELETE | `/buyer/addresses/:id` | BUYER | - | Delete own address |
 
 ### Buyer — Cart
 
-> Lihat [Single-Store Checkout](#single-store-checkout) untuk aturan utama.
+> See [Single-Store Checkout](#single-store-checkout) for main rules.
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| GET | `/buyer/cart` | BUYER | - | Isi cart + summary (`totalItems`, `subtotal`) |
-| POST | `/buyer/cart/items` | BUYER | `{ productId, quantity }` | Tambah produk (`409` jika beda toko) |
-| PUT | `/buyer/cart/items/:productId` | BUYER | `{ quantity }` | Update quantity (`0` = hapus item) |
-| DELETE | `/buyer/cart/items/:productId` | BUYER | - | Hapus item |
-| DELETE | `/buyer/cart` | BUYER | - | Kosongkan cart (reset `storeId`) |
+| GET | `/buyer/cart` | BUYER | - | Cart contents + summary (`totalItems`, `subtotal`) |
+| POST | `/buyer/cart/items` | BUYER | `{ productId, quantity }` | Add product (`409` if different store) |
+| PUT | `/buyer/cart/items/:productId` | BUYER | `{ quantity }` | Update quantity (`0` = remove item) |
+| DELETE | `/buyer/cart/items/:productId` | BUYER | - | Remove item |
+| DELETE | `/buyer/cart` | BUYER | - | Empty cart (resets `storeId`) |
 
 ### Checkout & Buyer Orders
 
-> Lihat [Kalkulasi Checkout](#kalkulasi-checkout).
+> See [Checkout Calculation](#checkout-calculation).
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| POST | `/buyer/checkout/preview` | BUYER | `{ deliveryMethod, discountCode? }` | Hitung ringkasan tanpa membuat order |
-| POST | `/buyer/checkout` | BUYER | `{ addressId, deliveryMethod, discountCode? }` | Buat order (`400` jika saldo/stok kurang) |
-| GET | `/buyer/orders` | BUYER | - | Riwayat order |
-| GET | `/buyer/orders/:id` | BUYER | - | Detail order + `statusHistory` + `delivery` |
+| POST | `/buyer/checkout/preview` | BUYER | `{ deliveryMethod, discountCode? }` | Calculate summary without creating an order |
+| POST | `/buyer/checkout` | BUYER | `{ addressId, deliveryMethod, discountCode? }` | Create order (`400` if insufficient balance/stock) |
+| GET | `/buyer/orders` | BUYER | - | Order history |
+| GET | `/buyer/orders/:id` | BUYER | - | Order details + `statusHistory` + `delivery` |
 
 ### Seller — Orders
 
-| Method | Endpoint | Auth | Deskripsi |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| GET | `/seller/orders` | SELLER | Order masuk untuk toko sendiri |
-| PATCH | `/seller/orders/:id/process` | SELLER | `SEDANG_DIKEMAS` → `MENUNGGU_PENGIRIM`, membuat delivery job |
+| GET | `/seller/orders` | SELLER | Incoming orders for own store |
+| PATCH | `/seller/orders/:id/process` | SELLER | `SEDANG_DIKEMAS` → `MENUNGGU_PENGIRIM`, creates delivery job |
 
 ### Discount — Voucher & Promo
 
-> Lihat [Voucher & Promo (Diskon)](#voucher--promo-diskon).
+> See [Vouchers & Promos (Discounts)](#vouchers--promos-discounts).
 
-| Method | Endpoint | Auth | Body | Deskripsi |
+| Method | Endpoint | Auth | Body | Description |
 |---|---|---|---|---|
-| POST | `/admin/vouchers` | ADMIN | `{ code, type, value, expiryDate, usageLimit }` | Buat voucher |
-| GET | `/vouchers` | - | - | List voucher |
-| GET | `/vouchers/:code` | - | - | Detail voucher |
+| POST | `/admin/vouchers` | ADMIN | `{ code, type, value, expiryDate, usageLimit }` | Create voucher |
+| GET | `/vouchers` | - | - | List vouchers |
+| GET | `/vouchers/:code` | - | - | Voucher details |
 | PATCH | `/admin/vouchers/:code/toggle` | ADMIN | - | Toggle `isActive` |
-| POST | `/admin/promos` | ADMIN | `{ code, type, value, expiryDate }` | Buat promo |
-| GET | `/promos` | - | - | List promo |
-| GET | `/promos/:code` | - | - | Detail promo |
+| POST | `/admin/promos` | ADMIN | `{ code, type, value, expiryDate }` | Create promo |
+| GET | `/promos` | - | - | List promos |
+| GET | `/promos/:code` | - | - | Promo details |
 | PATCH | `/admin/promos/:code/toggle` | ADMIN | - | Toggle `isActive` |
 
 ### Reports
 
-| Method | Endpoint | Auth | Deskripsi |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
 | GET | `/buyer/reports/summary` | BUYER | `totalSpending`, `totalDiscount`, `totalRefunded`, `statusBreakdown` |
 | GET | `/seller/reports/summary` | SELLER | `totalIncome`, `totalReversedIncome`, `statusBreakdown` |
 
 ### Driver — Delivery Jobs
 
-| Method | Endpoint | Auth | Deskripsi |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| GET | `/driver/jobs` | DRIVER | List job `AVAILABLE` (order = `MENUNGGU_PENGIRIM`) |
-| GET | `/driver/jobs/active` | DRIVER | Job yang sedang dikerjakan (`TAKEN`) |
-| GET | `/driver/jobs/history` | DRIVER | Job yang sudah `COMPLETED` |
-| GET | `/driver/jobs/:id` | DRIVER | Detail job + order |
-| POST | `/driver/jobs/:id/take` | DRIVER | Ambil job (`409` jika sudah diambil driver lain) |
-| POST | `/driver/jobs/:id/complete` | DRIVER | Selesaikan job (`403` jika bukan job sendiri) |
+| GET | `/driver/jobs` | DRIVER | List `AVAILABLE` jobs (order = `MENUNGGU_PENGIRIM`) |
+| GET | `/driver/jobs/active` | DRIVER | Currently taken jobs (`TAKEN`) |
+| GET | `/driver/jobs/history` | DRIVER | Completed jobs (`COMPLETED`) |
+| GET | `/driver/jobs/:id` | DRIVER | Job details + order |
+| POST | `/driver/jobs/:id/take` | DRIVER | Take job (`409` if taken by another driver) |
+| POST | `/driver/jobs/:id/complete` | DRIVER | Complete job (`403` if not own job) |
 | GET | `/driver/earnings` | DRIVER | `totalCompletedJobs`, `totalEarnings` |
 
 ### Admin — Monitoring & Overdue
 
-| Method | Endpoint | Auth | Deskripsi |
+| Method | Endpoint | Auth | Description |
 |---|---|---|---|
-| GET | `/admin/summary` | ADMIN | Ringkasan jumlah user/store/produk/order/voucher/promo/delivery/overdue |
-| GET | `/admin/users` | ADMIN | Monitoring user + roles |
-| GET | `/admin/stores` | ADMIN | Monitoring toko |
-| GET | `/admin/products` | ADMIN | Monitoring produk |
-| GET | `/admin/orders` | ADMIN | Monitoring seluruh order |
-| GET | `/admin/deliveries` | ADMIN | Monitoring delivery job |
-| GET | `/admin/overdue` | ADMIN | Order melewati SLA + riwayat `DIKEMBALIKAN` |
-| POST | `/admin/overdue/run` | ADMIN | Trigger manual pengecekan overdue |
-| POST | `/admin/simulate-next-day` | ADMIN | Majukan waktu +24 jam & jalankan overdue check |
+| GET | `/admin/summary` | ADMIN | Count summary of users/stores/products/orders/vouchers/promos/deliveries/overdue |
+| GET | `/admin/users` | ADMIN | Monitor users + roles |
+| GET | `/admin/stores` | ADMIN | Monitor stores |
+| GET | `/admin/products` | ADMIN | Monitor products |
+| GET | `/admin/orders` | ADMIN | Monitor all orders |
+| GET | `/admin/deliveries` | ADMIN | Monitor delivery jobs |
+| GET | `/admin/overdue` | ADMIN | Orders past SLA + `DIKEMBALIKAN` history |
+| POST | `/admin/overdue/run` | ADMIN | Manual trigger overdue check |
+| POST | `/admin/simulate-next-day` | ADMIN | Fast-forward time +24 hours & run overdue check |
 
 ---
 
 ## End-to-End Testing Guide
 
-Alur demo lengkap menggunakan demo accounts:
+Full demo flow using demo accounts:
 
-1. **Buyer** (`buyer1`): top-up wallet → cek alamat default → tambah produk dari `Toko Demo Seapedia` ke cart.
-2. `POST /buyer/checkout/preview` dengan `discountCode: "SEAVOUCHER10"` → cek `discount`, `ppn`, `total`.
-3. `POST /buyer/checkout` → order baru, status `SEDANG_DIKEMAS`.
-4. **Seller** (`seller1`): `GET /seller/orders` → `PATCH /seller/orders/:id/process` → status `MENUNGGU_PENGIRIM`, delivery job dibuat.
+1. **Buyer** (`buyer1`): top-up wallet → check default address → add products from `Toko Demo Seapedia` to cart.
+2. `POST /buyer/checkout/preview` with `discountCode: "SEAVOUCHER10"` → check `discount`, `ppn`, `total`.
+3. `POST /buyer/checkout` → new order, status `SEDANG_DIKEMAS` (Packing).
+4. **Seller** (`seller1`): `GET /seller/orders` → `PATCH /seller/orders/:id/process` → status `MENUNGGU_PENGIRIM` (Awaiting Driver), delivery job created.
 5. **Driver** (`driver1`): `GET /driver/jobs` → `POST /driver/jobs/:id/take` (order → `SEDANG_DIKIRIM`) → `POST /driver/jobs/:id/complete` (order → `PESANAN_SELESAI`).
-6. **Buyer**: `GET /buyer/orders/:id` → cek `statusHistory` lengkap; `GET /buyer/reports/summary`.
-7. **Seller**: `GET /seller/reports/summary` → `totalIncome` bertambah.
-8. **Driver**: `GET /driver/earnings` → `totalEarnings` bertambah sebesar `deliveryFee`.
-9. **Overdue demo**: buat order baru dengan `deliveryMethod: "INSTANT"`, **jangan** diproses seller. Login **Admin** → `POST /admin/simulate-next-day` → `GET /admin/overdue` → order menjadi `DIKEMBALIKAN`, wallet buyer ter-refund, stok produk kembali.
-10. **Multi-role demo**: login `multirole1` → `requiresRoleSelection: true` → `POST /auth/select-role` dengan `role: "SELLER"` atau `"BUYER"`.
+6. **Buyer**: `GET /buyer/orders/:id` → check complete `statusHistory`; `GET /buyer/reports/summary`.
+7. **Seller**: `GET /seller/reports/summary` → `totalIncome` increases.
+8. **Driver**: `GET /driver/earnings` → `totalEarnings` increases by `deliveryFee`.
+9. **Overdue demo**: create a new order with `deliveryMethod: "INSTANT"`, **do not** process as seller. Login as **Admin** → `POST /admin/simulate-next-day` → `GET /admin/overdue` → order becomes `DIKEMBALIKAN`, buyer wallet refunded, product stock restored.
+10. **Multi-role demo**: login as `multirole1` → `requiresRoleSelection: true` → `POST /auth/select-role` with `role: "SELLER"` or `"BUYER"`.
 
 ---
 
 ## Security Testing Checklist
 
-| # | Skenario | Hasil yang Diharapkan |
+| # | Scenario | Expected Result |
 |---|---|---|
-| 1 | `POST /reviews` dengan `comment: "<script>alert(1)</script>Mantap"` | Tag `<script>` tidak tersimpan/dieksekusi sebagai HTML aktif |
-| 2 | `POST /seller/products` dengan `name` mengandung `<img onerror=...>` | Tag dihapus dari hasil yang disimpan |
-| 3 | `POST /auth/login` dengan `username: "admin' OR '1'='1"` | `401 Invalid username or password` (bukan SQL error/bypass) |
-| 4 | `POST /auth/logout` lalu pakai token yang sama untuk `GET /auth/me` | `401 Token has been revoked` |
-| 5 | Token `activeRole: BUYER` mengakses `POST /seller/products` | `403 Forbidden` |
-| 6 | Token Buyer A mengakses `GET /buyer/orders/:id` milik Buyer B | `404 Order not found` |
-| 7 | Token Seller A mengakses `PUT /seller/products/:id` milik Seller B | `403 Forbidden` |
-| 8 | Token non-admin mengakses `GET /admin/users` | `403 Forbidden` |
-| 9 | `POST /auth/login` gagal berulang >20x dalam 15 menit | `429 Too Many Requests` |
-| 10 | `POST /admin/vouchers` dengan `type: "PERCENTAGE", value: 150` | `400` (melebihi 100%) |
-| 11 | `POST /buyer/addresses` dengan `phoneNumber: "abc"` | `400` dengan `errors.phoneNumber` |
+| 1 | `POST /reviews` with `comment: "<script>alert(1)</script>Awesome"` | `<script>` tag is not saved/executed as active HTML |
+| 2 | `POST /seller/products` with `name` containing `<img onerror=...>` | Tag is removed from saved result |
+| 3 | `POST /auth/login` with `username: "admin' OR '1'='1"` | `401 Invalid username or password` (not an SQL error/bypass) |
+| 4 | `POST /auth/logout` then use the same token for `GET /auth/me` | `401 Token has been revoked` |
+| 5 | Token `activeRole: BUYER` accessing `POST /seller/products` | `403 Forbidden` |
+| 6 | Buyer A Token accessing `GET /buyer/orders/:id` belonging to Buyer B | `404 Order not found` |
+| 7 | Seller A Token accessing `PUT /seller/products/:id` belonging to Seller B | `403 Forbidden` |
+| 8 | Non-admin token accessing `GET /admin/users` | `403 Forbidden` |
+| 9 | `POST /auth/login` fails repeatedly >20x in 15 minutes | `429 Too Many Requests` |
+| 10 | `POST /admin/vouchers` with `type: "PERCENTAGE", value: 150` | `400` (exceeds 100%) |
+| 11 | `POST /buyer/addresses` with `phoneNumber: "abc"` | `400` with `errors.phoneNumber` |

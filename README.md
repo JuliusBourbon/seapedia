@@ -8,7 +8,7 @@ SEAPEDIA is a comprehensive marketplace application designed to facilitate trans
 
 This project consists of two main components:
 - **Backend**: A RESTful API built with Node.js, Express, and Prisma ORM using PostgreSQL.
-- **Frontend**: A cross-platform mobile application built with React Native and Expo.
+- **Frontend**: A mobile application (Android) built with React Native and Expo.
 
 ---
 
@@ -71,15 +71,15 @@ To set up the database schema and populate it with initial data (including the A
    npx prisma db seed
    ```
 
-### Creating an Admin Account
+### Demo Accounts
 
-The SEAPEDIA system strictly controls the creation of Admin accounts. They cannot be registered through the public registration endpoints for security reasons. 
-
-An initial Admin account is automatically created when you run the database seed command (`npx prisma db seed`). The default credentials generated are:
-- **Username**: `admin`
-- **Password**: `admin123`
-
-*Note: It is highly recommended to change the password immediately after the first login in a production environment.*
+| Role | Username | Password | Note |
+|---|---|---|---|
+| Admin | `admin` | `admin123` | Full access to `/admin/*` |
+| Seller | `seller1` | `seller123` | Has a store **"Toko Demo Seapedia"** + 3 products |
+| Buyer | `buyer1` | `buyer123` | Initial wallet **Rp1.000.000**, has 1 default address |
+| Driver | `driver1` | `driver123` | No active jobs yet |
+| Multi-role | `multirole1` | `multi123` | Roles **BUYER + SELLER** — use for demo flow of active role selection |
 
 ### Running the Backend Server
 
@@ -96,8 +96,8 @@ The backend API will be accessible at `http://localhost:3000`.
 The API documentation is available in the form of a **Postman Collection** which can be imported directly into Postman.
 
 ### Files
-- `seapedia-be/postman/SEAPEDIA.postman_collection.json` — all Level 1-7 endpoints complete with test scripts
-- `seapedia-be/postman/SEAPEDIA.postman_environment.json` — environment variables (base URL, tokens per role, etc.)
+- <a href="./seapedia-be/postman/SEAPEDIA.postman_collection.json" target="_blank">`seapedia-be/postman/SEAPEDIA.postman_collection.json`</a> — all Level 1-7 endpoints complete with test scripts
+- <a href="./seapedia-be/postman/SEAPEDIA.postman_environment.json" target="_blank">`seapedia-be/postman/SEAPEDIA.postman_environment.json`</a> — environment variables (base URL, tokens per role, etc.)
 
 ### How to Import
 1. Open **Postman**.
@@ -105,6 +105,8 @@ The API documentation is available in the form of a **Postman Collection** which
 3. Make sure the **SEAPEDIA** environment is active (top right corner of Postman).
 4. Run the backend first (`npm run dev`), then run the seed (`npx prisma db seed`) if you haven't already.
 5. Execute requests sequentially starting from the **A. Auth & Role** folder — some requests depend on the results of previous requests via environment variables.
+
+There's also more detail information about Backend/API in <a href="./seapedia-be/README.md" target="_blank"><b>Seapedia-be README.md</b></a>
 
 ---
 
@@ -149,8 +151,6 @@ If you prefer not to run the frontend development server, you can use the releas
 3. Install the APK (ensure "Install from Unknown Sources" is enabled in your device settings).
 4. Run the SEAPEDIA app directly from your device.
 *(Note: Ensure your device is on the same network as the backend if testing locally, and that the APK was built using the correct API URL).*
-
-There's also more detail information about Backend/API in `seapedia-be/README.md`
 
 ---
 
