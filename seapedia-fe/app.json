@@ -12,10 +12,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#062926",
-        "foregroundImage": "./assets/images/icon.png"
+        "backgroundColor": "#ffffff",
+        "foregroundImage": "./assets/images/icon.png",
+        "package": "com.juliusbourbon.Seapedia"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.juliusbourbon.Seapedia"
     },
     "web": {
       "output": "static",
@@ -27,15 +29,21 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/icon.png",
-          "imageWidth": 500,
+          "imageWidth": 300,
           "resizeMode": "contain",
-          "backgroundColor": "#062926"
+          "backgroundColor": "#ffffff"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8fac518d-f6ad-4716-9367-4d3f3e6804d5"
+      }
     }
   }
 }
