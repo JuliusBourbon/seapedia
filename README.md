@@ -158,7 +158,7 @@ npx expo start -c
 
 **Option 2: Install Released APK**
 If you prefer not to run the frontend development server, you can use the released APK:
-1. Download the latest release APK file <a href="[./seapedia-fe/dist/seapedia-release.apk](https://github.com/JuliusBourbon/seapedia/releases/download/v1.0.0/seapedia-release.apk)" target="_blank">sepedia-release.apk</a>.
+1. Download the latest release APK file <a href="https://github.com/JuliusBourbon/seapedia/releases/download/v1.0.0/seapedia-release.apk" target="_blank">sepedia-release.apk</a>.
 2. Install the APK (ensure "Install from Unknown Sources" is enabled in your device settings).
 3. Run the SEAPEDIA app directly from your device.
 
