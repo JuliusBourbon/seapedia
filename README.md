@@ -81,6 +81,14 @@ To set up the database schema and populate it with initial data (including the A
 | Driver | `driver1` | `driver123` | No active jobs yet |
 | Multi-role | `multirole1` | `multi123` | Roles **BUYER + SELLER** — use for demo flow of active role selection |
 
+**Discount codes (from seed):**
+
+| Code | Type | Value | Notes |
+|---|---|---|---|
+| `SEAVOUCHER10` | Voucher, PERCENTAGE | 10% | `usageLimit: 100` |
+| `SEAPROMO5K` | Promo, FIXED | Rp5,000 | Unlimited usage |
+
+
 ### Running the Backend Server
 
 Start the development server:
@@ -96,8 +104,8 @@ The backend API will be accessible at `http://localhost:3000`.
 The API documentation is available in the form of a **Postman Collection** which can be imported directly into Postman.
 
 ### Files
-- <a href="./seapedia-be/postman/SEAPEDIA.postman_collection.json" target="_blank">`seapedia-be/postman/SEAPEDIA.postman_collection.json`</a> — all Level 1-7 endpoints complete with test scripts
-- <a href="./seapedia-be/postman/SEAPEDIA.postman_environment.json" target="_blank">`seapedia-be/postman/SEAPEDIA.postman_environment.json`</a> — environment variables (base URL, tokens per role, etc.)
+- <a href="./seapedia-be/postman/SEAPEDIA API Collection.postman_collection.json" target="_blank">`seapedia-be/postman/SEAPEDIA.postman_collection.json`</a> — all Level 1-7 endpoints complete with test scripts
+- <a href="./seapedia-be/postman/SEAPEDIA Local.postman_environment.json" target="_blank">`seapedia-be/postman/SEAPEDIA.postman_environment.json`</a> — environment variables (base URL, tokens per role, etc.)
 
 ### How to Import
 1. Open **Postman**.
