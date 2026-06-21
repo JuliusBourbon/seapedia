@@ -162,7 +162,6 @@ If you prefer not to run the frontend development server, you can use the releas
 2. Transfer the APK to your Android device.
 3. Install the APK (ensure "Install from Unknown Sources" is enabled in your device settings).
 4. Run the SEAPEDIA app directly from your device.
-*(Note: Ensure your device is on the same network as the backend if testing locally, and that the APK was built using the correct API URL).*
 
 ---
 
