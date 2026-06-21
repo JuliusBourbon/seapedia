@@ -137,11 +137,15 @@ There's also more detail information about Backend/API in <a href="./seapedia-be
 Create a `.env` file in the `seapedia-fe` directory and specify the backend API URL. If you are running the app on a physical device, ensure you use your machine's local IP address instead of `localhost`.
 
 ```env
-EXPO_PUBLIC_API_URL="http://[IP_ADDRESS]:3000/api/v1"
+EXPO_PUBLIC_API_URL=http://[IP_ADDRESS]:3000/api/v1
 ```
 example:
 ```env
-EXPO_PUBLIC_API_URL="http://192.168.1.2:3000/api/v1"
+EXPO_PUBLIC_API_URL=http://192.168.1.2:3000/api/v1
+```
+Or using deployed Backend:
+```env
+EXPO_PUBLIC_API_URL=https://leave-present-citizenship-neo.trycloudflare.com/api/v1
 ```
 
 ### Running the Application
