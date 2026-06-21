@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Lock, User as UserIcon, LogIn } from 'lucide-react-native';
@@ -16,6 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/useAuthStore';
 import api from '@/services/api';
+import logo from '@/assets/images/icon.png';
 
 export default function LoginScreen() {
   const theme = useTheme();
@@ -46,21 +48,17 @@ export default function LoginScreen() {
         const { requiresRoleSelection, token, preAuthToken, roles, activeRole } = response.data.data;
 
         if (requiresRoleSelection) {
-          // Multi-role user, requires select-role
           setPreAuth(preAuthToken, roles);
           router.replace('/(public)/select-role');
         } else {
-          // Single-role or admin user, direct login
           setAuth(token, activeRole, roles);
 
-          // Fetch profile details
           try {
             const profileResponse = await api.get('/auth/me');
             if (profileResponse.data?.success) {
               setUser(profileResponse.data.data);
             }
           } catch (profileErr) {
-            // Profile fetch failed but authentication is valid
           }
         }
       }
@@ -87,14 +85,15 @@ export default function LoginScreen() {
         <ScrollView contentContainerClassName="flex-grow px-8 justify-center py-8">
           <View className="items-center mb-8">
             <View
-              className="w-20 h-20 rounded-full items-center justify-center mb-4"
+              className="w-40 h-40 rounded-full items-center justify-center mb-4"
               style={{ backgroundColor: `${theme.primary}15` }}
             >
-              <LogIn size={40} color={theme.primary} />
+              <Image source={logo} style={{ width: 100, height: 100 }} />
             </View>
             <ThemedText type="subtitle" className="text-[28px] font-extrabold text-center">
               Selamat Datang
             </ThemedText>
+            <ThemedText className="text-center">Masuk dan mulai belanja di Seapedia!</ThemedText>
           </View>
 
           <View className="w-full">
