@@ -87,7 +87,24 @@ The backend API will be accessible at `http://localhost:3000`.
 
 ---
 
-## 3. Frontend Setup (`seapedia-fe`)
+## 3. API Documentation
+
+The API documentation is available in the form of a **Postman Collection** which can be imported directly into Postman.
+
+### Files
+- `seapedia-be/postman/SEAPEDIA.postman_collection.json` — all Level 1-7 endpoints complete with test scripts
+- `seapedia-be/postman/SEAPEDIA.postman_environment.json` — environment variables (base URL, tokens per role, etc.)
+
+### How to Import
+1. Open **Postman**.
+2. Click **Import** → select the two files above.
+3. Make sure the **SEAPEDIA** environment is active (top right corner of Postman).
+4. Run the backend first (`npm run dev`), then run the seed (`npx prisma db seed`) if you haven't already.
+5. Execute requests sequentially starting from the **A. Auth & Role** folder — some requests depend on the results of previous requests via environment variables.
+
+---
+
+## 4. Frontend Setup (`seapedia-fe`)
 
 ### Installation
 
@@ -118,7 +135,7 @@ npx expo start -c
 
 ---
 
-## 4. Key Features Overview
+## 5. Key Features Overview
 
 - **Role-Based Access Control (RBAC)**: Supports `ADMIN`, `BUYER`, `SELLER`, and `DRIVER` roles. Users can possess multiple roles simultaneously and select their active role upon login.
 - **Marketplace Ecosystem**: Sellers can manage products and stores; Buyers can browse, add to cart, and checkout with automated PPN (VAT) calculations.

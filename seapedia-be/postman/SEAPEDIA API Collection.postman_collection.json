@@ -1,0 +1,3209 @@
+{
+  "info": {
+    "_postman_id": "d239ca50-e7c8-4c38-b359-adf8e9e76fa5",
+    "name": "SEAPEDIA API Collection",
+    "description": "Full end-to-end collection for SEAPEDIA marketplace backend (Level 1-7). Run folders in order A → K.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "35574386"
+  },
+  "item": [
+    {
+      "name": "A. Auth & Role",
+      "item": [
+        {
+          "name": "A1. Login admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Success true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('Token exists', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "pm.environment.set('token_admin', json.data.token);",
+                  "pm.environment.set('active_role_admin', json.data.activeRole);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin\", \"password\": \"admin123\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A2. Login seller1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Success true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('Token exists', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "pm.environment.set('token_seller', json.data.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"seller1\", \"password\": \"seller123\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A3. Login buyer1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Success true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('Token exists', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "pm.environment.set('token_buyer', json.data.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"buyer1\", \"password\": \"buyer123\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A4. Login driver1",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Success true', () => pm.expect(json.success).to.be.true);",
+                  "pm.test('Token exists', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "pm.environment.set('token_driver', json.data.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"driver1\", \"password\": \"driver123\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A5a. Register multirole user",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('Success true', () => pm.expect(json.success).to.be.true);",
+                  "const ts = Date.now();",
+                  "pm.environment.set('multirole_username', 'multirole_test_' + ts);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"multirole_test\", \"email\": \"multirole_test@example.com\", \"password\": \"Test1234!\", \"name\": \"Multi Role Test\", \"roles\": [\"BUYER\", \"SELLER\"]}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A5b. Login multirole1 (seed user)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('requiresRoleSelection true', () => pm.expect(json.data.requiresRoleSelection).to.be.true);",
+                  "pm.test('preAuthToken exists', () => pm.expect(json.data.preAuthToken).to.be.a('string'));",
+                  "pm.test('roles has BUYER and SELLER', () => {",
+                  "  pm.expect(json.data.roles).to.include('BUYER');",
+                  "  pm.expect(json.data.roles).to.include('SELLER');",
+                  "});",
+                  "pm.environment.set('preauth_token_multirole', json.data.preAuthToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"multirole1\", \"password\": \"multi123\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A5c. Select role SELLER (multirole)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('token exists', () => pm.expect(json.data.token).to.be.a('string'));",
+                  "pm.test('activeRole is SELLER', () => pm.expect(json.data.activeRole).to.equal('SELLER'));",
+                  "pm.environment.set('token_multirole_seller', json.data.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{preauth_token_multirole}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"role\": \"SELLER\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/select-role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "select-role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "A6. GET /auth/me (buyer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('activeRole is BUYER', () => pm.expect(json.data.activeRole).to.equal('BUYER'));",
+                  "pm.test('username is buyer1', () => pm.expect(json.data.username).to.equal('buyer1'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "B. Public & Reviews",
+      "item": [
+        {
+          "name": "B7. GET /products (no auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Products array not empty', () => pm.expect(json.data).to.be.an('array').that.is.not.empty);",
+                  "const firstProduct = json.data[0];",
+                  "pm.environment.set('product_id_1', firstProduct.id);",
+                  "pm.environment.set('store_id_1', firstProduct.store ? firstProduct.store.id : firstProduct.storeId);",
+                  "console.log('Saved product_id_1:', firstProduct.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "B8. GET /products/:id (no auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('store.name exists', () => {",
+                  "  pm.expect(json.data.store).to.exist;",
+                  "  pm.expect(json.data.store.name).to.be.a('string').and.not.empty;",
+                  "});",
+                  "pm.environment.set('product_price_1', json.data.price);",
+                  "pm.environment.set('product_stock_1', json.data.stock);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id_1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "B9. POST /reviews (XSS test, no auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const responseText = pm.response.text();",
+                  "pm.test('Script tag not present as-is in response', () => {",
+                  "  pm.expect(responseText).to.not.include('<script>alert(1)</script>');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reviewerName\": \"Anonymous Tester\", \"rating\": 5, \"comment\": \"<script>alert(1)</script>Mantap sekali!\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "B10. GET /reviews (no auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Reviews array not empty', () => pm.expect(json.data).to.be.an('array').that.is.not.empty);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/reviews",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "reviews"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "B_extra. GET /stores/:id (no auth)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Store has products array', () => pm.expect(json.data.products).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/stores/{{store_id_1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "stores",
+                "{{store_id_1}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "C. Seller — Store & Products",
+      "item": [
+        {
+          "name": "C11. GET /seller/store",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Store exists with name', () => pm.expect(json.data.name).to.be.a('string').and.not.empty);",
+                  "pm.environment.set('seller_store_id', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/store",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "store"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "C12. POST /seller/products (create new)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('Product created with id', () => pm.expect(json.data.id).to.be.a('string'));",
+                  "pm.environment.set('product_id_2', json.data.id);",
+                  "console.log('Created product_id_2:', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Produk Test Postman\", \"description\": \"Produk untuk keperluan testing\", \"price\": 75000, \"stock\": 50}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "C13. PUT /seller/products/:id (update stock)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Stock updated to 100', () => pm.expect(json.data.stock).to.equal(100));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"stock\": 100}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/products/{{product_id_2}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{product_id_2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "C14a. DELETE /seller/products/:id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 or 204', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/products/{{product_id_2}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "products",
+                "{{product_id_2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "C14b. POST /seller/products (recreate for checkout)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('product_id_2', json.data.id);",
+                  "console.log('Recreated product_id_2:', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\": \"Produk Test Postman v2\", \"description\": \"Produk ulang untuk checkout testing\", \"price\": 50000, \"stock\": 100}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "C_extra. GET /seller/products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Returns array', () => pm.expect(json.data).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "C_extra. PUT /seller/store (update description)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Description updated', () => pm.expect(json.data.description).to.equal('Toko demo yang telah diupdate via Postman'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\": \"Toko demo yang telah diupdate via Postman\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/seller/store",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "store"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "D. Buyer — Wallet, Address, Cart",
+      "item": [
+        {
+          "name": "D15. GET /buyer/wallet",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Balance is a number', () => pm.expect(json.data.balance).to.be.a('number'));",
+                  "pm.environment.set('wallet_balance_initial', json.data.balance);",
+                  "console.log('Initial balance:', json.data.balance);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/wallet",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "wallet"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D16. POST /buyer/wallet/topup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 or 201', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "const json = pm.response.json();",
+                  "pm.test('Balance increased', () => {",
+                  "  const initial = parseFloat(pm.environment.get('wallet_balance_initial'));",
+                  "  pm.expect(json.data.balance).to.be.greaterThan(initial);",
+                  "});",
+                  "pm.environment.set('wallet_balance_after_topup', json.data.balance);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"amount\": 500000}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/wallet/topup",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "wallet",
+                "topup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D17. GET /buyer/addresses",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Has at least one address', () => pm.expect(json.data).to.be.an('array').that.is.not.empty);",
+                  "const defaultAddr = json.data.find(a => a.isDefault) || json.data[0];",
+                  "pm.environment.set('address_id', defaultAddr.id);",
+                  "console.log('Saved address_id:', defaultAddr.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/addresses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D_extra. POST /buyer/addresses (add new)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('address_id_new', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"label\": \"Rumah Baru\", \"recipientName\": \"Buyer Satu\", \"phoneNumber\": \"08123456789\", \"fullAddress\": \"Jl. Testing No. 123\", \"city\": \"Bandung\", \"postalCode\": \"40123\", \"isDefault\": false}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/addresses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "addresses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D18. POST /buyer/cart/items (add product_id_1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 or 201', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));",
+                  "const json = pm.response.json();",
+                  "pm.test('Cart item added', () => pm.expect(json.success).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"productId\": \"{{product_id_1}}\", \"quantity\": 2}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/cart/items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D19. PUT /buyer/cart/items/:productId (qty=1)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Success true', () => pm.expect(json.success).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"quantity\": 1}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/cart/items/{{product_id_1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items",
+                "{{product_id_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "D20. GET /buyer/cart (verify subtotal)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Cart has summary.subtotal', () => {",
+                  "  pm.expect(json.data.summary).to.exist;",
+                  "  pm.expect(json.data.summary.subtotal).to.be.a('number').and.greaterThan(0);",
+                  "});",
+                  "pm.environment.set('cart_subtotal', json.data.summary.subtotal);",
+                  "console.log('Cart subtotal:', json.data.summary.subtotal);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "E. Checkout dengan Diskon",
+      "item": [
+        {
+          "name": "E21. POST /buyer/checkout/preview (SEAVOUCHER10)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('discount.source is VOUCHER', () => {",
+                  "  pm.expect(json.data.discount).to.exist;",
+                  "  pm.expect(json.data.discount.source).to.equal('VOUCHER');",
+                  "});",
+                  "pm.test('Total calculation correct', () => {",
+                  "  const d = json.data;",
+                  "  const discountedSubtotal = d.subtotal - (d.discount ? d.discount.amount : 0);",
+                  "  const expectedPPN = Math.round(discountedSubtotal * 0.12);",
+                  "  const expectedTotal = discountedSubtotal + d.deliveryFee + expectedPPN;",
+                  "  pm.expect(d.total).to.be.closeTo(expectedTotal, 1);",
+                  "});",
+                  "pm.environment.set('preview_total', json.data.total);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"deliveryMethod\": \"REGULAR\", \"discountCode\": \"SEAVOUCHER10\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/checkout/preview",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "checkout",
+                "preview"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "E22. POST /buyer/checkout (SEAVOUCHER10, REGULAR)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('Order created', () => pm.expect(json.data.id).to.be.a('string'));",
+                  "pm.test('Status is SEDANG_DIKEMAS', () => pm.expect(json.data.status).to.equal('SEDANG_DIKEMAS'));",
+                  "pm.environment.set('order_id_1', json.data.id);",
+                  "pm.environment.set('order_total_1', json.data.total);",
+                  "console.log('Created order_id_1:', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"addressId\": \"{{address_id}}\", \"deliveryMethod\": \"REGULAR\", \"discountCode\": \"SEAVOUCHER10\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "checkout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "E23. GET /buyer/wallet/transactions (verify PAYMENT)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "const txList = json.data.transactions || json.data;",
+                  "pm.test('Has PAYMENT transaction', () => {",
+                  "  const payTx = txList.find(t => t.type === 'PAYMENT');",
+                  "  pm.expect(payTx).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/wallet/transactions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "wallet",
+                "transactions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "E24. GET /products/:id (verify stock decreased)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "const initialStock = parseInt(pm.environment.get('product_stock_1'));",
+                  "if (!isNaN(initialStock)) {",
+                  "  pm.test('Stock decreased by 1', () => {",
+                  "    pm.expect(json.data.stock).to.equal(initialStock - 1);",
+                  "  });",
+                  "} else {",
+                  "  pm.test('Stock is a number', () => pm.expect(json.data.stock).to.be.a('number'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/products/{{product_id_1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "products",
+                "{{product_id_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "E_extra. GET /buyer/orders/:id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Order id matches', () => pm.expect(json.data.id).to.equal(pm.environment.get('order_id_1')));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/orders/{{order_id_1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{order_id_1}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "F. Seller Memproses Order",
+      "item": [
+        {
+          "name": "F25. GET /seller/orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "const orders = json.data.orders || json.data;",
+                  "const targetOrder = orders.find(o => o.id === pm.environment.get('order_id_1'));",
+                  "pm.test('order_id_1 found with status SEDANG_DIKEMAS', () => {",
+                  "  pm.expect(targetOrder).to.exist;",
+                  "  pm.expect(targetOrder.status).to.equal('SEDANG_DIKEMAS');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "F26. PATCH /seller/orders/:id/process",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Status changed to MENUNGGU_PENGIRIM', () => {",
+                  "  pm.expect(json.data.status).to.equal('MENUNGGU_PENGIRIM');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/orders/{{order_id_1}}/process",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "orders",
+                "{{order_id_1}}",
+                "process"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "G. Driver Delivery Flow",
+      "item": [
+        {
+          "name": "G27. GET /driver/jobs (AVAILABLE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "const jobs = json.data.jobs || json.data;",
+                  "pm.test('Has available jobs', () => pm.expect(jobs).to.be.an('array').that.is.not.empty);",
+                  "const job = jobs.find(j => j.orderId === pm.environment.get('order_id_1')) || jobs[0];",
+                  "pm.environment.set('delivery_id_1', job.id);",
+                  "console.log('Saved delivery_id_1:', job.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/driver/jobs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "driver",
+                "jobs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "G28. POST /driver/jobs/:id/take",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Order status is TAKEN', () => {",
+                  "  const orderStatus = json.data.order ? json.data.order.status : json.data.status;",
+                  "  pm.expect(orderStatus).to.equal('TAKEN');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/driver/jobs/{{delivery_id_1}}/take",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "driver",
+                "jobs",
+                "{{delivery_id_1}}",
+                "take"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "G29. GET /driver/jobs/active",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Active job exists', () => {",
+                  "  const job = json.data.job || json.data;",
+                  "  pm.expect(job).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/driver/jobs/active",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "driver",
+                "jobs",
+                "active"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "G30. POST /driver/jobs/:id/complete",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Order status is COMPLETED', () => {",
+                  "  const orderStatus = json.data.order ? json.data.order.status : json.data.status;",
+                  "  pm.expect(orderStatus).to.equal('COMPLETED');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/driver/jobs/{{delivery_id_1}}/complete",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "driver",
+                "jobs",
+                "{{delivery_id_1}}",
+                "complete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "G31. GET /driver/earnings",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('totalCompletedJobs >= 1', () => {",
+                  "  pm.expect(json.data.totalCompletedJobs).to.be.at.least(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/driver/earnings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "driver",
+                "earnings"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "G_extra. GET /driver/jobs/history",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('History is array', () => pm.expect(json.data).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/driver/jobs/history",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "driver",
+                "jobs",
+                "history"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "H. Reports & Dashboard",
+      "item": [
+        {
+          "name": "H32. GET /buyer/reports/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Has totalSpending', () => pm.expect(json.data.totalSpending).to.be.a('number'));",
+                  "pm.test('Has totalDiscount', () => pm.expect(json.data.totalDiscount).to.exist);",
+                  "pm.test('Has statusBreakdown', () => pm.expect(json.data.statusBreakdown).to.exist);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/reports/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "reports",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "H33. GET /seller/reports/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('totalIncome > 0', () => pm.expect(json.data.totalIncome).to.be.greaterThan(0));",
+                  "pm.environment.set('seller_total_income_before_overdue', json.data.totalIncome);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/reports/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "H_extra. GET /dashboard/buyer/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/buyer/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "buyer",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "H_extra. GET /dashboard/seller/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/seller/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "seller",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "H_extra. GET /dashboard/driver/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_driver}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/driver/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "driver",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "H_extra. GET /dashboard/admin/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/dashboard/admin/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "dashboard",
+                "admin",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "I. Overdue Simulation",
+      "item": [
+        {
+          "name": "I34a. Clear cart first",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Cart cleared or already empty (200 or 204)', () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/cart",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I34b. Add product_id_1 to cart (for order_id_2)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200 or 201', () => pm.expect(pm.response.code).to.be.oneOf([200, 201]));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"productId\": \"{{product_id_1}}\", \"quantity\": 1}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/cart/items",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "cart",
+                "items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I34c. POST /buyer/checkout (INSTANT, no discount) → order_id_2",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('order_id_2 created', () => pm.expect(json.data.id).to.be.a('string'));",
+                  "pm.test('deliveryMethod is INSTANT', () => pm.expect(json.data.deliveryMethod).to.equal('INSTANT'));",
+                  "pm.environment.set('order_id_2', json.data.id);",
+                  "pm.environment.set('order_total_2', json.data.total);",
+                  "console.log('Created order_id_2 (INSTANT, no process):', json.data.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"addressId\": \"{{address_id}}\", \"deliveryMethod\": \"INSTANT\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/checkout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "checkout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I34d. GET /buyer/wallet (pre-refund balance)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('wallet_balance_pre_refund', json.data.balance);",
+                  "console.log('Pre-refund balance:', json.data.balance);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/wallet",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "wallet"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I35. POST /admin/simulate-next-day",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('overdueCheck.totalProcessed >= 1', () => {",
+                  "  const total = json.data.overdueCheck ? json.data.overdueCheck.totalProcessed : json.data.totalProcessed;",
+                  "  pm.expect(total).to.be.at.least(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/simulate-next-day",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "simulate-next-day"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I36. GET /buyer/orders/:id (verify DIKEMBALIKAN)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('order_id_2 status is DIKEMBALIKAN', () => {",
+                  "  pm.expect(json.data.status).to.equal('DIKEMBALIKAN');",
+                  "});",
+                  "pm.test('statusHistory has DIKEMBALIKAN entry', () => {",
+                  "  const history = json.data.statusHistory || json.data.OrderStatusHistory || [];",
+                  "  const found = history.some(h => h.status === 'DIKEMBALIKAN');",
+                  "  pm.expect(found).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/orders/{{order_id_2}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{order_id_2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I37. GET /buyer/wallet (verify refund received)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "const preRefund = parseFloat(pm.environment.get('wallet_balance_pre_refund'));",
+                  "const orderTotal = parseFloat(pm.environment.get('order_total_2'));",
+                  "if (!isNaN(preRefund) && !isNaN(orderTotal)) {",
+                  "  pm.test('Balance increased by order_id_2 total (refund)', () => {",
+                  "    pm.expect(json.data.balance).to.be.closeTo(preRefund + orderTotal, 1);",
+                  "  });",
+                  "} else {",
+                  "  pm.test('Balance is a number', () => pm.expect(json.data.balance).to.be.a('number'));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/wallet",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "wallet"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "I38. GET /seller/reports/summary (verify reversed income)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('totalReversedIncome exists', () => {",
+                  "  pm.expect(json.data.totalReversedIncome).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/reports/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "reports",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "J. Admin Monitoring & Discount Management",
+      "item": [
+        {
+          "name": "J39a. GET /admin/summary",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/summary",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "summary"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J39b. GET /admin/users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J39c. GET /admin/stores",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/stores",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "stores"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J39d. GET /admin/products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J39e. GET /admin/orders",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J39f. GET /admin/deliveries",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/deliveries",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "deliveries"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J39g. GET /admin/overdue",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/overdue",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "overdue"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. POST /admin/overdue/run (manual)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/overdue/run",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "overdue",
+                "run"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. GET /vouchers (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Vouchers array exists', () => pm.expect(json.data).to.be.an('array'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vouchers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vouchers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. GET /vouchers/:code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Voucher code matches', () => pm.expect(json.data.code).to.equal('SEAVOUCHER10'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vouchers/SEAVOUCHER10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vouchers",
+                "SEAVOUCHER10"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. POST /admin/vouchers (create new)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('voucher_code_new', json.data.code);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"code\": \"TESTVCHR20\", \"type\": \"PERCENTAGE\", \"value\": 20, \"expiryDate\": \"2026-12-31T23:59:59.000Z\", \"usageLimit\": 50}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/vouchers",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "vouchers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. PATCH /admin/vouchers/:code/toggle",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('isActive changed', () => pm.expect(json.data.isActive).to.be.a('boolean'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/vouchers/TESTVCHR20/toggle",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "vouchers",
+                "TESTVCHR20",
+                "toggle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. GET /promos (public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/promos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "promos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J_extra. GET /promos/:code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('Promo code matches', () => pm.expect(json.data.code).to.equal('SEAPROMO5K'));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/promos/SEAPROMO5K",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "promos",
+                "SEAPROMO5K"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J40. POST /admin/promos (create new promo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "const json = pm.response.json();",
+                  "pm.test('Promo created', () => pm.expect(json.data.code).to.be.a('string'));",
+                  "pm.environment.set('promo_code_new', json.data.code);",
+                  "console.log('Created promo_code_new:', json.data.code);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"code\": \"TESTPROMO3K\", \"type\": \"FIXED\", \"value\": 3000, \"expiryDate\": \"2026-12-31T23:59:59.000Z\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/promos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "promos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J41. PATCH /admin/promos/:code/toggle → isActive false",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('isActive is now false', () => pm.expect(json.data.isActive).to.be.false);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_admin}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/promos/{{promo_code_new}}/toggle",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "promos",
+                "{{promo_code_new}}",
+                "toggle"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "J42. POST /buyer/checkout/preview (inactive promo → 400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Checkout preview returns 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Error message indicates a checkout blocker\", function () {",
+                  "    const res = pm.response.json();",
+                  "    pm.expect(res.message).to.satisfy((msg) =>",
+                  "        msg.includes('not active') || msg.includes('cart is empty')",
+                  "    );",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"deliveryMethod\": \"REGULAR\", \"discountCode\": \"{{promo_code_new}}\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/buyer/checkout/preview",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "checkout",
+                "preview"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "K. Security & Authorization",
+      "item": [
+        {
+          "name": "K43. Login SQL injection attempt → 401",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 (SQL injection rejected)', () => pm.response.to.have.status(401));",
+                  "const json = pm.response.json();",
+                  "pm.test('success is false', () => pm.expect(json.success).to.be.false);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"admin' OR '1'='1\", \"password\": \"anything\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K44. GET /seller/products with token_buyer → 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 403 (role mismatch)', () => pm.response.to.have.status(403));",
+                  "const json = pm.response.json();",
+                  "pm.test('success is false', () => pm.expect(json.success).to.be.false);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/seller/products",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "seller",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K45. GET /admin/users with token_seller → 403",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 403 (not admin)', () => pm.response.to.have.status(403));",
+                  "const json = pm.response.json();",
+                  "pm.test('success is false', () => pm.expect(json.success).to.be.false);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_seller}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K46. GET /buyer/orders/:id with different buyer → 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404 (order not found for this buyer)', () => pm.response.to.have.status(404));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer_other}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buyer/orders/{{order_id_1}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buyer",
+                "orders",
+                "{{order_id_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K46_setup. Register buyer_other & login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Register step: just check 201",
+                  "pm.test('Status 201 (buyer_other registered)', () => pm.response.to.have.status(201));"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"buyer_other\", \"email\": \"buyer_other@example.com\", \"password\": \"BuyerOther123!\", \"name\": \"Buyer Other\", \"roles\": [\"BUYER\"]}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K46_login. Login buyer_other → token_buyer_other",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.environment.set('token_buyer_other', json.data.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"username\": \"buyer_other\", \"password\": \"BuyerOther123!\"}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K47a. POST /auth/logout (token_buyer)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "const json = pm.response.json();",
+                  "pm.test('success is true', () => pm.expect(json.success).to.be.true);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "K47b. GET /auth/me (revoked token → 401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 401 (token revoked)', () => pm.response.to.have.status(401));",
+                  "const json = pm.response.json();",
+                  "pm.test('Error mentions revoked or invalid', () => {",
+                  "  const msg = json.message || '';",
+                  "  pm.expect(msg.toLowerCase()).to.satisfy(m => m.includes('revoked') || m.includes('invalid') || m.includes('expired') || m.includes('unauthorized'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_buyer}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Z. Cleanup / Reset Notes",
+      "item": [
+        {
+          "name": "Z1. [BACA] Cara reset database & seed ulang",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}",
+              "host": [
+                "{{base_url}}"
+              ]
+            },
+            "description": "Ini bukan request yang perlu dieksekusi. Baca deskripsi di atas untuk panduan reset."
+          },
+          "response": []
+        },
+        {
+          "name": "Z2. [INFO] Demo Accounts dari Seed",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}",
+              "host": [
+                "{{base_url}}"
+              ]
+            },
+            "description": "Referensi akun dan konfigurasi seed. Tidak perlu dieksekusi."
+          },
+          "response": []
+        }
+      ],
+      "description": "Folder ini berisi catatan/panduan reset data. Tidak ada request yang perlu dieksekusi di sini."
+    }
+  ]
+}
