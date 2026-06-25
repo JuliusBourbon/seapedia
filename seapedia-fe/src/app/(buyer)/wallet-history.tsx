@@ -34,7 +34,7 @@ export default function WalletHistoryScreen() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
+
   // Top Up State
   const [topupAmount, setTopupAmount] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -126,13 +126,13 @@ export default function WalletHistoryScreen() {
     return (
       <View className="mb-3">
         {/* Wallet Balance Card */}
-        <Card className="mb-3 p-4">
+        <Card className="mb-3 p-6 border border-primaryShades-700">
           <View className="flex-row justify-between items-center">
             <View>
-              <ThemedText className="text-[12px] font-semibold uppercase tracking-wider" themeColor="textSecondary">
+              <ThemedText className="text-[12px] font-semibold uppercase tracking-wider">
                 Saldo Anda Saat Ini
               </ThemedText>
-              <ThemedText className="text-[26px] font-black text-[#0D9488] mt-1">{formattedBalance}</ThemedText>
+              <ThemedText type="extraLarge" className="font-black text-[#0D9488] mt-5">{formattedBalance}</ThemedText>
             </View>
             <View className="w-[52px] h-[52px] rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}20` }}>
               <Wallet size={28} color={theme.primary} />
@@ -141,10 +141,11 @@ export default function WalletHistoryScreen() {
         </Card>
 
         {/* Topup Form Section */}
-        <Card className="p-4 mb-4">
-          <ThemedText type="smallBold" className="text-base mb-2">
-            Isi Ulang Saldo (Dummy)
-          </ThemedText>
+        <Card className="mb-4">
+          <View className="flex-row items-center gap-2 mb-5">
+            <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+            <ThemedText className="text-base font-bold">Isi Ulang Saldo</ThemedText>
+          </View>
           <Input
             placeholder="Masukkan jumlah top-up (Rp)"
             value={topupAmount}
@@ -165,10 +166,10 @@ export default function WalletHistoryScreen() {
                   setTopupAmount(amount.toString());
                   setAmountError(null);
                 }}
-                className={`flex-1 h-[38px] rounded-lg border-[1.5px] items-center justify-center ${topupAmount === amount.toString() ? 'border-primary' : 'border-border'}`}
-                style={{ backgroundColor: theme.background }}
+                className={`flex-1 h-[38px] rounded-lg border-[1.5px] items-center justify-center ${topupAmount === amount.toString() ? 'border-primary' : 'border-neutral-400'}`}
+                style={{ backgroundColor: theme.neutral[100] }}
               >
-                <ThemedText className="text-[12px] font-bold">
+                <ThemedText className={`${topupAmount === amount.toString() ? 'text-primary' : 'text-neutral-500'} text-[12px] font-bold`}>
                   {(amount / 1000).toLocaleString('id-ID')}k
                 </ThemedText>
               </Pressable>
@@ -185,10 +186,11 @@ export default function WalletHistoryScreen() {
           />
         </Card>
 
-        <ThemedText type="smallBold" className="text-base font-bold mb-2">
-          Riwayat Transaksi Dompet
-        </ThemedText>
-      </View>
+        <View className="flex-row items-center gap-2 mt-5">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="text-base font-bold">Riwayat Transaksi Dompet</ThemedText>
+        </View>
+      </View >
     );
   };
 
