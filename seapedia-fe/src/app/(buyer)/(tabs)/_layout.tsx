@@ -15,19 +15,17 @@ export default function BuyerTabsLayout() {
         onClose={() => setProfileVisible(false)}
       />
       <Tabs
-        // "none": Tombol back hardware tidak akan ditangkap oleh Tab navigator,
-        // sehingga langsung diteruskan ke Stack navigator (kembali ke halaman sebelumnya / public).
         backBehavior="none"
         tabBar={() => (
           <BuyerNavBar onProfilePress={() => setProfileVisible(true)} />
         )}
         screenOptions={{
           headerStyle: {
-            backgroundColor: theme.backgroundElement,
+            backgroundColor: theme.neutral[50],
             borderBottomWidth: 1,
-            borderBottomColor: theme.border,
+            borderBottomColor: theme.neutral[50],
           },
-          headerTintColor: theme.text,
+          headerTintColor: theme.neutral[800],
           headerTitleStyle: {
             fontWeight: '700',
           },
