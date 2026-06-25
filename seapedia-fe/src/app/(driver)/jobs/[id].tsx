@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  Platform,
   Alert,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Truck, MapPin, Store, Calendar, CreditCard, ShieldAlert, Phone, User, Package, CheckCircle2 } from 'lucide-react-native';
+import { Truck, MapPin, Store, Calendar, ShieldAlert, Package, CheckCircle2 } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import { DELIVERY_METHODS, DELIVERY_STATUS_LABELS } from '@/constants/config';
 import api from '@/services/api';
 
@@ -181,7 +178,7 @@ export default function DriverJobDetailScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
+        <ThemedText className="mt-3">
           Mengambil rincian pekerjaan...
         </ThemedText>
       </ThemedView>
@@ -192,7 +189,7 @@ export default function DriverJobDetailScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center p-5">
         <ShieldAlert size={48} color={theme.danger} />
-        <ThemedText className="text-[16px] font-semibold mt-3 text-center">{error || 'Rincian pekerjaan tidak ditemukan'}</ThemedText>
+        <ThemedText className="font-semibold mt-3 text-center">{error || 'Rincian pekerjaan tidak ditemukan'}</ThemedText>
         <Button label="Kembali" onPress={() => router.back()} className="mt-4" />
       </ThemedView>
     );
@@ -203,7 +200,7 @@ export default function DriverJobDetailScreen() {
   return (
     <ThemedView className="flex-1">
       <ScrollView
-        contentContainerClassName="p-4 pb-5 gap-3"
+        contentContainerClassName="p-4 pb-20 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -213,120 +210,124 @@ export default function DriverJobDetailScreen() {
           />
         }
       >
-        {/* Status Header Card */}
-        <Card className="p-4">
-          <View className="flex-row justify-between items-center">
-            <View className='flex-[7]'>
-              <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+        <Card className="p-4 border rounded-md border-primary">
+          <View className="flex-row justify-between items-start gap-2">
+            <View className="flex-1">
+              <ThemedText className="uppercase font-semibold">
                 ID Job Pengiriman:
               </ThemedText>
-              <ThemedText className="font-extrabold font-mono mt-[2px]">
+              <ThemedText className="font-mono mt-[2px]">
                 {job.id}
               </ThemedText>
             </View>
-            <View className="flex-[3] text-center">
+            <View className="flex-shrink items-end">
               {getStatusBadge(job.status)}
             </View>
           </View>
 
-          <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
-          <View className="flex-row items-center">
+          <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.neutral[400] }} />
+
+          <View className="flex-row items-center justify-center gap-1">
             <Truck size={18} color={theme.primary} />
-            <ThemedText className="text-[14px] font-bold ml-2">
-              Ongkos Kirim (Earning): {formatCurrency(job.earning)}
+            <ThemedText type='large' className="font-medium">
+              Earning:
+            </ThemedText>
+            <ThemedText type='large' className="font-bold text-primary">
+              {formatCurrency(job.earning)}
             </ThemedText>
           </View>
         </Card>
 
-        {/* Route Card (Pickup & destination) */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Rute Pengiriman
-        </ThemedText>
-        <Card className="p-4">
-          {/* Pickup */}
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Rute Pengiriman</ThemedText>
+        </View>
+        <Card className="p-4 border border-primary rounded-md">
           <View className="flex-row items-start gap-3">
             <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.primary }} />
             <View className="flex-1 gap-[2px]">
-              <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
-                Penjemputan (Toko Nelayan)
+              <ThemedText className="font-medium">
+                Penjemputan (Toko)
               </ThemedText>
-              <ThemedText type="smallBold" className="text-[15px]">
+              <ThemedText className="font-semibold">
                 {job.order.store.name}
               </ThemedText>
             </View>
           </View>
 
-          {/* Line */}
-          <View className="w-[2px] h-[25px] ml-[5px] my-[2px]" style={{ backgroundColor: theme.border }} />
+          <View className="w-[2px] h-[25px] ml-[5px] my-[2px]" style={{ backgroundColor: theme.neutral[500] }} />
 
-          {/* Dropoff */}
           <View className="flex-row items-start gap-3">
-            <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.warning }} />
+            <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.danger }} />
             <View className="flex-1 gap-[2px]">
               <View className="flex-row justify-between items-center mb-[2px]">
-                <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+                <ThemedText className="font-medium">
                   Tujuan (Penerima)
                 </ThemedText>
                 <Badge label={deliveryMethodLabel} variant="neutral" />
               </View>
-              <ThemedText type="smallBold" className="text-[15px]">
+              <ThemedText className="font-semibold">
                 {job.order.address.recipientName} ({job.order.address.phoneNumber})
               </ThemedText>
-              <ThemedText className="leading-[18px] mt-[2px]" themeColor="textSecondary">
+              <ThemedText className="leading-[18px] mt-[2px]">
                 {job.order.address.fullAddress}, {job.order.address.city}, {job.order.address.postalCode}
               </ThemedText>
             </View>
           </View>
         </Card>
 
-        {/* Items to Deliver */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Daftar Barang Bawaan
-        </ThemedText>
-        <Card className="p-4">
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Daftar Barang Bawaan</ThemedText>
+        </View>
+        <Card className="p-4 border border-primary rounded-md">
           {job.order.items.map((item, idx) => (
             <View key={item.id}>
-              {idx > 0 && <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />}
-              <View className="flex-row justify-between items-center">
+              {idx > 0 && <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.neutral[400] }} />}
+              <View className="flex-row justify-between items-center mb-2">
                 <View className="flex-1 pr-3">
-                  <ThemedText type="smallBold" className="text-[14px]">
+                  <ThemedText className="font-semibold">
                     {item.productName}
                   </ThemedText>
-                  <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
-                    Jumlah: {item.quantity} item
+                  <ThemedText className="mt-[2px]">
+                    {item.quantity} x {formatCurrency(item.price)}
                   </ThemedText>
                 </View>
-                <ThemedText className="text-[12px]" themeColor="textSecondary">
-                  {formatCurrency(item.price)} / pcs
+                <ThemedText className="font-bold">
+                  {formatCurrency(item.subtotal)}
                 </ThemedText>
               </View>
             </View>
           ))}
         </Card>
 
-        {/* Job Dates */}
         {job.status !== 'AVAILABLE' && (
-          <Card className="p-4">
-            {job.takenAt && (
-              <View className="flex-row items-center">
-                <Calendar size={16} color={theme.textSecondary} />
-                <ThemedText className="ml-2" themeColor="textSecondary">
-                  Diambil pada: {new Date(job.takenAt).toLocaleString('id-ID')}
-                </ThemedText>
-              </View>
-            )}
-            {job.completedAt && (
-              <View className="flex-row items-center mt-2">
-                <CheckCircle2 size={16} color={theme.success} />
-                <ThemedText className="ml-2" themeColor="textSecondary">
-                  Selesai pada: {new Date(job.completedAt).toLocaleString('id-ID')}
-                </ThemedText>
-              </View>
-            )}
-          </Card>
+          <>
+            <View className="flex-row items-center gap-2">
+              <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+              <ThemedText className="font-bold">Informasi Waktu</ThemedText>
+            </View>
+            <Card className="p-4 border border-primary rounded-md">
+              {job.takenAt && (
+                <View className="flex-row items-center">
+                  <Calendar size={16} color={theme.neutral[500]} />
+                  <ThemedText className="ml-2">
+                    Diambil pada: {new Date(job.takenAt).toLocaleString('id-ID')}
+                  </ThemedText>
+                </View>
+              )}
+              {job.completedAt && (
+                <View className="flex-row items-center mt-2">
+                  <CheckCircle2 size={16} color={theme.primary} />
+                  <ThemedText className="ml-2">
+                    Selesai pada: {new Date(job.completedAt).toLocaleString('id-ID')}
+                  </ThemedText>
+                </View>
+              )}
+            </Card>
+          </>
         )}
 
-        {/* Action Button */}
         {job.status === 'AVAILABLE' && (
           <Button
             label="Ambil Pekerjaan Ini"

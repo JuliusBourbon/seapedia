@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -8,14 +7,13 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ClipboardList, MapPin, Store, DollarSign, Navigation, Info } from 'lucide-react-native';
+import { ClipboardList, MapPin, Store, Navigation, } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import { DELIVERY_METHODS } from '@/constants/config';
 import api from '@/services/api';
 
@@ -135,11 +133,11 @@ export default function DriverJobsScreen() {
     const deliveryMethodLabel = DELIVERY_METHODS[item.order.deliveryMethod]?.label || item.order.deliveryMethod;
 
     return (
-      <Card className="mb-3 p-4">
-        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
-          <View className="flex-row items-center gap-2">
-            <Navigation size={16} color={theme.primary} />
-            <ThemedText type="smallBold" className="text-[14px]">
+      <Card className="mb-3 p-4 border border-primary rounded-md">
+        <View className="flex-row justify-between items-center border-b border-neutral-600 pb-2 mb-2">
+          <View className="flex-row items-center justify-center gap-2">
+            <Navigation size={20} color={theme.primary} />
+            <ThemedText className="font-semibold">
               {deliveryMethodLabel}
             </ThemedText>
           </View>
@@ -147,40 +145,38 @@ export default function DriverJobsScreen() {
         </View>
 
         <View className="gap-3">
-          {/* Pickup */}
           <View className="flex-row items-start gap-3">
-            <Store size={16} color={theme.textSecondary} className="mt-[2px]" />
+            <Store size={16} color={theme.neutral[500]} className="mt-[4px]" />
             <View className="flex-1">
-              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
+              <ThemedText className="font-medium">
                 Penjemputan (Toko)
               </ThemedText>
-              <ThemedText type="smallBold" className="text-[14px] mt-[1px]">
+              <ThemedText className="font-semibold mt-[1px]">
                 {item.order.store.name}
               </ThemedText>
             </View>
           </View>
 
-          {/* Destination */}
           <View className="flex-row items-start gap-3">
-            <MapPin size={16} color={theme.textSecondary} className="mt-[2px]" />
+            <MapPin size={16} color={theme.neutral[500]} className="mt-[4px]" />
             <View className="flex-1">
-              <ThemedText className="text-[11px] uppercase font-semibold" themeColor="textSecondary">
+              <ThemedText className=" font-semibold">
                 Tujuan (Kota)
               </ThemedText>
-              <ThemedText type="smallBold" className="text-[14px] mt-[1px]">
+              <ThemedText className="font-semibold mt-[1px]">
                 {item.order.address.recipientName} - {item.order.address.city}
               </ThemedText>
             </View>
           </View>
 
-          <View className="h-[1px] my-1" style={{ backgroundColor: theme.border }} />
+          <View className="h-[1px] my-1" style={{ backgroundColor: theme.neutral[600] }} />
 
-          <View className="flex-row justify-between items-center">
+          <View className="flex-row justify-between items-center bg-neutral-20">
             <View>
-              <ThemedText className="text-[11px]" themeColor="textSecondary">
+              <ThemedText className="">
                 Earning Kurir
               </ThemedText>
-              <ThemedText className="text-[18px] font-extrabold text-[#0D9488] mt-[2px]">
+              <ThemedText type='extraLarge' className="font-bold text-primary mt-[2px]">
                 {formatCurrency(item.earning)}
               </ThemedText>
             </View>
@@ -212,8 +208,8 @@ export default function DriverJobsScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-6 px-5">
-        <ClipboardList size={52} color={theme.placeholder} />
-        <ThemedText className="text-center mt-3" themeColor="textSecondary">
+        <ClipboardList size={52} color={theme.neutral[500]} />
+        <ThemedText className="text-center mt-3">
           {error ? error : 'Saat ini tidak ada lowongan pekerjaan pengiriman yang tersedia.'}
         </ThemedText>
       </View>
@@ -224,7 +220,7 @@ export default function DriverJobsScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
+        <ThemedText className="mt-3">
           Mencari lowongan pekerjaan...
         </ThemedText>
       </ThemedView>

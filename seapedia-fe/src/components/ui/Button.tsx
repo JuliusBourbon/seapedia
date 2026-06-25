@@ -67,12 +67,12 @@ export function Button({
   const getSizeClasses = () => {
     switch (size) {
       case 'small':
-        return { container: 'py-[6px] px-4 rounded-lg', text: 'text-[13px] font-semibold' };
+        return { container: 'py-[6px] px-4 rounded-lg', text: 'font-semibold' };
       case 'large':
-        return { container: 'py-4 px-8 rounded-md', text: 'text-[17px] font-bold' };
+        return { container: 'py-4 px-8 rounded-md', text: 'font-bold' };
       case 'medium':
       default:
-        return { container: 'py-3 px-6 rounded-lg', text: 'text-[15px] font-semibold' };
+        return { container: 'py-3 px-6 rounded-lg', text: 'font-semibold' };
     }
   };
 
@@ -84,14 +84,14 @@ export function Button({
   return (
     <Pressable
       disabled={isDisabled}
-      className={`flex-row items-center justify-center gap-2 shadow-sm ${variantClass.container} ${sizeClass.container} ${isDisabled ? 'opacity-50' : ''} ${className || ''}`}
+      className={`flex-row items-center justify-center gap-2 ${variant !== 'outline' ? 'shadow-sm' : ''} ${variantClass.container} ${sizeClass.container} ${isDisabled ? 'opacity-50' : ''} ${className || ''}`}
       {...props}
     >
       {!loading && leftIcon}
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'outline' ? theme.primary : '#FFFFFF'}
+          color={variant === 'outline' ? theme.primary : theme.neutral[200]}
         />
       ) : (
         <ThemedText
