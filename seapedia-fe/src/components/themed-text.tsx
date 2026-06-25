@@ -1,16 +1,12 @@
 import { Platform, Text, type TextProps } from 'react-native';
 
-import { Fonts, ThemeColor } from '@/constants/theme';
-import { useTheme } from '@/hooks/use-theme';
 
 export type ThemedTextProps = TextProps & {
   type?: 'default' | 'title' | 'small' | 'large' | 'extraLarge' | 'smallBold' | 'subtitle' | 'link' | 'linkPrimary' | 'code';
-  themeColor?: ThemeColor;
   className?: string;
 };
 
-export function ThemedText({ style, type = 'default', themeColor, className, ...rest }: ThemedTextProps) {
-  const theme = useTheme();
+export function ThemedText({ type = 'default', className, ...rest }: ThemedTextProps) {
 
   const getTypeClasses = () => {
     switch (type) {
@@ -29,10 +25,6 @@ export function ThemedText({ style, type = 'default', themeColor, className, ...
   };
 
   return (
-    <Text
-      style={[{ color: themeColor ? theme[themeColor] : theme.text }, style]}
-      className={`${getTypeClasses()} ${className || ''}`}
-      {...rest}
-    />
+    <Text className={`${getTypeClasses()} ${className || ''}`}{...rest} />
   );
 }

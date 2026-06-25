@@ -8,7 +8,13 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export function useTheme() {
   const scheme = useColorScheme();
-  const theme = scheme === 'unspecified' ? 'light' : scheme;
 
-  return Colors[theme];
+  // Because `theme.ts` uses a single color palette without light/dark modes,
+  // we return the `Colors` object directly and map common semantic colors.
+  return {
+    ...Colors,
+    // text: Colors.neutral[900],
+    // textSecondary: Colors.neutral[500],
+    // background: Colors.neutral[50],
+  };
 }

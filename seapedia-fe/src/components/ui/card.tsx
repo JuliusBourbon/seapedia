@@ -7,15 +7,10 @@ export interface CardProps extends ViewProps {
 }
 
 export function Card({ style, variant = 'default', className, ...props }: CardProps) {
-  const getVariantClasses = () => {
-    return 'shadow-md shadow-slate-900/5 dark:shadow-slate-900/20 border border-white/20';
-  };
-
-  const variantClass = getVariantClasses();
 
   return (
     <View
-      className={`rounded-2xl p-4 ${variantClass} ${className || ''}`}
+      className={`rounded-2xl p-4 ${className || ''}`}
       style={style}
       {...props}
     />

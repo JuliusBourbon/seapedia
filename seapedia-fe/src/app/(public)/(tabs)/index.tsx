@@ -6,18 +6,14 @@ import {
   ActivityIndicator,
   Pressable,
   Platform,
-  Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Search, Anchor, Store } from 'lucide-react-native';
+import { Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { ProductCard, ProductData } from '@/components/product-card';
 import api from '@/services/api';
-
-const { width } = Dimensions.get('window');
 
 export default function MarketplaceHomeScreen() {
   const theme = useTheme();
@@ -61,10 +57,10 @@ export default function MarketplaceHomeScreen() {
     <View className="w-full pb-4 py-5">
       <Pressable
         onPress={handleSearchPress}
-        className="flex-row items-center mx-6 px-4 h-12 rounded-md border-[1.5px] mb-6 border-white/20"
+        className="flex-row items-center mx-6 px-4 h-12 rounded-md border-[1.5px] mb-6 border-primaryShades-700"
       >
-        <Search size={20} color={theme.textSecondary} />
-        <ThemedText className="text-placeholder ml-2">
+        <Search size={20} color={theme.neutral[800]} />
+        <ThemedText className="text-placeholder ml-2" style={{ color: theme.primaryShades[700] }}>
           Cari
         </ThemedText>
       </Pressable>
@@ -75,7 +71,7 @@ export default function MarketplaceHomeScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-16">
-        <ThemedText className="text-textSecondary">
+        <ThemedText style={{ color: theme.primaryShades[700] }}>
           {error ? error : 'Belum ada produk yang dijual saat ini.'}
         </ThemedText>
       </View>
@@ -83,11 +79,11 @@ export default function MarketplaceHomeScreen() {
   };
 
   return (
-    <ThemedView className="flex-1">
+    <ThemedView className="flex-1" style={{ backgroundColor: theme.neutral[100] }}>
       {loading && !refreshing ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
-          <ThemedText className="mt-4 text-textSecondary">
+          <ThemedText className="mt-4">
             Mencari produk..
           </ThemedText>
         </View>
@@ -103,7 +99,7 @@ export default function MarketplaceHomeScreen() {
           keyExtractor={(item) => item.id}
           numColumns={Platform.OS === 'web' ? undefined : 2}
           contentContainerClassName={Platform.OS === 'web' ? "flex-row flex-wrap justify-center px-4 pb-8" : "pb-8"}
-          columnWrapperClassName={Platform.OS !== 'web' && products.length > 0 ? "justify-between px-2" : undefined}
+          columnWrapperClassName={Platform.OS !== 'web' && products.length > 0 ? "justify-between px-1" : undefined}
           ListHeaderComponent={renderHeader}
           ListEmptyComponent={renderEmpty}
           refreshControl={

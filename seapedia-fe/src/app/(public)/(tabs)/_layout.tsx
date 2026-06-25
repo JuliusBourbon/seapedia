@@ -1,4 +1,4 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Color, Tabs, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { Home, Compass, Star, LogIn, User, ShoppingCart, Search } from 'lucide-react-native';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -24,21 +24,21 @@ export default function PublicTabsLayout() {
       <Tabs
         screenOptions={{
           tabBarActiveTintColor: theme.primary,
-          tabBarInactiveTintColor: theme.textSecondary,
+          tabBarInactiveTintColor: theme.neutral[500],
           tabBarStyle: {
-            backgroundColor: theme.backgroundElement,
+            backgroundColor: theme.neutral[50],
             borderTopWidth: 1,
-            borderTopColor: theme.border,
+            borderTopColor: theme.neutral[50],
             height: 60 + insets.bottom,
             paddingBottom: 8 + insets.bottom,
             paddingTop: 8,
           },
           headerStyle: {
-            backgroundColor: theme.backgroundElement,
+            backgroundColor: theme.neutral[50],
             borderBottomWidth: 1,
-            borderBottomColor: theme.border,
+            borderBottomColor: theme.neutral[50],
           },
-          headerTintColor: theme.text,
+          headerTintColor: theme.neutral[900],
           headerTitleStyle: {
             fontWeight: '700',
           },
@@ -88,7 +88,6 @@ export default function PublicTabsLayout() {
               ) : (
                 <LogIn size={size} color={color} />
               ),
-            // Saat sudah login, tab Profil membuka dropdown, bukan navigate ke login
             tabBarButton: isAuthenticated
               ? (props) => (
                 <Pressable

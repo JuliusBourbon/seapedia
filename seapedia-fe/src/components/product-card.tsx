@@ -1,13 +1,10 @@
-import React from 'react';
-import { StyleSheet, View, Pressable, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { StyleSheet, View, Pressable, Platform, Image } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ShoppingBag, Eye } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from './themed-text';
 import { Card } from './ui/card';
 import { Badge } from './ui/badge';
-import { Spacing } from '@/constants/theme';
 
 export interface ProductData {
   id: string;
@@ -53,20 +50,23 @@ export function ProductCard({ product, onAddToCart, showAddToCart = true }: Prod
   };
 
   return (
-    <Card className="flex-1 m-[6px] p-0 overflow-hidden bg-black/5 dark:bg-white/5" style={{ maxWidth: Platform.OS === 'web' ? 240 : '48%' }}>
+    <Card className="flex-1 m-[6px] p-0 overflow-hidden bg-neutral-100 border border-neutral-200" style={{ maxWidth: Platform.OS === 'web' ? 240 : '48%' }}>
       <Pressable onPress={handlePress}>
-        <View className="">{getStockBadge()}</View>
-
         <View className="p-2">
+          <Image
+            source={require('../../assets/images/icon.png')}
+            className="w-28 h-28"
+          />
           <ThemedText className="font-bold">
             {product.name}
+          </ThemedText>
+          <ThemedText type='small' className="font-bold text-neutral-500">
+            {product.store.name}
           </ThemedText>
           <ThemedText className="font-extrabold mb-2">
             {formattedPrice}
           </ThemedText>
-          <ThemedText type='small' className="font-bold" themeColor="textSecondary">
-            {product.store.name}
-          </ThemedText>
+          <View>{getStockBadge()}</View>
         </View>
       </Pressable>
 
