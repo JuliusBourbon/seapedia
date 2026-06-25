@@ -5,6 +5,7 @@ export default function BuyerLayout() {
   const theme = useTheme();
   return (
     <Stack screenOptions={{
+      headerShown: false,
       headerStyle: {
         backgroundColor: theme.neutral[50],
       },
