@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import { BarChart3, TrendingDown, DollarSign, Gift, Truck, Percent, ShieldCheck, HelpCircle } from 'lucide-react-native';
+import { TrendingDown, Gift, Truck, Percent, HelpCircle } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import { ORDER_STATUS_LABELS } from '@/constants/config';
 import api from '@/services/api';
 
@@ -71,7 +68,7 @@ export default function BuyerReportsScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
+        <ThemedText className="mt-3">
           Mengompilasi laporan pengeluaran Anda...
         </ThemedText>
       </ThemedView>
@@ -110,41 +107,41 @@ export default function BuyerReportsScreen() {
 
         {/* Stats Grid */}
         <View className="flex-row flex-wrap gap-3">
-          <Card className="w-[47.5%] p-4 gap-1">
-            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.success}10` }}>
-              <Gift size={20} color={theme.success} />
+          <Card className="w-[47.5%] p-4 gap-1 border border-neutral-300 rounded-md">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1 bg-primary/10">
+              <Gift size={20} color={theme.primary} />
             </View>
-            <ThemedText type='small' themeColor="textSecondary">Hemat Voucher</ThemedText>
-            <ThemedText type="large" style={{ color: theme.success }}>
+            <ThemedText type='small'>Hemat Voucher</ThemedText>
+            <ThemedText type="large" style={{ color: theme.primary }}>
               {formatCurrency(report?.totalDiscount ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card className="w-[47.5%] p-4 gap-1">
-            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.primary}10` }}>
-              <Percent size={20} color={theme.primary} />
+          <Card className="w-[47.5%] p-4 gap-1 border border-neutral-300 rounded-md">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1 bg-secondary/10">
+              <Percent size={20} color={theme.secondary} />
             </View>
-            <ThemedText type='small' themeColor="textSecondary">Total PPN (12%)</ThemedText>
+            <ThemedText type='small'>Total PPN (12%)</ThemedText>
             <ThemedText type="large">
               {formatCurrency(report?.totalPpn ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card className="w-[47.5%] p-4 gap-1">
-            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.secondary}10` }}>
+          <Card className="w-[47.5%] p-4 gap-1 border border-neutral-300 rounded-md">
+            <View className="w-9 h-9 rounded-lg items-center justify-center mb-1 bg-secondary/10">
               <Truck size={20} color={theme.secondary} />
             </View>
-            <ThemedText type='small' themeColor="textSecondary">Ongkos Kirim</ThemedText>
+            <ThemedText type='small'>Ongkos Kirim</ThemedText>
             <ThemedText type="large">
               {formatCurrency(report?.totalDeliveryFee ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card className="w-[47.5%] p-4 gap-1">
+          <Card className="w-[47.5%] p-4 gap-1 border border-neutral-300 rounded-md">
             <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: `${theme.danger}10` }}>
               <TrendingDown size={20} color={theme.danger} />
             </View>
-            <ThemedText type='small' themeColor="textSecondary">Refund</ThemedText>
+            <ThemedText type='small'>Refund</ThemedText>
             <ThemedText type="large" style={{ color: theme.danger }}>
               {formatCurrency(report?.totalRefunded ?? 0)}
             </ThemedText>
@@ -152,12 +149,13 @@ export default function BuyerReportsScreen() {
         </View>
 
         {/* Status Breakdown Section */}
-        <ThemedText type="smallBold" className="uppercase font-bold tracking-wider mb-1 mt-2">
-          Sebaran Status Pesanan
-        </ThemedText>
+        <View className="flex-row items-center gap-2 mt-4">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Sebaran Status Pesanan</ThemedText>
+        </View>
         <Card className="p-4 gap-3">
           {statusKeys.length === 0 ? (
-            <ThemedText className="text-center my-4" themeColor="textSecondary">
+            <ThemedText className="text-center my-4">
               Belum ada data status pesanan tersedia.
             </ThemedText>
           ) : (
@@ -169,10 +167,10 @@ export default function BuyerReportsScreen() {
               return (
                 <View key={statusKey} className="gap-1">
                   <View className="flex-row justify-between items-center">
-                    <ThemedText type="smallBold" className="text-[13px]">
+                    <ThemedText className="font-semibold">
                       {label}
                     </ThemedText>
-                    <ThemedText className="text-[13px]" themeColor="textSecondary">
+                    <ThemedText className="">
                       {count} Pesanan
                     </ThemedText>
                   </View>
@@ -183,7 +181,7 @@ export default function BuyerReportsScreen() {
                         width: `${barPercent}%`,
                         backgroundColor:
                           statusKey === 'PESANAN_SELESAI'
-                            ? theme.success
+                            ? theme.primary
                             : statusKey === 'DIKEMBALIKAN'
                               ? theme.danger
                               : theme.primary,
@@ -198,9 +196,9 @@ export default function BuyerReportsScreen() {
 
         {/* Note on Refund */}
         {report && report.refundedOrdersCount > 0 && (
-          <Card className="p-4 flex-row gap-3 items-start bg-warning/5">
-            <HelpCircle size={18} color={theme.warning} />
-            <ThemedText className="flex-1 text-[12px] leading-[18px]" themeColor="textSecondary">
+          <Card className="p-4 flex-row gap-3 items-start bg-danger">
+            <HelpCircle size={18} color={theme.danger} />
+            <ThemedText className="flex-1 text-[12px] leading-[18px]">
               Sebanyak **{report.refundedOrdersCount} pesanan** dibatalkan dan direfund (dikembalikan ke Wallet Anda) senilai total **{formatCurrency(report.totalRefunded)}** karena melewati SLA waktu pengantaran kurir.
             </ThemedText>
           </Card>
