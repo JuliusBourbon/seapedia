@@ -226,11 +226,11 @@ export default function CartScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-6 px-5 mt-12">
-        <ShoppingCart size={64} color={theme.neutral[200]} />
-        <ThemedText type="smallBold" className="text-[18px] mt-4">
+        <ShoppingCart size={64} color={theme.primary} />
+        <ThemedText type="large" className="mt-4">
           Keranjang Belanja Kosong
         </ThemedText>
-        <ThemedText className="text-[14px] text-center mt-2 px-3">
+        <ThemedText className="text-center mt-2 px-3">
           Yuk, jelajahi produk kami dan isi keranjang belanja Anda!
         </ThemedText>
         <Button
