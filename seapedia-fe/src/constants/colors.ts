@@ -50,4 +50,5 @@ export const Colors = {
     800: '#2E3132',
     900: '#191C1D',
   },
+  danger: '#EF4444',
 } as const;

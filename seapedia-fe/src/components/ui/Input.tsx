@@ -53,14 +53,14 @@ export function Input({
   const isPassword = secureTextEntry;
   const shouldHidePassword = isPassword && !isPasswordVisible;
 
-  // Process error message
   const errorMsg = Array.isArray(error) ? error[0] : error;
 
-  let borderColorClass = 'border-white/20';
+  let borderColor: string = theme.neutral[300];
+
   if (errorMsg) {
-    borderColorClass = 'border-danger'
+    borderColor = theme.danger;
   } else if (isFocused) {
-    borderColorClass = 'border-primary'
+    borderColor = theme.primary;
   }
 
   return (
@@ -68,24 +68,28 @@ export function Input({
       {label && (
         <ThemedText
           type="smallBold"
-          className="mb-1 text-textSecondary"
-          style={labelStyle}
+          className="mb-1"
+          style={[{ color: theme.neutral[600] }, labelStyle]}
         >
           {label}
         </ThemedText>
       )}
       <View
-        className={`flex-row items-center border-[1px] rounded-xl px-4 h-[52px] bg-black-10 ${borderColorClass}`}
+        className="flex-row items-center border-[1px] rounded-xl px-4 h-[52px]"
+        style={{
+          backgroundColor: theme.neutral[100],
+          borderColor: borderColor,
+        }}
       >
         {leftIcon && <View className="mr-2 justify-center items-center">{leftIcon}</View>}
 
         <TextInput
-          placeholderTextColor={theme.placeholder}
+          placeholderTextColor={theme.neutral[400]}
           secureTextEntry={shouldHidePassword}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          className={`flex-1 h-full text-[15px] font-medium text-white p-0 ${inputClasses || ''}`}
-          style={inputStyle}
+          className={`flex-1 h-full text-[15px] font-medium p-0 ${inputClasses || ''}`}
+          style={[{ color: theme.neutral[900] }, inputStyle]}
           {...props}
         />
         {isPassword && (
@@ -94,9 +98,9 @@ export function Input({
             className="p-1 justify-center items-center"
           >
             {isPasswordVisible ? (
-              <EyeOff size={20} color={theme.textSecondary} />
+              <EyeOff size={20} color={theme.neutral[500]} />
             ) : (
-              <Eye size={20} color={theme.textSecondary} />
+              <Eye size={20} color={theme.neutral[500]} />
             )}
           </Pressable>
         )}

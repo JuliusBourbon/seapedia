@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
   Modal,
   Pressable,
   Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Animated,
 } from 'react-native';
-import { Star, MessageSquarePlus, X } from 'lucide-react-native';
+import { Star, MessageSquarePlus, X, MessageCircle } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -47,6 +46,24 @@ export default function ApplicationReviewsScreen() {
   const [submitting, setSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 0.4, duration: 900, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      Animated.timing(fadeAnim, { toValue: 1, duration: 300, useNativeDriver: true }).start();
+    }
+  }, [loading]);
+
   const fetchReviews = async () => {
     try {
       setError(null);
@@ -54,7 +71,7 @@ export default function ApplicationReviewsScreen() {
       if (response.data?.success) {
         setReviews(response.data.data);
       } else {
-        setError('Gagal memuat review');
+        setError('Gagal memuat ulasan');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Terjadi kesalahan koneksi');
@@ -107,7 +124,7 @@ export default function ApplicationReviewsScreen() {
 
       const response = await api.post('/reviews', payload);
       if (response.data?.success) {
-        Alert.alert('Sukses', 'Terima kasih atas review Anda!');
+        Alert.alert('Sukses', 'Terima kasih atas ulasan Anda!');
         setModalVisible(false);
         setFormComment('');
         setFormRating(5);
@@ -117,22 +134,22 @@ export default function ApplicationReviewsScreen() {
       if (err.response?.data?.errors) {
         setFormErrors(err.response.data.errors);
       } else {
-        Alert.alert('Gagal', err.response?.data?.message || 'Gagal mengirim review');
+        Alert.alert('Gagal', err.response?.data?.message || 'Gagal mengirim ulasan');
       }
     } finally {
       setSubmitting(false);
     }
   };
 
-  const renderStars = (rating: number, size = 16) => {
+  const renderStars = (rating: number, size = 14) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
         <Star
           key={i}
           size={size}
-          color={i <= rating ? theme.warning : 'gray'}
-          fill={i <= rating ? theme.warning : 'transparent'}
+          color={i <= rating ? theme.secondary : theme.neutral[300]}
+          fill={i <= rating ? theme.secondary : 'transparent'}
           style={{ marginRight: 2 }}
         />
       );
@@ -147,8 +164,8 @@ export default function ApplicationReviewsScreen() {
         <Pressable key={i} onPress={() => setFormRating(i)} className="p-1">
           <Star
             size={36}
-            color={i <= formRating ? theme.warning : '#fff000'}
-            fill={i <= formRating ? theme.warning : 'transparent'}
+            color={i <= formRating ? theme.secondary : theme.neutral[300]}
+            fill={i <= formRating ? theme.secondary : 'transparent'}
           />
         </Pressable>
       );
@@ -156,58 +173,131 @@ export default function ApplicationReviewsScreen() {
     return <View className="flex-row justify-between px-5 my-2">{stars}</View>;
   };
 
+  // ── Skeleton Loading ────────────────────────────────────
+  const renderSkeleton = () => (
+    <Animated.View style={{ opacity: pulseAnim }} className="px-4 pt-4">
+      {[1, 2, 3, 4].map((i) => (
+        <View
+          key={i}
+          className="mb-4 p-4 rounded-2xl"
+          style={{ backgroundColor: theme.neutral[50], shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 2 }}
+        >
+          <View className="flex-row justify-between mb-3">
+            <View>
+              <View className="h-4 rounded-full mb-2" style={{ width: 120, backgroundColor: theme.neutral[200] }} />
+              <View className="h-3 rounded-full" style={{ width: 80, backgroundColor: theme.neutral[200] }} />
+            </View>
+            <View className="h-3 rounded-full" style={{ width: 60, backgroundColor: theme.neutral[200] }} />
+          </View>
+          <View className="h-3 rounded-full mb-2" style={{ width: '100%', backgroundColor: theme.neutral[200] }} />
+          <View className="h-3 rounded-full" style={{ width: '70%', backgroundColor: theme.neutral[200] }} />
+        </View>
+      ))}
+    </Animated.View>
+  );
+
   const renderReviewItem = ({ item }: { item: ReviewData }) => {
     const formattedDate = new Date(item.createdAt).toLocaleDateString('id-ID', {
       day: 'numeric',
-      month: 'long',
+      month: 'short',
       year: 'numeric',
     });
 
+    const initials = item.reviewerName.substring(0, 2).toUpperCase();
+
     return (
-      <Card className="mb-4">
-        <View className="flex-row justify-between items-start mb-2">
-          <View>
-            <ThemedText className="text-base font-bold">{item.reviewerName}</ThemedText>
-            {renderStars(item.rating)}
+      <View
+        className="mb-4 p-4 rounded-2xl"
+        style={{ backgroundColor: theme.neutral[50] }}
+      >
+        <View className="flex-row justify-between items-start mb-3">
+          <View className="flex-row items-center gap-3">
+            <View
+              className="w-10 h-10 rounded-full items-center justify-center"
+              style={{ backgroundColor: theme.primaryShades[100] }}
+            >
+              <ThemedText className="font-bold text-sm" style={{ color: theme.primaryShades[700] }}>
+                {initials}
+              </ThemedText>
+            </View>
+            <View>
+              <ThemedText className="text-sm font-bold" style={{ color: theme.neutral[900] }}>
+                {item.reviewerName}
+              </ThemedText>
+              {renderStars(item.rating)}
+            </View>
           </View>
-          <ThemedText className="text-xs" themeColor="textSecondary">
+          <ThemedText className="text-xs" style={{ color: theme.neutral[400] }}>
             {formattedDate}
           </ThemedText>
         </View>
-        <ThemedText className="text-sm leading-5">{item.comment}</ThemedText>
-      </Card>
-    );
-  };
-
-  const renderEmpty = () => {
-    if (loading) return null;
-    return (
-      <View className="items-center justify-center py-12">
-        <ThemedText className="text-textSecondary text-center px-4">
-          {error ? error : 'Belum ada review untuk aplikasi ini. Jadilah yang pertama!'}
+        <ThemedText className="text-sm leading-5" style={{ color: theme.neutral[700] }}>
+          {item.comment}
         </ThemedText>
       </View>
     );
   };
 
+  const renderEmpty = () => {
+    if (loading) return renderSkeleton();
+    return (
+      <View className="items-center justify-center py-16 px-8">
+        <View
+          className="w-20 h-20 rounded-full items-center justify-center mb-4"
+          style={{ backgroundColor: theme.neutral[200] }}
+        >
+          <MessageCircle size={36} color={theme.primaryShades[400]} />
+        </View>
+        <ThemedText className="text-base font-semibold text-center mb-1" style={{ color: theme.neutral[900] }}>
+          {error ? 'Terjadi Kesalahan' : 'Belum Ada Ulasan'}
+        </ThemedText>
+        <ThemedText className="text-sm text-center leading-5" style={{ color: theme.neutral[400] }}>
+          {error
+            ? error
+            : 'Jadilah yang pertama memberikan ulasan dan membagikan pengalaman Anda.'}
+        </ThemedText>
+      </View>
+    );
+  };
+
+  // Calculate stats for the header
+  const totalReviews = reviews.length;
+  const avgRating = totalReviews > 0
+    ? (reviews.reduce((acc, curr) => acc + curr.rating, 0) / totalReviews).toFixed(1)
+    : '0.0';
+
   return (
-    <ThemedView className="flex-1">
+    <ThemedView className="flex-1" style={{ backgroundColor: theme.neutral[100] }}>
       {loading && !refreshing ? (
-        <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color={theme.primary} />
-          <ThemedText className="mt-4 text-textSecondary">
-            Memuat ulasan pengguna...
-          </ThemedText>
+        <View className="flex-1">
+          {renderSkeleton()}
         </View>
       ) : (
-        <View className="flex-1">
+        <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
           <FlatList
             data={reviews}
             renderItem={renderReviewItem}
             keyExtractor={(item) => item.id}
-            contentContainerClassName="p-4"
+            contentContainerClassName="px-4 pt-4"
             contentContainerStyle={{ paddingBottom: 88 }}
             ListEmptyComponent={renderEmpty}
+            ListHeaderComponent={
+              totalReviews > 0 ? (
+                <View className="mb-4 flex-row items-center justify-between p-4 rounded-2xl" style={{ backgroundColor: theme.neutral[50] }}>
+                  <View>
+                    <ThemedText className="text-2xl font-extrabold" style={{ color: theme.neutral[900] }}>
+                      {avgRating} <ThemedText className="text-sm font-normal" style={{ color: theme.neutral[400] }}>/ 5.0</ThemedText>
+                    </ThemedText>
+                    <ThemedText className="text-xs" style={{ color: theme.neutral[500] }}>
+                      Berdasarkan {totalReviews} ulasan
+                    </ThemedText>
+                  </View>
+                  <View className="items-end">
+                    {renderStars(Math.round(Number(avgRating)), 20)}
+                  </View>
+                </View>
+              ) : null
+            }
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -218,15 +308,22 @@ export default function ApplicationReviewsScreen() {
             }
           />
 
-          <View className="p-4">
+          <View
+            className="absolute bottom-0 left-0 right-0 p-4 border-t"
+            style={{
+              backgroundColor: theme.neutral[50],
+              borderColor: theme.neutral[200],
+              paddingBottom: Platform.OS === 'ios' ? Math.max(insets.bottom, 16) : 16
+            }}
+          >
             <Button
-              label="Tulis Review"
-              leftIcon={<MessageSquarePlus size={20} color="#FFFFFF" />}
+              label="Tulis Ulasan"
+              leftIcon={<MessageSquarePlus size={20} color={theme.neutral[50]} />}
               onPress={() => setModalVisible(true)}
-              className="rounded-full h-[52px] shadow-lg shadow-black/15"
+              className="rounded-full h-[52px]"
             />
           </View>
-        </View>
+        </Animated.View>
       )}
 
       {/* Review Submission Modal */}
@@ -241,48 +338,56 @@ export default function ApplicationReviewsScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             className="w-full"
           >
-            <ThemedView type="backgroundElement" className="rounded-t-[24px]">
-              <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
-                <ThemedText type="smallBold" className="text-lg">
-                  Tulis Review Aplikasi
+            <ThemedView className="rounded-t-[24px]" style={{ backgroundColor: theme.neutral[50] }}>
+              <View className="flex-row justify-between items-center p-5 border-b" style={{ borderColor: theme.neutral[200] }}>
+                <ThemedText className="text-lg font-bold" style={{ color: theme.neutral[900] }}>
+                  Tulis Ulasan
                 </ThemedText>
-                <Pressable onPress={() => setModalVisible(false)} className="p-1">
-                  <X size={20} color={theme.text} />
+                <Pressable
+                  onPress={() => setModalVisible(false)}
+                  className="w-8 h-8 rounded-full items-center justify-center"
+                  style={{ backgroundColor: theme.neutral[100] }}
+                >
+                  <X size={18} color={theme.neutral[600]} />
                 </Pressable>
               </View>
 
-              <ScrollView contentContainerClassName="p-4 pb-8">
+              <ScrollView contentContainerClassName="p-5 pb-8">
                 <Input
                   label="Nama Pengulas"
                   placeholder="Masukkan nama Anda"
                   value={formName}
                   onChangeText={setFormName}
                   error={formErrors.reviewerName}
-                  editable={!user?.name} // Lock if logged in
+                  editable={!user?.name}
+                  inputClasses="text-[15px]"
                 />
 
-                <View className="mb-4">
-                  <ThemedText type="smallBold" className="text-textSecondary mb-1">
+                <View className="mb-5 mt-2">
+                  <ThemedText className="text-sm font-semibold mb-2" style={{ color: theme.neutral[700] }}>
                     Rating Aplikasi
                   </ThemedText>
-                  {renderStarSelector()}
+                  <View className="items-center bg-neutral-100/50 rounded-xl py-2">
+                    {renderStarSelector()}
+                  </View>
                 </View>
 
                 <Input
                   label="Komentar / Ulasan"
-                  placeholder="Ceritakan pengalaman Anda menggunakan SEAPEDIA..."
+                  placeholder="Ceritakan pengalaman Anda menggunakan aplikasi ini..."
                   value={formComment}
                   onChangeText={setFormComment}
                   error={formErrors.comment}
                   multiline
                   numberOfLines={4}
+                  inputClasses="text-[15px] h-24"
                 />
 
                 <Button
                   label="Kirim Ulasan"
                   onPress={handleSubmitReview}
                   loading={submitting}
-                  className="mt-4"
+                  className="mt-6 rounded-xl h-[52px]"
                 />
               </ScrollView>
             </ThemedView>

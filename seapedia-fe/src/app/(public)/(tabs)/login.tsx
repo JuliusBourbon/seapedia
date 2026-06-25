@@ -82,18 +82,19 @@ export default function LoginScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerClassName="flex-grow px-8 justify-center py-8">
-          <View className="items-center mb-8">
-            <View
-              className="w-40 h-40 rounded-full items-center justify-center mb-4"
-              style={{ backgroundColor: `${theme.primary}15` }}
-            >
-              <Image source={logo} style={{ width: 100, height: 100 }} />
-            </View>
-            <ThemedText type="subtitle" className="text-[28px] font-extrabold text-center">
+        <ScrollView contentContainerClassName="flex-grow px-8 justify-center py-12">
+          <View className="items-center mb-6">
+            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center text-primary">
               Selamat Datang
             </ThemedText>
-            <ThemedText className="text-center">Masuk dan mulai bertransaksi di Seapedia!</ThemedText>
+            <ThemedText className="text-center mt-1" style={{ color: theme.neutral[600] }}>
+              Masuk dan mulai perjalanan Anda!
+            </ThemedText>
+            <Image
+              source={logo}
+              className="w-40 h-40"
+              resizeMode="contain"
+            />
           </View>
 
           <View className="w-full">
@@ -102,7 +103,7 @@ export default function LoginScreen() {
               placeholder="Masukkan username Anda"
               value={username}
               onChangeText={setUsername}
-              leftIcon={<UserIcon size={20} color={theme.textSecondary} />}
+              leftIcon={<UserIcon size={20} color={theme.neutral[500]} />}
               error={errors.username}
               autoCapitalize="none"
             />
@@ -112,7 +113,7 @@ export default function LoginScreen() {
               placeholder="Masukkan password Anda"
               value={password}
               onChangeText={setPassword}
-              leftIcon={<Lock size={20} color={theme.textSecondary} />}
+              leftIcon={<Lock size={20} color={theme.neutral[500]} />}
               error={errors.password}
               secureTextEntry
               autoCapitalize="none"
@@ -122,15 +123,15 @@ export default function LoginScreen() {
               label="Masuk Sekarang"
               onPress={handleLogin}
               loading={loading}
-              className="mt-4 h-[52px]"
+              className="mt-6 h-[52px]"
             />
 
-            <View className="flex-row justify-center items-center mt-6">
-              <ThemedText className="text-textSecondary">
+            <View className="flex-row justify-center items-center mt-6 mb-8">
+              <ThemedText style={{ color: theme.neutral[500] }}>
                 Belum punya akun?{' '}
               </ThemedText>
               <Pressable onPress={() => router.push('/(public)/register')}>
-                <ThemedText themeColor="primary" className="font-bold">
+                <ThemedText className="font-bold text-primary underline">
                   Daftar di sini
                 </ThemedText>
               </Pressable>

@@ -5,7 +5,7 @@ import {
   Pressable,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
+  ScrollView, Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Lock, User as UserIcon, Mail, Smile, CheckSquare, Square } from 'lucide-react-native';
@@ -123,18 +123,19 @@ export default function RegisterScreen() {
     return (
       <Pressable
         onPress={() => toggleRole(role)}
-        className={`flex-row items-center border-[1.5px] rounded-xl p-4 mb-2 ${isSelected ? 'border-primary' : 'border-textSecondary'}`}
+        className="flex-row items-center border-[1.5px] rounded-xl p-4 mb-2"
+        style={{ borderColor: isSelected ? theme.primary : theme.neutral[300] }}
       >
         {isSelected ? (
           <CheckSquare size={24} color={theme.primary} />
         ) : (
-          <Square size={24} color={theme.textSecondary} />
+          <Square size={24} color={theme.neutral[400]} />
         )}
         <View className="ml-4 flex-1">
-          <ThemedText type="smallBold" className="text-sm font-bold">
+          <ThemedText type="smallBold" className={`text-sm font-bold ${isSelected ? 'text-primary' : ''}`}>
             {label}
           </ThemedText>
-          <ThemedText className="text-xs mt-[2px]" themeColor="textSecondary">
+          <ThemedText className={`text-xs mt-[2px] ${isSelected ? 'text-primary' : ''}`}>
             {description}
           </ThemedText>
         </View>
@@ -148,14 +149,19 @@ export default function RegisterScreen() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerClassName="flex-grow px-8 py-6">
+        <ScrollView contentContainerClassName="flex-grow px-8 py-12">
           <View className="items-center mb-6">
-            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center">
+            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center text-primary">
               Daftar Akun Baru
             </ThemedText>
-            <ThemedText className="text-sm text-center mt-1" themeColor="textSecondary">
-              Bergabunglah dengan SEAPEDIA
+            <ThemedText className="text-center mt-1" style={{ color: theme.neutral[600] }}>
+              Bergabunglah dengan aplikasi ini
             </ThemedText>
+            <Image
+              source={require('../../../assets/images/icon.png')}
+              className="w-40 h-40"
+              resizeMode="contain"
+            />
           </View>
 
           <View className="w-full">
@@ -164,7 +170,7 @@ export default function RegisterScreen() {
               placeholder="Minimal 3 karakter"
               value={username}
               onChangeText={setUsername}
-              leftIcon={<UserIcon size={20} color={theme.textSecondary} />}
+              leftIcon={<UserIcon size={20} color={theme.neutral[500]} />}
               error={errors.username}
               autoCapitalize="none"
             />
@@ -174,7 +180,7 @@ export default function RegisterScreen() {
               placeholder="Masukkan nama lengkap Anda"
               value={name}
               onChangeText={setName}
-              leftIcon={<Smile size={20} color={theme.textSecondary} />}
+              leftIcon={<Smile size={20} color={theme.neutral[500]} />}
               error={errors.name}
             />
 
@@ -183,7 +189,7 @@ export default function RegisterScreen() {
               placeholder="contoh@domain.com"
               value={email}
               onChangeText={setEmail}
-              leftIcon={<Mail size={20} color={theme.textSecondary} />}
+              leftIcon={<Mail size={20} color={theme.neutral[500]} />}
               error={errors.email}
               autoCapitalize="none"
               keyboardType="email-address"
@@ -194,26 +200,26 @@ export default function RegisterScreen() {
               placeholder="Minimal 6 karakter"
               value={password}
               onChangeText={setPassword}
-              leftIcon={<Lock size={20} color={theme.textSecondary} />}
+              leftIcon={<Lock size={20} color={theme.neutral[500]} />}
               error={errors.password}
               secureTextEntry
               autoCapitalize="none"
             />
 
             <View className="my-2">
-              <ThemedText type="smallBold" className="mb-2 text-textSecondary">
+              <ThemedText type="smallBold" className="mb-2" style={{ color: theme.neutral[600] }}>
                 Pilih Peran Akun (Dapat memilih lebih dari satu)
               </ThemedText>
 
               {renderRoleCheckbox(
                 'BUYER',
                 'Pembeli (Buyer)',
-                'Membeli hasil laut segar langsung dari nelayan/toko.'
+                'Membeli produk dari berbagai toko terpercaya.'
               )}
               {renderRoleCheckbox(
                 'SELLER',
                 'Penjual (Seller)',
-                'Buka toko dan pasarkan hasil tangkapan laut Anda.'
+                'Buka toko dan pasarkan produk Anda.'
               )}
               {renderRoleCheckbox(
                 'DRIVER',
@@ -235,11 +241,11 @@ export default function RegisterScreen() {
             />
 
             <View className="flex-row justify-center items-center mt-6 mb-8">
-              <ThemedText className="text-textSecondary">
+              <ThemedText style={{ color: theme.neutral[500] }}>
                 Sudah memiliki akun?{' '}
               </ThemedText>
               <Pressable onPress={() => router.replace('/(public)/(tabs)/login')}>
-                <ThemedText themeColor="primary" className="font-bold">
+                <ThemedText className="font-bold text-primary underline">
                   Masuk di sini
                 </ThemedText>
               </Pressable>

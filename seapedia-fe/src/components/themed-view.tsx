@@ -12,10 +12,10 @@ export function ThemedView({ style, type, className, ...otherProps }: ThemedView
   const theme = useTheme();
 
   return (
-    <View 
-      style={[{ backgroundColor: theme[type ?? 'background'] }, style]} 
-      className={className} 
-      {...otherProps} 
+    <View
+      style={[{ backgroundColor: theme.neutral[100] }, style]}
+      className={className}
+      {...otherProps}
     />
   );
 }

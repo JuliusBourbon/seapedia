@@ -5,10 +5,9 @@ import {
   ActivityIndicator,
   Pressable,
   Alert,
-  Platform,
+  Platform, Image
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 import { ShoppingBag, ArrowLeft, Store as StoreIcon, ShieldAlert } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
@@ -19,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 import { useAuthStore } from '@/store/useAuthStore';
+import { Text } from 'react-native-svg';
 
 interface ProductDetail {
   id: string;
@@ -137,7 +137,7 @@ export default function ProductDetailScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-4 text-textSecondary">
+        <ThemedText className="mt-4 text-primary">
           Memuat rincian produk...
         </ThemedText>
       </ThemedView>
@@ -148,7 +148,7 @@ export default function ProductDetailScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center p-8">
         <ShieldAlert size={48} color={theme.danger} />
-        <ThemedText className="text-base font-semibold mt-4 text-center">
+        <ThemedText className="text-base font-semibold mt-4 text-center text-primary">
           {error || 'Produk tidak ditemukan'}
         </ThemedText>
         <Button label="Kembali" onPress={() => router.back()} className="mt-6" />
@@ -163,21 +163,24 @@ export default function ProductDetailScreen() {
   }).format(product.price);
 
   return (
-    <ThemedView className="flex-1">
+    <ThemedView className="flex-1 bg-neutral-50">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}>
         <View className="p-4">
+          {/* View Dummy Image */}
+          <View className="w-full h-64 bg-neutral-200 rounded-xl mb-4" />
+
           <ThemedText type="subtitle">
             {product.name}
           </ThemedText>
 
-          <View className="w-full mb-10">
-            <ThemedText type='small' className=''>
+          <View className="w-full mb-5">
+            <ThemedText type='small' className='text-neutral-500'>
               {product.description || 'Tidak ada deskripsi produk.'}
             </ThemedText>
           </View>
 
           <View className="flex-row items-center gap-3">
-            <ThemedText type='large'>
+            <ThemedText type='extraLarge'>
               {formattedPrice}
             </ThemedText>
             <ThemedText type='large'>
@@ -192,23 +195,23 @@ export default function ProductDetailScreen() {
           </View>
 
           {/* Divider */}
-          <View className="h-[1.5px] my-4 bg-white/20" />
+          <View className="h-[1.5px] my-5 bg-neutral-300" />
 
           {/* Store Info Card */}
           <View className="w-full">
             <Pressable onPress={() => router.push(`/(public)/store/${product.store.id}` as any)}>
-              <Card className="flex-row items-center p-3 rounded-xl mt-1 border border-white/20">
+              <Card className="flex-row items-center p-3 rounded-xl border border-neutral-300">
                 <View
                   className="w-12 h-12 rounded-xl items-center justify-center"
-                  style={{ backgroundColor: `${theme.primary}15` }}
+                  style={{ backgroundColor: `${theme.primary}` }}
                 >
-                  <StoreIcon size={24} color={theme.primary} />
+                  <StoreIcon size={24} color={theme.neutral[50]} />
                 </View>
                 <View className="flex-1 ml-3">
                   <ThemedText type="smallBold" className="text-[15px] font-bold">
                     {product.store.name}
                   </ThemedText>
-                  <ThemedText className="text-[13px] mt-[2px]" numberOfLines={1} themeColor="textSecondary">
+                  <ThemedText className="text-[13px] mt-[2px]" numberOfLines={1}>
                     {product.store.description || 'Lihat daftar produk di toko ini.'}
                   </ThemedText>
                 </View>
@@ -220,8 +223,7 @@ export default function ProductDetailScreen() {
 
       {/* Sticky Bottom Actions */}
       <ThemedView
-        type="backgroundElement"
-        className="absolute bottom-0 left-0 right-0 flex-row items-center p-4 border-t border-white/20"
+        className="absolute bottom-0 left-0 right-0 flex-row items-center p-4 border-t border-neutral-300"
         style={{
           height: 80 + insets.bottom,
           paddingBottom: 16 + insets.bottom,
@@ -231,14 +233,14 @@ export default function ProductDetailScreen() {
           <View className="flex-row items-center mr-4 gap-3">
             <Pressable
               onPress={() => setQuantity(Math.max(1, quantity - 1))}
-              className="w-8 h-8 rounded-lg border-[1.5px] border-white/20 items-center justify-center active:opacity-70"
+              className="w-8 h-8 rounded-lg border-[1.5px] border-neutral-300 items-center justify-center active:opacity-70"
             >
               <ThemedText className="text-lg font-bold">-</ThemedText>
             </Pressable>
             <ThemedText className="text-base font-bold w-5 text-center">{quantity}</ThemedText>
             <Pressable
               onPress={() => setQuantity(Math.min(product.stock, quantity + 1))}
-              className="w-8 h-8 rounded-lg border-[1.5px] border-white/20 items-center justify-center active:opacity-70"
+              className="w-8 h-8 rounded-lg border-[1.5px] border-neutral-300 items-center justify-center active:opacity-70"
             >
               <ThemedText className="text-lg font-bold">+</ThemedText>
             </Pressable>
