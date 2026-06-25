@@ -24,11 +24,11 @@ export default function SellerTabsLayout() {
         )}
         screenOptions={{
           headerStyle: {
-            backgroundColor: theme.backgroundElement,
+            backgroundColor: theme.neutral[50],
             borderBottomWidth: 1,
-            borderBottomColor: theme.border,
+            borderBottomColor: theme.neutral[50],
           },
-          headerTintColor: theme.text,
+          headerTintColor: theme.neutral[800],
           headerTitleStyle: {
             fontWeight: '700',
           },
