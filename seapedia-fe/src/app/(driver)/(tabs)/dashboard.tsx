@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  Pressable,
   Alert,
-  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Truck, CheckCircle2, Wallet, RefreshCcw, LogOut, Info, MapPin, Phone, User, Package, Calendar } from 'lucide-react-native';
@@ -17,7 +14,6 @@ import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import { useAuthStore } from '@/store/useAuthStore';
 import { DELIVERY_METHODS, ORDER_STATUS_LABELS } from '@/constants/config';
 import api from '@/services/api';
@@ -171,7 +167,7 @@ export default function DriverDashboardScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
+        <ThemedText className="mt-3">
           Memuat dasbor kurir Anda...
         </ThemedText>
       </ThemedView>
@@ -191,8 +187,7 @@ export default function DriverDashboardScreen() {
           />
         }
       >
-        {/* Profile Info Banner */}
-        <Card className="p-4 mb-2">
+        <Card className="p-4 mb-2 border border-primary rounded-md bg-primary/10">
           <View className="flex-row items-center">
             <View className="w-[60px] h-[60px] rounded-[14px] items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
               <User size={36} color={theme.primary} />
@@ -201,7 +196,7 @@ export default function DriverDashboardScreen() {
               <ThemedText type="large" className="font-semibold">
                 {user?.name}
               </ThemedText>
-              <ThemedText className="text-[13px]" themeColor="textSecondary">
+              <ThemedText className="">
                 Kurir Mitra (@{user?.username})
               </ThemedText>
             </View>
@@ -219,36 +214,37 @@ export default function DriverDashboardScreen() {
           )}
         </Card>
 
-        {/* Stats Grid */}
         <View className="flex-row gap-3 mb-2">
-          <Card className="flex-1 p-4 items-start gap-1">
+          <Card className="flex-1 p-4 items-start gap-1 border-primary border rounded-md ">
             <Wallet size={24} color={theme.primary} />
-            <ThemedText className="mt-1" themeColor="textSecondary">
+            <ThemedText className="mt-1">
               Total Pendapatan
             </ThemedText>
-            <ThemedText type="extraLarge" className="font-extrabold">
+            <ThemedText type="extraLarge" className="font-bold text-primary">
               {formatCurrency(summary?.totalEarnings ?? 0)}
             </ThemedText>
           </Card>
 
-          <Card className="flex-1 p-4 items-start gap-1">
-            <CheckCircle2 size={24} color={theme.success} />
-            <ThemedText className=" mt-1" themeColor="textSecondary">
+          <Card className="flex-1 p-4 items-start gap-1 border-primary border rounded-md ">
+            <CheckCircle2 size={24} color={theme.primary} />
+            <ThemedText className=" mt-1">
               Order Selesai
             </ThemedText>
-            <ThemedText type="extraLarge" className="font-extrabold">
+            <ThemedText type="extraLarge" className="font-bold text-primary">
               {summary?.completedJobs ?? 0}
             </ThemedText>
           </Card>
         </View>
 
-        {/* Active Job Section */}
-        <ThemedText type="smallBold" className=" uppercase font-bold tracking-wider mb-1 mt-2">
-          Tugas Pengantaran Aktif
-        </ThemedText>
+        <View className="flex-row items-center gap-2 my-4">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold" style={{ color: theme.neutral[900] }}>
+            Tugas Pengantaran Aktif
+          </ThemedText>
+        </View>
 
         {activeJob ? (
-          <Card className="p-4">
+          <Card className="p-4 border border-primary rounded-md">
             <View className="flex-row justify-between items-center">
               <Badge label="Pekerjaan Berlangsung" variant="primary" />
               <ThemedText className="font-extrabold text-[#0D9488]">
@@ -256,13 +252,12 @@ export default function DriverDashboardScreen() {
               </ThemedText>
             </View>
 
-            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
+            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.neutral[500] }} />
 
-            {/* Pickup Location */}
             <View className="flex-row items-start gap-3">
               <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.primary }} />
               <View className="flex-1 gap-[2px]">
-                <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+                <ThemedText className="uppercase font-semibold">
                   Lokasi Penjemputan (Toko)
                 </ThemedText>
                 <ThemedText className='font-semibold'>
@@ -271,14 +266,12 @@ export default function DriverDashboardScreen() {
               </View>
             </View>
 
-            {/* Connecting line */}
-            <View className="w-[2px] h-[25px] ml-[5px] my-[2px]" style={{ backgroundColor: theme.border }} />
+            <View className="w-[2px] h-[25px] ml-[5px] my-[2px]" style={{ backgroundColor: theme.neutral[500] }} />
 
-            {/* Destination Location */}
             <View className="flex-row items-start gap-3">
-              <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.warning }} />
+              <View className="w-3 h-3 rounded-full mt-1" style={{ backgroundColor: theme.danger }} />
               <View className="flex-1 gap-[2px]">
-                <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+                <ThemedText className="uppercase font-semibold">
                   Lokasi Pengantaran (Pembeli)
                 </ThemedText>
                 <Badge label={DELIVERY_METHODS[activeJob.order.deliveryMethod]?.label || activeJob.order.deliveryMethod} variant="neutral" />
@@ -294,9 +287,8 @@ export default function DriverDashboardScreen() {
               </View>
             </View>
 
-            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
+            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.neutral[500] }} />
 
-            {/* Items Summary */}
             {activeJob.order.items && activeJob.order.items.length > 0 && (
               <View className="">
                 <ThemedText className="font-semibold mb-1">
@@ -304,7 +296,7 @@ export default function DriverDashboardScreen() {
                 </ThemedText>
                 {activeJob.order.items.map((item) => (
                   <View key={item.id} className="flex-row items-center gap-2 mt-1">
-                    <Package size={14} color={theme.textSecondary} />
+                    <Package size={14} color={theme.neutral[500]} />
                     <ThemedText className="">
                       {item.productName} (x{item.quantity})
                     </ThemedText>
@@ -313,7 +305,7 @@ export default function DriverDashboardScreen() {
               </View>
             )}
 
-            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
+            <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.neutral[500] }} />
 
             <Button
               label="Selesaikan Pengantaran"
@@ -334,9 +326,9 @@ export default function DriverDashboardScreen() {
             />
           </Card>
         ) : (
-          <Card className="p-5 items-center justify-center gap-2">
-            <Info size={36} color={theme.placeholder} />
-            <ThemedText className="text-[14px] text-center mt-1 leading-[20px]" themeColor="textSecondary">
+          <Card className="p-5 items-center justify-center gap-2 border border-primary rounded-md">
+            <Info size={36} color={theme.primary} />
+            <ThemedText className=" text-center mt-1 leading-[20px] text-neutral-800">
               Anda tidak memiliki pekerjaan pengantaran aktif saat ini.
             </ThemedText>
             <Button
@@ -350,7 +342,6 @@ export default function DriverDashboardScreen() {
           </Card>
         )}
 
-        {/* Logout Button */}
         <Button
           label="Keluar Dari Akun"
           variant="danger"
