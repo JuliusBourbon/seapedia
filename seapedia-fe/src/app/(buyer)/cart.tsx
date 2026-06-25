@@ -5,7 +5,7 @@ import {
   RefreshControl,
   ActivityIndicator,
   Pressable,
-  Alert,
+  Alert, Image
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Trash2, ShoppingCart, Store, ArrowRight } from 'lucide-react-native';
@@ -146,50 +146,66 @@ export default function CartScreen() {
     const isUpdating = updatingItemId === item.productId;
 
     return (
-      <Card className="mb-4 p-4">
-        <View className="flex-row justify-between items-center mb-2">
-          <ThemedText type="smallBold" className="text-[15px] flex-1 pr-3" numberOfLines={1}>
-            {item.productName}
-          </ThemedText>
-          <Pressable onPress={() => handleRemoveItem(item.productId)} className="p-1">
-            <Trash2 size={16} color={theme.danger} />
-          </Pressable>
-        </View>
+      <Card className="mb-4 p-3 border-0 elevation-sm" style={{ backgroundColor: '#ffffff' }}>
+        <View className="flex-row items-start gap-3">
+          <Image
+            source={require('../../../assets/images/icon.png')}
+            className="w-20 h-20 rounded-xl"
+            style={{ backgroundColor: theme.neutral[100] }}
+            resizeMode="cover"
+          />
 
-        <View className="flex-row justify-between items-center">
-          <ThemedText className="text-[15px] font-extrabold" themeColor="primary">
-            {formattedPrice}
-          </ThemedText>
+          <View className="flex-1 justify-between min-h-[80px]">
+            <View className="flex-row justify-between items-start">
+              <ThemedText className="font-semibold flex-1 pr-2 leading-5" numberOfLines={2} style={{ color: theme.neutral[900] }}>
+                {item.productName}
+              </ThemedText>
+              <Pressable onPress={() => handleRemoveItem(item.productId)} className="p-1 active:opacity-60 -mr-1 -mt-1">
+                <Trash2 size={18} color={theme.danger} />
+              </Pressable>
+            </View>
 
-          <View className="flex-row items-center gap-3">
-            {isUpdating ? (
-              <ActivityIndicator size="small" color={theme.primary} />
-            ) : (
-              <>
-                <Pressable
-                  onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity - 1)}
-                  className="w-7 h-7 rounded-md border-[1.5px] border-white/20 items-center justify-center active:opacity-70"
-                >
-                  <ThemedText className="text-[15px] font-bold">-</ThemedText>
-                </Pressable>
-                <ThemedText className="text-[14px] font-bold w-5 text-center">{item.quantity}</ThemedText>
-                <Pressable
-                  onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity + 1)}
-                  disabled={item.quantity >= item.stock}
-                  className={`w-7 h-7 rounded-md border-[1.5px] border-white/20 items-center justify-center active:opacity-70 ${item.quantity >= item.stock ? 'opacity-40' : ''}`}
-                >
-                  <ThemedText className="text-[15px] font-bold">+</ThemedText>
-                </Pressable>
-              </>
-            )}
+            <View className="flex-row justify-between items-end mt-2">
+              <View>
+                <ThemedText className="text-lg font-black" style={{ color: theme.primary }}>
+                  {formattedPrice}
+                </ThemedText>
+                <ThemedText type="small" style={{ color: theme.neutral[500] }}>
+                  Sisa {item.stock} stok
+                </ThemedText>
+              </View>
+
+              <View className="flex-row items-center rounded-lg border" style={{ borderColor: theme.neutral[200] }}>
+                {isUpdating ? (
+                  <View className="h-8 w-[90px] items-center justify-center">
+                    <ActivityIndicator size="small" color={theme.primary} />
+                  </View>
+                ) : (
+                  <>
+                    <Pressable
+                      onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity - 1)}
+                      className="w-8 h-8 items-center justify-center active:opacity-60"
+                    >
+                      <ThemedText className="text-[16px] font-bold" style={{ color: theme.neutral[600] }}>-</ThemedText>
+                    </Pressable>
+                    <View className="w-8 items-center justify-center border-l border-r" style={{ borderColor: theme.neutral[200], backgroundColor: theme.neutral[50] }}>
+                      <ThemedText className="text-[14px] font-bold" style={{ color: theme.neutral[900] }}>
+                        {item.quantity}
+                      </ThemedText>
+                    </View>
+                    <Pressable
+                      onPress={() => handleUpdateQty(item.productId, item.quantity, item.quantity + 1)}
+                      disabled={item.quantity >= item.stock}
+                      className={`w-8 h-8 items-center justify-center active:opacity-60 ${item.quantity >= item.stock ? 'opacity-40' : ''}`}
+                    >
+                      <ThemedText className="text-[16px] font-bold" style={{ color: theme.neutral[600] }}>+</ThemedText>
+                    </Pressable>
+                  </>
+                )}
+              </View>
+            </View>
           </View>
         </View>
-
-        {item.quantity >= item.stock && (
-          <ThemedText className="text-[11px] mt-1 font-semibold" themeColor="warning">
-            Maksimum stok tercapai ({item.stock} item)
-          </ThemedText>
-        )}
       </Card>
     );
   };
@@ -210,11 +226,11 @@ export default function CartScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-6 px-5 mt-12">
-        <ShoppingCart size={64} color={theme.placeholder} />
+        <ShoppingCart size={64} color={theme.neutral[200]} />
         <ThemedText type="smallBold" className="text-[18px] mt-4">
           Keranjang Belanja Kosong
         </ThemedText>
-        <ThemedText className="text-[14px] text-center mt-2 px-3" themeColor="textSecondary">
+        <ThemedText className="text-[14px] text-center mt-2 px-3">
           Yuk, jelajahi produk kami dan isi keranjang belanja Anda!
         </ThemedText>
         <Button
@@ -261,8 +277,7 @@ export default function CartScreen() {
 
       {hasItems && (
         <ThemedView
-          type="backgroundElement"
-          className="absolute bottom-0 left-0 right-0 border-t border-white/20 p-4"
+          className="absolute bottom-0 left-0 right-0 border-t border-primary p-4"
           style={{
             height: 84 + insets.bottom,
             paddingBottom: 16 + insets.bottom,
