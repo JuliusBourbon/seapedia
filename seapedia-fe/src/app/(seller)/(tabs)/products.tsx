@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -20,8 +19,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
 interface Product {
@@ -34,7 +31,6 @@ interface Product {
 
 export default function SellerProductsScreen() {
   const theme = useTheme();
-  const insets = useSafeAreaInsets();
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -213,17 +209,17 @@ export default function SellerProductsScreen() {
     }).format(item.price);
 
     return (
-      <Card className="mb-3 p-4">
-        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+      <Card className="mb-3 p-4 border border-primary rounded-md">
+        <View className="flex-row justify-between items-center border-b border-neutral-500 pb-2 mb-2">
           <View className="flex-row items-center flex-1 gap-2 pr-2">
-            <ThemedText type="smallBold" className="text-[15px] flex-1" numberOfLines={1}>
+            <ThemedText className="font-semibold flex-1" numberOfLines={1}>
               {item.name}
             </ThemedText>
             {getStockBadge(item.stock)}
           </View>
           <View className="flex-row gap-3">
             <Pressable onPress={() => openEditModal(item)} className="p-1">
-              <Edit2 size={16} color={theme.text} />
+              <Edit2 size={16} color={theme.neutral[800]} />
             </Pressable>
             <Pressable
               onPress={() => handleDeleteProduct(item.id, item.name)}
@@ -235,12 +231,12 @@ export default function SellerProductsScreen() {
         </View>
 
         <View className="gap-1">
-          <ThemedText className="text-[16px] font-extrabold" themeColor="primary">
+          <ThemedText className="font-bold text-primary">
             {formattedPrice}
           </ThemedText>
           {item.description && (
-            <ThemedText className="text-[13px] leading-[18px] mt-[2px]" themeColor="textSecondary" numberOfLines={2}>
-              {item.description}
+            <ThemedText className="text-neutral-600" numberOfLines={2}>
+              "{item.description}"
             </ThemedText>
           )}
         </View>
@@ -252,7 +248,7 @@ export default function SellerProductsScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-6 px-5">
-        <ShoppingBag size={52} color={theme.placeholder} />
+        <ShoppingBag size={52} color={theme.neutral[800]} />
         <ThemedText className="text-center mt-3" themeColor="textSecondary">
           Toko Anda belum memiliki produk jualan. Silakan tambah produk baru untuk mulai berjualan.
         </ThemedText>
@@ -299,7 +295,6 @@ export default function SellerProductsScreen() {
         />
       </View>
 
-      {/* Product Form Modal */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -311,20 +306,20 @@ export default function SellerProductsScreen() {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             style={{ width: '100%' }}
           >
-            <ThemedView type="backgroundElement" className="rounded-t-[24px]">
-              <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
-                <ThemedText type="smallBold" className="text-[18px]">
+            <ThemedView className="rounded-t-[24px]">
+              <View className="flex-row justify-between items-center p-4">
+                <ThemedText type='large' className="font-bold">
                   {editingProduct ? 'Ubah Informasi Produk' : 'Tambah Produk Baru'}
                 </ThemedText>
                 <Pressable onPress={() => setModalVisible(false)} className="p-1">
-                  <X size={20} color={theme.text} />
+                  <X size={20} color={theme.neutral[800]} />
                 </Pressable>
               </View>
 
               <ScrollView contentContainerClassName="p-4 pb-6">
                 <Input
                   label="Nama Produk"
-                  placeholder="Contoh: Ikan Kakap Merah Segar"
+                  placeholder="Contoh: Laptop Gaming"
                   value={name}
                   onChangeText={setName}
                   error={errors.name}
