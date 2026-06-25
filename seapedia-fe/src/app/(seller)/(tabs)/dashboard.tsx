@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   ScrollView,
   RefreshControl,
-  ActivityIndicator,
   Pressable,
   Alert,
   Modal,
   TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Platform,
+  Animated,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Store, ShoppingBag, ClipboardList, RefreshCcw, LogOut, Pencil, X } from 'lucide-react-native';
+import { Store, ShoppingBag, ClipboardList, RefreshCcw, LogOut, Pencil, X, TrendingUp, Package } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -43,13 +43,22 @@ export default function SellerDashboardScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loggingOut, setLoggingOut] = useState(false);
-
-  // Store profile edit modal state
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editErrors, setEditErrors] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
+
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 0.4, duration: 800, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
 
   const fetchSummary = async () => {
     try {
@@ -102,9 +111,7 @@ export default function SellerDashboardScreen() {
     ]);
   };
 
-  // --- Store Profile Edit ---
   const openEditModal = async () => {
-    // Pre-fill from summary, and also fetch full store detail for description
     setEditName(summary?.storeName || '');
     setEditDescription('');
     setEditErrors({});
@@ -156,21 +163,41 @@ export default function SellerDashboardScreen() {
     }
   };
 
+  const formatCurrency = (val: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(val);
+  };
+
+  const renderSkeleton = () => (
+    <ThemedView className="flex-1">
+      <Animated.View style={{ opacity: pulseAnim }} className="p-4">
+        <View className="h-28 rounded-xl mb-4" style={{ backgroundColor: theme.neutral[200] }} />
+
+        <View className="flex-row gap-3 mb-4">
+          <View className="flex-1 h-24 rounded-xl" style={{ backgroundColor: theme.neutral[200] }} />
+          <View className="flex-1 h-24 rounded-xl" style={{ backgroundColor: theme.neutral[200] }} />
+        </View>
+
+        <View className="h-24 rounded-xl mb-4" style={{ backgroundColor: theme.neutral[200] }} />
+
+        <View className="h-5 w-32 rounded mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-12 rounded-xl mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-12 rounded-xl mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+      </Animated.View>
+    </ThemedView>
+  );
+
   if (loading && !refreshing) {
-    return (
-      <ThemedView className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
-          Memuat dasbor toko Anda...
-        </ThemedText>
-      </ThemedView>
-    );
+    return renderSkeleton();
   }
 
   return (
     <ThemedView className="flex-1">
       <ScrollView
-        contentContainerClassName="p-4 pb-5"
+        contentContainerClassName="p-4 pb-8"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -180,18 +207,17 @@ export default function SellerDashboardScreen() {
           />
         }
       >
-        {/* Welcome Shop Banner */}
-        <Card className="mb-3 p-4">
+        <Card className="mb-4 p-4 border border-primary  bg-primary/10 rounded-xl">
           <View className="flex-row items-center">
-            <View className="w-[60px] h-[60px] rounded-[14px] items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
-              <Store size={36} color={theme.primary} />
+            <View className="w-14 h-14 rounded-2xl items-center justify-center" style={{ backgroundColor: `${theme.neutral}15` }}>
+              <Store size={32} color={theme.primary} />
             </View>
             <View className="ml-4 flex-1">
-              <ThemedText type="large" className="text-[18px]">
-                Toko: {summary?.storeName}
+              <ThemedText type="large" style={{ color: theme.neutral[900] }}>
+                {summary?.storeName}
               </ThemedText>
-              <ThemedText type='smallBold' themeColor="textSecondary">
-                Pemilik: {user?.name} (@{user?.username})
+              <ThemedText className="text-[13px] mt-1 font-medium" style={{ color: theme.neutral[700] }}>
+                {user?.name} - @{user?.username}
               </ThemedText>
             </View>
             <Pressable
@@ -215,62 +241,66 @@ export default function SellerDashboardScreen() {
           )}
         </Card>
 
-        {/* Dashboard Metrics Grid */}
         <View className="flex-row gap-3 mb-4">
           <Pressable
-            className="flex-1"
+            className="flex-1 active:opacity-80"
             onPress={() => router.push('/(seller)/(tabs)/products')}
           >
-            <Card className="flex-row items-center p-3">
-              <ShoppingBag size={24} color={theme.primary} />
-              <View className="ml-3 flex-1">
-                <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6">
-                  {summary?.totalProducts ?? 0}
-                </ThemedText>
-                <ThemedText type='small' className="mt-[2px]" themeColor="textSecondary">
-                  Total Produk
-                </ThemedText>
+            <Card className="p-4 border border-neutral-300 rounded-xl">
+              <View className="flex-row items-center justify-between mb-3">
+                <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
+                  <Package size={22} color={theme.primary} />
+                </View>
               </View>
+              <ThemedText className="text-[26px] font-black" style={{ color: theme.neutral[900] }}>
+                {summary?.totalProducts ?? 0}
+              </ThemedText>
+              <ThemedText className="text-[13px] font-medium mt-1" style={{ color: theme.neutral[500] }}>
+                Total Produk
+              </ThemedText>
             </Card>
           </Pressable>
 
           <Pressable
-            className="flex-1"
+            className="flex-1 active:opacity-80"
             onPress={() => router.push('/(seller)/(tabs)/orders')}
           >
-            <Card className="flex-row items-center p-3">
-              <ClipboardList size={24} color={theme.warning} />
-              <View className="ml-3 flex-1">
-                <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6">
-                  {summary?.pendingOrders ?? 0}
-                </ThemedText>
-                <ThemedText type='small' className="mt-[2px]" themeColor="textSecondary">
-                  Order Baru
-                </ThemedText>
+            <Card className="p-4 border border-neutral-300 rounded-xl">
+              <View className="flex-row items-center justify-between mb-3">
+                <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.danger}15` }}>
+                  <ClipboardList size={22} color={theme.danger} />
+                </View>
               </View>
+              <ThemedText className="text-[26px] font-black" style={{ color: theme.neutral[900] }}>
+                {summary?.pendingOrders ?? 0}
+              </ThemedText>
+              <ThemedText className="text-[13px] font-medium mt-1" style={{ color: theme.neutral[500] }}>
+                Order Baru
+              </ThemedText>
             </Card>
           </Pressable>
         </View>
 
-        {/* Sales Revenue */}
-        <Card className="flex-row items-center p-3 mb-4">
-          <View className="w-12 h-12 rounded-full items-center justify-center">
-            <ShoppingBag size={24} color={theme.success} />
-          </View>
-          <View className="ml-3 flex-1">
-            <ThemedText className="font-semibold" >
+        <Card className="p-4 border border-neutral-300 rounded-xl">
+          <View className="flex-row items-center mb-3">
+            <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
+              <TrendingUp size={22} color={theme.primary} />
+            </View>
+            <ThemedText className="ml-3 text-[14px] font-semibold" style={{ color: theme.neutral[500] }}>
               Pendapatan Penjualan
             </ThemedText>
-            <ThemedText type="subtitle" className="text-[20px] font-extrabold leading-6 mt-1" style={{ color: theme.success }}>
-              {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(summary?.totalIncome ?? 0)}
-            </ThemedText>
           </View>
+          <ThemedText type='extraLarge' className="font-black" style={{ color: theme.primary }}>
+            {formatCurrency(summary?.totalIncome ?? 0)}
+          </ThemedText>
         </Card>
 
-        {/* Store settings quick links */}
-        <ThemedText type="smallBold" className="text-[14px] uppercase font-bold tracking-wider mb-2 mt-2">
-          Navigasi Toko
-        </ThemedText>
+        <View className="flex-row items-center gap-2 my-4">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold" style={{ color: theme.neutral[900] }}>
+            Navigasi Toko
+          </ThemedText>
+        </View>
 
         <Button
           label="Kelola Daftar Produk"
@@ -286,7 +316,6 @@ export default function SellerDashboardScreen() {
           className="mb-3 h-[50px]"
         />
 
-        {/* Logout */}
         <Button
           label="Keluar Dari Akun"
           variant="danger"
@@ -297,7 +326,6 @@ export default function SellerDashboardScreen() {
         />
       </ScrollView>
 
-      {/* Store Profile Edit Modal */}
       <Modal
         animationType="fade"
         transparent={true}
@@ -310,28 +338,29 @@ export default function SellerDashboardScreen() {
               <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : undefined}
               >
-                <ThemedView type="backgroundElement" className="rounded-t-[24px] pb-6">
-                  {/* Modal Header */}
-                  <View className="flex-row justify-between items-center p-4 border-b border-white/10">
-                    <ThemedText type="smallBold" className="text-[18px]">
-                      Edit Profil Toko
-                    </ThemedText>
+                <ThemedView className="rounded-t-[24px] pb-6">
+                  <View className="flex-row justify-between items-center p-4 border-b" style={{ borderBottomColor: theme.neutral[200] }}>
+                    <View className="flex-row items-center gap-2">
+                      <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+                      <ThemedText className="text-base font-bold" style={{ color: theme.neutral[900] }}>
+                        Edit Profil Toko
+                      </ThemedText>
+                    </View>
                     <Pressable
                       onPress={() => setEditModalVisible(false)}
                       className="p-1"
                     >
-                      <X size={20} color={theme.text} />
+                      <X size={20} color={theme.neutral[500]} />
                     </Pressable>
                   </View>
 
-                  {/* Modal Body */}
                   <View className="px-4 pt-4">
                     <Input
                       label="Nama Toko"
                       placeholder="Masukkan nama toko"
                       value={editName}
                       onChangeText={setEditName}
-                      leftIcon={<Store size={20} color={theme.textSecondary} />}
+                      leftIcon={<Store size={20} color={theme.neutral[400]} />}
                       error={editErrors.name}
                     />
 
