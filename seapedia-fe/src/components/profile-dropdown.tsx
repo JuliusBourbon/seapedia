@@ -7,7 +7,7 @@ import {
   Animated,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useSegments } from 'expo-router';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -35,16 +35,18 @@ interface ProfileDropdownProps {
 }
 
 interface MenuItem {
-  icon: React.ReactNode;
+  icon: (color: string) => React.ReactNode;
   label: string;
   sublabel?: string;
   onPress: () => void;
   danger?: boolean;
+  path?: string;
 }
 
 export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDropdownProps) {
   const theme = useTheme();
   const router = useRouter();
+  const segments = useSegments();
   const insets = useSafeAreaInsets();
   const { roles, clearAuth, activeRole } = useAuthStore();
 
@@ -52,6 +54,9 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
 
   const scaleAnim = useRef(new Animated.Value(0.95)).current;
   const opacityAnim = useRef(new Animated.Value(0)).current;
+
+  // The current raw path matches the layout route (e.g. /(buyer)/(tabs)/dashboard)
+  const currentRawPath = '/' + segments.join('/');
 
   React.useEffect(() => {
     if (visible) {
@@ -98,100 +103,113 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
     }, 300);
   };
 
-
   const buyerMenuItems: MenuItem[] = [
     {
-      icon: <LayoutDashboard size={20} color={theme.primary} />,
+      icon: (color: string) => <LayoutDashboard size={20} color={color} />,
       label: 'Dasbor',
       sublabel: 'Ringkasan akun & dompet',
       onPress: () => navigate('/(buyer)/(tabs)/dashboard'),
+      path: '/(buyer)/(tabs)/dashboard',
     },
     {
-      icon: <ShoppingBag size={20} color={theme.primary} />,
+      icon: (color: string) => <ShoppingBag size={20} color={color} />,
       label: 'Pesanan',
       sublabel: 'Lacak pesanan Anda',
       onPress: () => navigate('/(buyer)/(tabs)/orders'),
+      path: '/(buyer)/(tabs)/orders',
     },
     {
-      icon: <MapPin size={20} color={theme.primary} />,
+      icon: (color: string) => <MapPin size={20} color={color} />,
       label: 'Alamat',
       sublabel: 'Kelola alamat pengiriman',
       onPress: () => navigate('/(buyer)/(tabs)/addresses'),
+      path: '/(buyer)/(tabs)/addresses',
     },
     {
-      icon: <BarChart3 size={20} color={theme.primary} />,
+      icon: (color: string) => <BarChart3 size={20} color={color} />,
       label: 'Laporan',
       sublabel: 'Riwayat pembelian',
       onPress: () => navigate('/(buyer)/(tabs)/reports'),
+      path: '/(buyer)/(tabs)/reports',
     },
   ];
 
   const sellerMenuItems: MenuItem[] = [
     {
-      icon: <Store size={20} color={theme.primary} />,
+      icon: (color: string) => <Store size={20} color={color} />,
       label: 'Dasbor Toko',
       sublabel: 'Ringkasan toko Anda',
       onPress: () => navigate('/(seller)/(tabs)/dashboard'),
+      path: '/(seller)/(tabs)/dashboard',
     },
     {
-      icon: <ShoppingBag size={20} color={theme.primary} />,
+      icon: (color: string) => <ShoppingBag size={20} color={color} />,
       label: 'Produk',
       sublabel: 'Kelola daftar produk',
       onPress: () => navigate('/(seller)/(tabs)/products'),
+      path: '/(seller)/(tabs)/products',
     },
     {
-      icon: <ClipboardList size={20} color={theme.primary} />,
+      icon: (color: string) => <ClipboardList size={20} color={color} />,
       label: 'Order Masuk',
       sublabel: 'Pesanan dari pembeli',
       onPress: () => navigate('/(seller)/(tabs)/orders'),
+      path: '/(seller)/(tabs)/orders',
     },
     {
-      icon: <BarChart3 size={20} color={theme.primary} />,
+      icon: (color: string) => <BarChart3 size={20} color={color} />,
       label: 'Laporan',
       sublabel: 'Laporan penjualan',
       onPress: () => navigate('/(seller)/(tabs)/reports'),
+      path: '/(seller)/(tabs)/reports',
     },
   ];
 
   const driverMenuItems: MenuItem[] = [
     {
-      icon: <Truck size={20} color={theme.primary} />,
+      icon: (color: string) => <Truck size={20} color={color} />,
       label: 'Dasbor Kurir',
       sublabel: 'Status & tugas aktif',
       onPress: () => navigate('/(driver)/(tabs)/dashboard'),
+      path: '/(driver)/(tabs)/dashboard',
     },
     {
-      icon: <ClipboardList size={20} color={theme.primary} />,
+      icon: (color: string) => <ClipboardList size={20} color={color} />,
       label: 'Cari Lowongan',
       sublabel: 'Ambil pekerjaan tersedia',
       onPress: () => navigate('/(driver)/(tabs)/jobs'),
+      path: '/(driver)/(tabs)/jobs',
     },
     {
-      icon: <Wallet size={20} color={theme.primary} />,
+      icon: (color: string) => <Wallet size={20} color={color} />,
       label: 'Pendapatan',
       sublabel: 'Riwayat penghasilan',
       onPress: () => navigate('/(driver)/(tabs)/earnings'),
+      path: '/(driver)/(tabs)/earnings',
     },
   ];
 
   const adminMenuItems: MenuItem[] = [
     {
-      icon: <BarChart3 size={20} color={theme.primary} />,
+      icon: (color: string) => <BarChart3 size={20} color={color} />,
       label: 'Dasbor Admin',
       sublabel: 'Pantau ringkasan platform',
       onPress: () => navigate('/(admin)/(tabs)/dashboard'),
+      path: '/(admin)/(tabs)/dashboard',
     },
     {
-      icon: <Percent size={20} color={theme.primary} />,
+      icon: (color: string) => <Percent size={20} color={color} />,
       label: 'Voucher',
       sublabel: 'Kelola kode diskon',
       onPress: () => navigate('/(admin)/(tabs)/discount'),
+      path: '/(admin)/(tabs)/discount',
     },
     {
-      icon: <Settings size={20} color={theme.primary} />,
+      icon: (color: string) => <Settings size={20} color={color} />,
       label: 'Sistem & Simulasi',
       sublabel: 'Pengaturan & simulasi waktu',
       onPress: () => navigate('/(admin)/(tabs)/system'),
+      path: '/(admin)/(tabs)/system',
     },
   ];
 
@@ -206,15 +224,16 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
     ...(roles.length > 1
       ? [
         {
-          icon: <RefreshCcw size={20} color={theme.textSecondary} />,
+          icon: (color: string) => <RefreshCcw size={20} color={color} />,
           label: 'Pindah Peran',
           sublabel: 'Ganti mode akun',
           onPress: () => navigate('/(public)/select-role'),
+          path: '/(public)/select-role',
         },
       ]
       : []),
     {
-      icon: <LogOut size={20} color="#EF4444" />,
+      icon: (color: string) => <LogOut size={20} color={color} />,
       label: 'Keluar',
       sublabel: 'Keluar dari akun ini',
       onPress: handleLogout,
@@ -231,60 +250,74 @@ export function ProfileDropdown({ visible, onClose, role: roleProp }: ProfileDro
       onRequestClose={onClose}
     >
       <TouchableWithoutFeedback onPress={onClose}>
-        <View className="flex-1 bg-black/35">
+        <View className="flex-1 bg-black/40">
           <TouchableWithoutFeedback>
             <Animated.View
-              className="absolute rounded-t-[18px] border-t border-l border-r overflow-hidden py-2"
+              className="absolute rounded-t-[24px] border-t border-l border-r overflow-hidden py-4 shadow-xl"
               style={{
-                backgroundColor: theme.backgroundElement,
-                borderColor: theme.border,
+                backgroundColor: theme.neutral[50],
+                borderColor: theme.neutral[200],
                 bottom: 60 + insets.bottom,
                 left: 0,
                 right: 0,
                 transform: [{ scale: scaleAnim }],
                 opacity: opacityAnim,
-                elevation: 16,
+                elevation: 20,
               }}
             >
-              {menuItems.map((item, index) => (
-                <React.Fragment key={index}>
-                  <Pressable
-                    onPress={item.onPress}
-                    className={`flex-row items-center px-5 py-[11px] active:opacity-70 ${index !== menuItems.length - 1 ? 'my-2' : ''
-                      }`}
-                  >
-                    {/* Icon Wrap */}
-                    <View
-                      className="w-9 h-9 rounded-[10px] items-center justify-center"
+              {menuItems.map((item, index) => {
+                const isSelected = item.path === currentRawPath;
+
+                let iconColor: string = theme.neutral[500];
+                let bgColor: string = theme.neutral[100];
+
+                if (item.danger) {
+                  iconColor = theme.danger;
+                  bgColor = `${theme.danger}15`;
+                } else if (isSelected) {
+                  iconColor = theme.neutral[50];
+                  bgColor = theme.primary;
+                }
+
+                return (
+                  <React.Fragment key={index}>
+                    <Pressable
+                      onPress={item.onPress}
+                      className={`flex-row items-center px-6 py-3 active:opacity-60 ${index !== menuItems.length - 1 ? 'mb-1' : ''
+                        }`}
                       style={{
-                        backgroundColor: item.danger
-                          ? '#EF444415'
-                          : `${theme.primary}12`,
+                        backgroundColor: isSelected ? `${theme.primary}05` : 'transparent'
                       }}
                     >
-                      {item.icon}
-                    </View>
-
-                    {/* Text */}
-                    <View className="ml-3 flex-1">
-                      <ThemedText
-                        className="text-[14px] font-bold"
-                        style={{ color: item.danger ? '#EF4444' : theme.text }}
+                      {/* Icon Wrap */}
+                      <View
+                        className="w-11 h-11 rounded-full items-center justify-center mr-4"
+                        style={{ backgroundColor: bgColor }}
                       >
-                        {item.label}
-                      </ThemedText>
-                      {item.sublabel && (
+                        {item.icon(iconColor)}
+                      </View>
+
+                      {/* Text */}
+                      <View className="flex-1">
                         <ThemedText
-                          className="text-[11px] mt-[1px]"
-                          themeColor="textSecondary"
+                          className="text-[15px] font-bold"
+                          style={{ color: item.danger ? theme.danger : isSelected ? theme.primary : theme.neutral[900] }}
                         >
-                          {item.sublabel}
+                          {item.label}
                         </ThemedText>
-                      )}
-                    </View>
-                  </Pressable>
-                </React.Fragment>
-              ))}
+                        {item.sublabel && (
+                          <ThemedText
+                            className="text-xs mt-[2px]"
+                            style={{ color: isSelected ? theme.primary : theme.neutral[500] }}
+                          >
+                            {item.sublabel}
+                          </ThemedText>
+                        )}
+                      </View>
+                    </Pressable>
+                  </React.Fragment>
+                );
+              })}
             </Animated.View>
           </TouchableWithoutFeedback>
         </View>

@@ -43,15 +43,15 @@ export function SellerNavBar({ onProfilePress }: SellerNavBarProps) {
     <View
       className="flex-row border-t"
       style={{
-        backgroundColor: theme.backgroundElement,
-        borderTopColor: theme.border,
+        backgroundColor: theme.neutral[50],
+        borderTopColor: theme.neutral[200],
         height: 60 + insets.bottom,
         paddingBottom: insets.bottom,
         paddingTop: 8,
       }}
     >
       {tabs.map((tab, index) => {
-        const color = tab.active ? theme.primary : theme.textSecondary;
+        const color = tab.active ? theme.primary : theme.neutral[500];
         return (
           <Pressable
             key={index}
