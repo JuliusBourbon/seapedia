@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   RefreshControl,
   ActivityIndicator,
-  Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ShoppingBag, MapPin, Truck, Calendar, CreditCard, ShieldAlert } from 'lucide-react-native';
@@ -16,7 +14,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { OrderStatusTimeline } from '@/components/order-status-timeline';
-import { Spacing } from '@/constants/theme';
 import { ORDER_STATUS_LABELS, DELIVERY_METHODS } from '@/constants/config';
 import api from '@/services/api';
 
@@ -139,7 +136,7 @@ export default function BuyerOrderDetailScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
+        <ThemedText className="mt-3">
           Mengambil rincian pesanan...
         </ThemedText>
       </ThemedView>
@@ -167,7 +164,7 @@ export default function BuyerOrderDetailScreen() {
   return (
     <ThemedView className="flex-1">
       <ScrollView
-        contentContainerClassName="p-4 pb-5 gap-3"
+        contentContainerClassName="p-4 pb-20 gap-3"
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -178,10 +175,10 @@ export default function BuyerOrderDetailScreen() {
         }
       >
         {/* Order Status Header Card */}
-        <Card className="p-4">
+        <Card className="p-4 border rounded-md border-primary">
           <View className="flex-row justify-between items-start gap-2">
             <View className="flex-1">
-              <ThemedText className="uppercase font-semibold" themeColor="textSecondary">
+              <ThemedText className="uppercase font-semibold">
                 ID Pesanan:
               </ThemedText>
               <ThemedText className="font-mono mt-[2px]">
@@ -192,30 +189,32 @@ export default function BuyerOrderDetailScreen() {
               {getStatusBadge(order.status)}
             </View>
           </View>
-          <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.border }} />
+          <View className="h-[1.5px] my-3" style={{ backgroundColor: theme.neutral[400] }} />
           <View className="flex-row items-center">
-            <Calendar size={16} color={theme.textSecondary} />
-            <ThemedText className="text-[13px] ml-1" themeColor="textSecondary">
+            <Calendar size={16} color={theme.neutral[500]} />
+            <ThemedText className="text-[13px] ml-1">
               Waktu Transaksi: {formattedDate}
             </ThemedText>
           </View>
         </Card>
 
         {/* Status history timeline */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Status Pengiriman
-        </ThemedText>
-        <Card className="p-4">
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Status Pengiriman</ThemedText>
+        </View>
+        <Card className="p-4 border rounded-md border-primary">
           <OrderStatusTimeline statusHistory={order.statusHistory} currentStatus={order.status} />
         </Card>
 
         {/* Shipping details (Courier/Driver) */}
         {order.status !== 'SEDANG_DIKEMAS' && (
           <>
-            <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-              Informasi Kurir
-            </ThemedText>
-            <Card className="p-3">
+            <View className="flex-row items-center gap-2">
+              <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+              <ThemedText className="font-bold">Informasi Kurir</ThemedText>
+            </View>
+            <Card className="p-3 border rounded-md border-primary">
               <View className="flex-row items-center">
                 <View className="w-11 h-11 rounded-lg items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
                   <Truck size={24} color={theme.primary} />
@@ -224,7 +223,7 @@ export default function BuyerOrderDetailScreen() {
                   <ThemedText type="smallBold">
                     {order.delivery?.driver ? order.delivery.driver.name : 'Mencari Kurir Pengirim...'}
                   </ThemedText>
-                  <ThemedText className="text-[12px]" themeColor="textSecondary">
+                  <ThemedText>
                     {order.delivery?.driver ? `@${order.delivery.driver.username}` : 'Menunggu kurir mengambil pesanan.'}
                   </ThemedText>
                 </View>
@@ -234,10 +233,11 @@ export default function BuyerOrderDetailScreen() {
         )}
 
         {/* Shipping address details */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Alamat Pengantaran
-        </ThemedText>
-        <Card className="p-4">
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Alamat Pengantaran</ThemedText>
+        </View>
+        <Card className="p-4 border border-primary rounded-md">
           <View className="flex-row items-center">
             <MapPin size={18} color={theme.primary} />
             <ThemedText type="smallBold" className="ml-1">
@@ -248,7 +248,7 @@ export default function BuyerOrderDetailScreen() {
             <ThemedText type="smallBold" className="text-[14px]">
               {order.address?.recipientName ?? 'Penerima tidak diketahui'}
             </ThemedText>
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
+            <ThemedText className="text-[13px]">
               {order.address?.phoneNumber ?? '-'}
             </ThemedText>
             <ThemedText className="text-[13px] leading-[18px] mt-1">
@@ -258,25 +258,26 @@ export default function BuyerOrderDetailScreen() {
         </Card>
 
         {/* List of items purchased */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Barang Yang Dibeli
-        </ThemedText>
-        <Card className="p-4">
-          <ThemedText type="smallBold" className="text-[15px]">
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Barang Yang Dibeli</ThemedText>
+        </View>
+        <Card className="p-4 border border-primary rounded-md">
+          <ThemedText className='font-semibold'>
             Toko: {order.store?.name}
           </ThemedText>
-          <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />
+          <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.neutral[400] }} />
           {order.items?.map((item) => (
             <View key={item.id} className="flex-row justify-between items-center mb-2">
               <View className="flex-1 pr-3">
-                <ThemedText type="smallBold" className="text-[14px]">
+                <ThemedText className="font-semibold">
                   {item.productName}
                 </ThemedText>
-                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
+                <ThemedText className="mt-[2px]">
                   {item.quantity} x {formatCurrency(item.price)}
                 </ThemedText>
               </View>
-              <ThemedText type="smallBold" className="text-[14px] font-bold">
+              <ThemedText className="font-bold">
                 {formatCurrency(item.subtotal)}
               </ThemedText>
             </View>
@@ -284,45 +285,46 @@ export default function BuyerOrderDetailScreen() {
         </Card>
 
         {/* Financial billing details */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Rincian Transaksi Keuangan
-        </ThemedText>
-        <Card className="p-4">
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Rincian Transaksi</ThemedText>
+        </View>
+        <Card className="p-4 border border-primary rounded-md">
           <View className="gap-2">
             <View className="flex-row justify-between items-center">
-              <ThemedText themeColor="textSecondary">Subtotal Belanja</ThemedText>
-              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.subtotal)}</ThemedText>
+              <ThemedText>Subtotal Belanja</ThemedText>
+              <ThemedText className="font-semibold">{formatCurrency(order.subtotal)}</ThemedText>
             </View>
 
             {order.discountAmount > 0 && (
               <View className="flex-row justify-between items-center">
-                <ThemedText style={{ color: theme.success }}>
+                <ThemedText className='text-primary'>
                   Diskon ({order.discountCode})
                 </ThemedText>
-                <ThemedText className="text-[14px] font-semibold" style={{ color: theme.success }}>
+                <ThemedText className="font-semibold text-primary" >
                   -{formatCurrency(order.discountAmount)}
                 </ThemedText>
               </View>
             )}
 
             <View className="flex-row justify-between items-center">
-              <ThemedText themeColor="textSecondary">Biaya Ongkos Kirim</ThemedText>
-              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.deliveryFee)}</ThemedText>
+              <ThemedText>Biaya Ongkos Kirim</ThemedText>
+              <ThemedText className="font-semibold">{formatCurrency(order.deliveryFee)}</ThemedText>
             </View>
 
             <View className="flex-row justify-between items-center">
-              <ThemedText themeColor="textSecondary">PPN (12%)</ThemedText>
-              <ThemedText className="text-[14px] font-semibold">{formatCurrency(order.ppn)}</ThemedText>
+              <ThemedText>PPN (12%)</ThemedText>
+              <ThemedText className="font-semibold">{formatCurrency(order.ppn)}</ThemedText>
             </View>
 
-            <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.border }} />
+            <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.neutral[400] }} />
 
             <View className="flex-row justify-between items-center">
               <View className="flex-row items-center gap-2">
-                <CreditCard size={18} color={theme.textSecondary} />
+                <CreditCard size={18} color={theme.neutral[500]} />
                 <ThemedText type="smallBold">Total Bayar</ThemedText>
               </View>
-              <ThemedText className="text-[18px] font-black" themeColor="primary">
+              <ThemedText className="font-bold text-primary">
                 {formatCurrency(order.total)}
               </ThemedText>
             </View>

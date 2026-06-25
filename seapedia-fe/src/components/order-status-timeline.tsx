@@ -23,7 +23,7 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
 
   const getStatusIcon = (status: string, isActive: boolean) => {
     const size = 18;
-    const color = isActive ? '#FFFFFF' : theme.textSecondary;
+    const color = isActive ? '#FFFFFF' : theme.neutral[800];
 
     switch (status) {
       case 'SEDANG_DIKEMAS':
@@ -49,17 +49,17 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
       return theme.primary;
     }
     if (isPassed) {
-      return theme.success;
+      return theme.primary;
     }
-    return theme.border;
+    return theme.neutral[800];
   };
 
   // Status order sequence
   const statusSteps = ['SEDANG_DIKEMAS', 'MENUNGGU_PENGIRIM', 'SEDANG_DIKIRIM', 'PESANAN_SELESAI'];
-  
+
   // If order was returned, we show a special sequence
   const isReturned = currentStatus === 'DIKEMBALIKAN';
-  const stepsToRender = isReturned 
+  const stepsToRender = isReturned
     ? ['SEDANG_DIKEMAS', 'MENUNGGU_PENGIRIM', 'SEDANG_DIKIRIM', 'DIKEMBALIKAN']
     : statusSteps;
 
@@ -76,11 +76,11 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
 
         const formattedDate = historyItem
           ? new Date(historyItem.createdAt).toLocaleDateString('id-ID', {
-              day: 'numeric',
-              month: 'short',
-              hour: '2-digit',
-              minute: '2-digit',
-            })
+            day: 'numeric',
+            month: 'short',
+            hour: '2-digit',
+            minute: '2-digit',
+          })
           : null;
 
         return (
@@ -91,7 +91,7 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
                 className="w-8 h-8 rounded-full border-2 items-center justify-center z-10"
                 style={[
                   {
-                    backgroundColor: isActive ? stepColor : isPassed ? `${stepColor}20` : theme.backgroundElement,
+                    backgroundColor: isActive ? stepColor : isPassed ? `${stepColor}20` : theme.neutral[100],
                     borderColor: stepColor,
                   },
                 ]}
@@ -103,7 +103,7 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
                   className="w-[2.5px] flex-1 min-h-[35px] my-[2px] z-0"
                   style={[
                     {
-                      backgroundColor: isPassed && index < statusHistory.length - 1 ? theme.success : theme.border,
+                      backgroundColor: isPassed && index < statusHistory.length - 1 ? theme.primary : theme.neutral[300],
                     },
                   ]}
                 />
@@ -115,22 +115,22 @@ export function OrderStatusTimeline({ statusHistory, currentStatus }: OrderStatu
               <View className="flex-row justify-between items-center">
                 <ThemedText
                   type="smallBold"
-                  className="text-[14px] font-bold"
+                  className="font-bold"
                   style={[
-                    { color: isActive ? theme.primary : isPassed ? theme.text : theme.textSecondary },
+                    { color: isActive ? theme.primary : isPassed ? theme.primary : theme.neutral[600] },
                   ]}
                 >
                   {label}
                 </ThemedText>
                 {formattedDate && (
-                  <ThemedText className="text-[11px]" themeColor="textSecondary">
+                  <ThemedText>
                     {formattedDate}
                   </ThemedText>
                 )}
               </View>
-              
+
               {historyItem?.note && (
-                <ThemedText className="text-[12px] mt-1 leading-[16px]" themeColor="textSecondary">
+                <ThemedText className="mt-1 leading-[16px]">
                   {historyItem.note}
                 </ThemedText>
               )}
