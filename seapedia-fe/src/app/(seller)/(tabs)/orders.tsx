@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
@@ -8,7 +7,6 @@ import {
   Pressable,
   Alert,
   ScrollView,
-  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ClipboardList, Calendar, ArrowRight, User, Package, ChevronRight } from 'lucide-react-native';
@@ -18,7 +16,6 @@ import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
 import { ORDER_STATUS_LABELS } from '@/constants/config';
 import api from '@/services/api';
 
@@ -171,42 +168,42 @@ export default function SellerOrdersScreen() {
     }
 
     return (
-      <Card className="mb-3 p-4">
-        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+      <Card className="mb-3 p-4 border border-primary rounded-md bg-neutral-50">
+        <View className="flex-row justify-between items-center pb-2 mb-2">
           <View className="flex-row items-center gap-2 flex-1 pr-2">
-            <User size={16} color={theme.textSecondary} />
-            <ThemedText type="smallBold" className="text-[14px]">
+            <User size={16} color={theme.neutral[700]} />
+            <ThemedText className="font-semibold">
               {item.buyer.name} (@{item.buyer.username})
             </ThemedText>
           </View>
           {getStatusBadge(item.status)}
         </View>
 
-        <View className="gap-2">
-          <View className="flex-row items-center gap-2">
-            <Calendar size={14} color={theme.textSecondary} />
-            <ThemedText className="text-[13px] flex-1" themeColor="textSecondary">
+        <View className="gap-2 border-t border-neutral-400">
+          <View className="flex-row items-center gap-2 mt-2">
+            <Calendar size={14} color={theme.neutral[700]} />
+            <ThemedText className=" flex-1">
               {formattedDate}
             </ThemedText>
           </View>
 
           <View className="flex-row items-center gap-2">
-            <Package size={14} color={theme.textSecondary} />
-            <ThemedText className="text-[13px] flex-1" themeColor="textSecondary" numberOfLines={1}>
+            <Package size={14} color={theme.neutral[700]} />
+            <ThemedText className=" flex-1" numberOfLines={1}>
               {itemsSummary}
             </ThemedText>
           </View>
 
-          <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
+          <ThemedText className=" font-mono">
             ID: {item.id}
           </ThemedText>
 
-          <View className="flex-row justify-between items-end mt-2">
-            <View>
-              <ThemedText className="text-[11px]" themeColor="textSecondary">
+          <View className="flex-row justify-between items-end mt-2 border-t border-neutral-500">
+            <View className='my-2'>
+              <ThemedText className="font-semibold">
                 Total Pendapatan
               </ThemedText>
-              <ThemedText className="text-[16px] font-extrabold text-[#0D9488] mt-[2px]">
+              <ThemedText type='large' className="font-bold text-primary my-2">
                 {formattedTotal}
               </ThemedText>
             </View>
@@ -217,7 +214,7 @@ export default function SellerOrdersScreen() {
                 className="flex-row items-center py-1.5 px-3 rounded-lg gap-1"
                 style={{ backgroundColor: `${theme.primary}10` }}
               >
-                <ThemedText className="text-[13px] font-bold" style={{ color: theme.primary }}>
+                <ThemedText className=" font-bold" style={{ color: theme.primary }}>
                   Rincian
                 </ThemedText>
                 <ArrowRight size={14} color={theme.primary} />
@@ -244,8 +241,8 @@ export default function SellerOrdersScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-6 px-5">
-        <ClipboardList size={52} color={theme.placeholder} />
-        <ThemedText className="text-center mt-3" themeColor="textSecondary">
+        <ClipboardList size={52} color={theme.primary} />
+        <ThemedText className="text-center mt-3">
           {error ? error : 'Tidak ada pesanan masuk untuk filter ini.'}
         </ThemedText>
       </View>
@@ -256,7 +253,7 @@ export default function SellerOrdersScreen() {
     return (
       <ThemedView className="flex-1 items-center justify-center">
         <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
+        <ThemedText className="mt-3">
           Mengambil daftar pesanan masuk...
         </ThemedText>
       </ThemedView>
@@ -266,7 +263,7 @@ export default function SellerOrdersScreen() {
   return (
     <ThemedView className="flex-1">
       {/* Horizontally Scrollable Filter Tabs */}
-      <View className="border-b" style={{ borderBottomColor: theme.border }}>
+      <View className="border-b" style={{ borderBottomColor: theme.neutral[500] }}>
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -282,8 +279,8 @@ export default function SellerOrdersScreen() {
                 style={isActive ? { borderBottomColor: theme.primary } : {}}
               >
                 <ThemedText
-                  className={`text-[13px] ${isActive ? 'font-bold' : 'font-medium'}`}
-                  style={{ color: isActive ? theme.primary : theme.textSecondary }}
+                  className={` ${isActive ? 'font-bold' : 'font-medium'}`}
+                  style={{ color: isActive ? theme.primary : theme.neutral[700] }}
                 >
                   {tab.label}
                 </ThemedText>
