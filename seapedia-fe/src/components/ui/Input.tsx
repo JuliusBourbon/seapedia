@@ -89,7 +89,7 @@ export function Input({
           onFocus={handleFocus}
           onBlur={handleBlur}
           className={`flex-1 h-full text-[15px] font-medium p-0 ${inputClasses || ''}`}
-          style={[{ color: theme.neutral[900] }, inputStyle]}
+          style={[{ color: theme.neutral[900], fontFamily: 'Commissioner_500Medium' }, inputStyle]}
           {...props}
         />
         {isPassword && (

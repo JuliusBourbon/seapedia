@@ -4,6 +4,14 @@ import { useColorScheme } from 'react-native';
 import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
+import {
+  useFonts,
+  Commissioner_400Regular,
+  Commissioner_500Medium,
+  Commissioner_600SemiBold,
+  Commissioner_700Bold,
+  Commissioner_800ExtraBold
+} from '@expo-google-fonts/commissioner';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -12,7 +20,14 @@ export default function RootLayout() {
   const router = useRouter();
   const [isReady, setIsReady] = useState(false);
 
-  // Monitor Zustand hydration from secure storage
+  const [fontsLoaded] = useFonts({
+    Commissioner_400Regular,
+    Commissioner_500Medium,
+    Commissioner_600SemiBold,
+    Commissioner_700Bold,
+    Commissioner_800ExtraBold,
+  });
+
   useEffect(() => {
     const unsubFinish = useAuthStore.persist.onFinishHydration(() => setIsReady(true));
     if (useAuthStore.persist.hasHydrated()) {
@@ -24,7 +39,7 @@ export default function RootLayout() {
   }, []);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || !fontsLoaded) return;
 
     const inAuthGroup =
       segments[0] === '(buyer)' ||
@@ -35,21 +50,17 @@ export default function RootLayout() {
     const inSelectRole = segments[1] === 'select-role';
 
     if (!isAuthenticated) {
-      // If user is guest, and tries to visit auth folders, redirect them to home
       if (inAuthGroup) {
         router.replace('/(public)/(tabs)');
       }
     } else {
-      // User is authenticated
       if (requiresRoleSelection) {
-        // Multi-role selection required, send them to select-role page
         if (!inSelectRole) {
           router.replace('/(public)/select-role');
         }
       } else if (activeRole) {
-        // activeRole is selected. Redirect to dashboard if trying to access public main tab screens or select-role
-        const inLoginOrRegister = 
-          segments[1] === 'login' || 
+        const inLoginOrRegister =
+          segments[1] === 'login' ||
           segments[1] === 'register' ||
           (segments[1] === '(tabs)' && segments[2] === 'login');
 
@@ -66,7 +77,7 @@ export default function RootLayout() {
         }
       }
     }
-  }, [isAuthenticated, activeRole, requiresRoleSelection, segments, isReady]);
+  }, [isAuthenticated, activeRole, requiresRoleSelection, segments, isReady, fontsLoaded]);
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
