@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import {
-  StyleSheet,
   View,
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
+  ScrollView, Image,
+  Pressable
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Store, Anchor, LogOut } from 'lucide-react-native';
@@ -14,9 +14,9 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Spacing } from '@/constants/theme';
 import { useAuthStore } from '@/store/useAuthStore';
 import api from '@/services/api';
+import logo from '@/assets/images/icon.png';
 
 export default function StoreSetupScreen() {
   const theme = useTheme();
@@ -93,13 +93,15 @@ export default function StoreSetupScreen() {
       >
         <ScrollView contentContainerClassName="flex-grow justify-center px-5 py-5">
           <View className="items-center mb-5">
-            <View className="w-20 h-20 rounded-[40px] items-center justify-center mb-3" style={{ backgroundColor: `${theme.primary}15` }}>
-              <Anchor size={40} color={theme.primary} />
-            </View>
-            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center">
+            <Image
+              source={logo}
+              className="w-40 h-40"
+              resizeMode="contain"
+            />
+            <ThemedText type="subtitle" className="text-center">
               Buka Toko Seapedia
             </ThemedText>
-            <ThemedText className="text-sm text-center mt-1 px-4" themeColor="textSecondary">
+            <ThemedText className="text-center mt-1 px-4 text-neutral-800">
               Mulai jual produkmu di Seapedia
             </ThemedText>
           </View>
@@ -110,7 +112,7 @@ export default function StoreSetupScreen() {
               placeholder="Contoh: Toko Jaya Abadi"
               value={name}
               onChangeText={setName}
-              leftIcon={<Store size={20} color={theme.textSecondary} />}
+              leftIcon={<Store size={20} color={theme.neutral[500]} />}
               error={errors.name}
             />
 
@@ -130,13 +132,10 @@ export default function StoreSetupScreen() {
               className="mt-3 h-[52px]"
             />
 
-            <Button
-              label="Batal & Keluar"
-              variant="outline"
-              leftIcon={<LogOut size={16} color={theme.primary} />}
-              onPress={handleCancel}
-              className="mt-2 h-[52px]"
-            />
+            <Pressable onPress={handleCancel} className="mt-3 h-[52px] border border-danger rounded-lg flex-row items-center justify-center gap-3">
+              <LogOut size={16} color={theme.danger} />
+              <ThemedText className="text-danger font-semibold">Batal & Keluar</ThemedText>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
