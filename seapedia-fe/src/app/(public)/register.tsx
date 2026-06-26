@@ -146,109 +146,115 @@ export default function RegisterScreen() {
   return (
     <ThemedView className="flex-1">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerClassName="flex-grow px-8 py-12">
-          <View className="items-center mb-6">
-            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center text-primary">
-              Daftar Akun Baru
-            </ThemedText>
-            <ThemedText className="text-center mt-1" style={{ color: theme.neutral[600] }}>
-              Bergabunglah dengan aplikasi ini
-            </ThemedText>
-            <Image
-              source={require('../../../assets/images/icon.png')}
-              className="w-40 h-40"
-              resizeMode="contain"
-            />
-          </View>
-
-          <View className="w-full">
-            <Input
-              label="Username"
-              placeholder="Minimal 3 karakter"
-              value={username}
-              onChangeText={setUsername}
-              leftIcon={<UserIcon size={20} color={theme.neutral[500]} />}
-              error={errors.username}
-              autoCapitalize="none"
-            />
-
-            <Input
-              label="Nama Lengkap"
-              placeholder="Masukkan nama lengkap Anda"
-              value={name}
-              onChangeText={setName}
-              leftIcon={<Smile size={20} color={theme.neutral[500]} />}
-              error={errors.name}
-            />
-
-            <Input
-              label="Email"
-              placeholder="contoh@domain.com"
-              value={email}
-              onChangeText={setEmail}
-              leftIcon={<Mail size={20} color={theme.neutral[500]} />}
-              error={errors.email}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
-
-            <Input
-              label="Password"
-              placeholder="Minimal 6 karakter"
-              value={password}
-              onChangeText={setPassword}
-              leftIcon={<Lock size={20} color={theme.neutral[500]} />}
-              error={errors.password}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-
-            <View className="my-2">
-              <ThemedText type="smallBold" className="mb-2" style={{ color: theme.neutral[600] }}>
-                Pilih Peran Akun (Dapat memilih lebih dari satu)
+        <ScrollView 
+          contentContainerClassName="flex-grow px-8 pb-12"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 justify-center mt-12">
+            <View className="items-center mb-6">
+              <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center text-primary">
+                Daftar Akun Baru
               </ThemedText>
-
-              {renderRoleCheckbox(
-                'BUYER',
-                'Pembeli (Buyer)',
-                'Membeli produk dari berbagai toko terpercaya.'
-              )}
-              {renderRoleCheckbox(
-                'SELLER',
-                'Penjual (Seller)',
-                'Buka toko dan pasarkan produk Anda.'
-              )}
-              {renderRoleCheckbox(
-                'DRIVER',
-                'Pengirim (Driver)',
-                'Antar pesanan ke pembeli dan peroleh penghasilan.'
-              )}
-              {errors.roles && (
-                <ThemedText className="text-danger text-xs mt-1 font-semibold">
-                  {errors.roles}
-                </ThemedText>
-              )}
+              <ThemedText className="text-center mt-1" style={{ color: theme.neutral[600] }}>
+                Bergabunglah dengan aplikasi ini
+              </ThemedText>
+              <Image
+                source={require('../../../assets/images/icon.png')}
+                className="w-40 h-40"
+                resizeMode="contain"
+              />
             </View>
 
-            <Button
-              label="Daftar Sekarang"
-              onPress={handleRegister}
-              loading={loading}
-              className="mt-6 h-[52px]"
-            />
+            <View className="w-full">
+              <Input
+                label="Username"
+                placeholder="Minimal 3 karakter"
+                value={username}
+                onChangeText={setUsername}
+                leftIcon={<UserIcon size={20} color={theme.neutral[500]} />}
+                error={errors.username}
+                autoCapitalize="none"
+              />
 
-            <View className="flex-row justify-center items-center mt-6 mb-8">
-              <ThemedText style={{ color: theme.neutral[500] }}>
-                Sudah memiliki akun?{' '}
-              </ThemedText>
-              <Pressable onPress={() => router.replace('/(public)/(tabs)/login')}>
-                <ThemedText className="font-bold text-primary underline">
-                  Masuk di sini
+              <Input
+                label="Nama Lengkap"
+                placeholder="Masukkan nama lengkap Anda"
+                value={name}
+                onChangeText={setName}
+                leftIcon={<Smile size={20} color={theme.neutral[500]} />}
+                error={errors.name}
+              />
+
+              <Input
+                label="Email"
+                placeholder="contoh@domain.com"
+                value={email}
+                onChangeText={setEmail}
+                leftIcon={<Mail size={20} color={theme.neutral[500]} />}
+                error={errors.email}
+                autoCapitalize="none"
+                keyboardType="email-address"
+              />
+
+              <Input
+                label="Password"
+                placeholder="Minimal 6 karakter"
+                value={password}
+                onChangeText={setPassword}
+                leftIcon={<Lock size={20} color={theme.neutral[500]} />}
+                error={errors.password}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+
+              <View className="my-2">
+                <ThemedText type="smallBold" className="mb-2" style={{ color: theme.neutral[600] }}>
+                  Pilih Peran Akun (Dapat memilih lebih dari satu)
                 </ThemedText>
-              </Pressable>
+
+                {renderRoleCheckbox(
+                  'BUYER',
+                  'Pembeli (Buyer)',
+                  'Membeli produk dari berbagai toko terpercaya.'
+                )}
+                {renderRoleCheckbox(
+                  'SELLER',
+                  'Penjual (Seller)',
+                  'Buka toko dan pasarkan produk Anda.'
+                )}
+                {renderRoleCheckbox(
+                  'DRIVER',
+                  'Pengirim (Driver)',
+                  'Antar pesanan ke pembeli dan peroleh penghasilan.'
+                )}
+                {errors.roles && (
+                  <ThemedText className="text-danger text-xs mt-1 font-semibold">
+                    {errors.roles}
+                  </ThemedText>
+                )}
+              </View>
+
+              <Button
+                label="Daftar Sekarang"
+                onPress={handleRegister}
+                loading={loading}
+                className="mt-6 h-[52px]"
+              />
+
+              <View className="flex-row justify-center items-center mt-6 mb-8">
+                <ThemedText style={{ color: theme.neutral[500] }}>
+                  Sudah memiliki akun?{' '}
+                </ThemedText>
+                <Pressable onPress={() => router.replace('/(public)/(tabs)/login')}>
+                  <ThemedText className="font-bold text-primary underline">
+                    Masuk di sini
+                  </ThemedText>
+                </Pressable>
+              </View>
             </View>
           </View>
         </ScrollView>

@@ -79,62 +79,68 @@ export default function LoginScreen() {
   return (
     <ThemedView className="flex-1">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1 }}
       >
-        <ScrollView contentContainerClassName="flex-grow px-8 justify-center py-12">
-          <View className="items-center mb-6">
-            <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center text-primary">
-              Selamat Datang
-            </ThemedText>
-            <ThemedText className="text-center mt-1" style={{ color: theme.neutral[600] }}>
-              Masuk dan mulai perjalanan Anda!
-            </ThemedText>
-            <Image
-              source={logo}
-              className="w-40 h-40"
-              resizeMode="contain"
-            />
-          </View>
-
-          <View className="w-full">
-            <Input
-              label="Username"
-              placeholder="Masukkan username Anda"
-              value={username}
-              onChangeText={setUsername}
-              leftIcon={<UserIcon size={20} color={theme.neutral[500]} />}
-              error={errors.username}
-              autoCapitalize="none"
-            />
-
-            <Input
-              label="Password"
-              placeholder="Masukkan password Anda"
-              value={password}
-              onChangeText={setPassword}
-              leftIcon={<Lock size={20} color={theme.neutral[500]} />}
-              error={errors.password}
-              secureTextEntry
-              autoCapitalize="none"
-            />
-
-            <Button
-              label="Masuk Sekarang"
-              onPress={handleLogin}
-              loading={loading}
-              className="mt-6 h-[52px]"
-            />
-
-            <View className="flex-row justify-center items-center mt-6 mb-8">
-              <ThemedText style={{ color: theme.neutral[500] }}>
-                Belum punya akun?{' '}
+        <ScrollView
+          contentContainerClassName="flex-grow px-8 pb-12"
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex-1 justify-center mt-12">
+            <View className="items-center mb-6">
+              <ThemedText type="subtitle" className="font-bold text-center text-primary">
+                Selamat Datang
               </ThemedText>
-              <Pressable onPress={() => router.push('/(public)/register')}>
-                <ThemedText className="font-bold text-primary underline">
-                  Daftar di sini
+              <ThemedText className="text-center mt-1" style={{ color: theme.neutral[600] }}>
+                Masuk dan mulai Bertransaksi!
+              </ThemedText>
+              <Image
+                source={logo}
+                className="w-40 h-40"
+                resizeMode="contain"
+              />
+            </View>
+
+            <View className="w-full">
+              <Input
+                label="Username"
+                placeholder="Masukkan username Anda"
+                value={username}
+                onChangeText={setUsername}
+                leftIcon={<UserIcon size={20} color={theme.neutral[500]} />}
+                error={errors.username}
+                autoCapitalize="none"
+              />
+
+              <Input
+                label="Password"
+                placeholder="Masukkan password Anda"
+                value={password}
+                onChangeText={setPassword}
+                leftIcon={<Lock size={20} color={theme.neutral[500]} />}
+                error={errors.password}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+
+              <Button
+                label="Masuk Sekarang"
+                onPress={handleLogin}
+                loading={loading}
+                className="mt-6 h-[52px]"
+              />
+
+              <View className="flex-row justify-center items-center mt-6 mb-8">
+                <ThemedText style={{ color: theme.neutral[500] }}>
+                  Belum punya akun?{' '}
                 </ThemedText>
-              </Pressable>
+                <Pressable onPress={() => router.push('/(public)/register')}>
+                  <ThemedText className="font-bold text-primary underline">
+                    Daftar di sini
+                  </ThemedText>
+                </Pressable>
+              </View>
             </View>
           </View>
         </ScrollView>
