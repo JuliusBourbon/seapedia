@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
-  StyleSheet,
   View,
   FlatList,
   RefreshControl,
-  ActivityIndicator,
   Pressable,
   Alert,
   Modal,
   ScrollView,
-  Platform,
+  Animated,
 } from 'react-native';
-import { Percent, Plus, ToggleLeft, ToggleRight, Calendar, UserCheck, AlertCircle, RefreshCcw } from 'lucide-react-native';
+import { Percent, Plus, ToggleLeft, ToggleRight, Calendar, UserCheck, X } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -19,7 +17,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Spacing } from '@/constants/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import api from '@/services/api';
 
@@ -45,7 +42,6 @@ export default function AdminDiscountScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<ModeTab>('VOUCHER');
 
-  // Modal creation states
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formType, setFormType] = useState<ModeTab>('VOUCHER');
   const [code, setCode] = useState('');
@@ -53,9 +49,20 @@ export default function AdminDiscountScreen() {
   const [value, setValue] = useState('');
   const [expiryDate, setExpiryDate] = useState('2026-12-31');
   const [usageLimit, setUsageLimit] = useState('100');
-  
+
   const [submitLoading, setSubmitLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 0.4, duration: 800, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -88,7 +95,7 @@ export default function AdminDiscountScreen() {
   const handleToggleStatus = async (item: DiscountItem) => {
     const typeLabel = activeTab === 'VOUCHER' ? 'voucher' : 'promo';
     const actionLabel = item.isActive ? 'menonaktifkan' : 'mengaktifkan';
-    
+
     Alert.alert(
       'Ubah Status',
       `Apakah Anda yakin ingin ${actionLabel} ${typeLabel} dengan kode "${item.code}"?`,
@@ -101,7 +108,7 @@ export default function AdminDiscountScreen() {
               const url = activeTab === 'VOUCHER'
                 ? `/admin/vouchers/${item.code}/toggle`
                 : `/admin/promos/${item.code}/toggle`;
-              
+
               const res = await api.patch(url);
               if (res.data?.success) {
                 Alert.alert('Sukses', `${typeLabel} berhasil di-toggle.`);
@@ -121,14 +128,14 @@ export default function AdminDiscountScreen() {
     if (!c || c.length < 3) {
       errors.code = 'Kode minimal 3 karakter alfanumerik.';
     }
-    
+
     const valueNum = Number(v);
     if (!v || isNaN(valueNum) || valueNum <= 0) {
       errors.value = 'Nilai diskon harus berupa angka positif.';
     } else if (discountType === 'PERCENTAGE' && valueNum > 100) {
       errors.value = 'Nilai persentase maksimal 100%.';
     }
-    
+
     if (!e || isNaN(Date.parse(e))) {
       errors.expiryDate = 'Format tanggal kadaluarsa tidak valid (YYYY-MM-DD).';
     }
@@ -145,7 +152,6 @@ export default function AdminDiscountScreen() {
   };
 
   const handleCreateDiscount = async () => {
-    // Sanitasi input sisi klien
     const cleanCode = code.toUpperCase().trim().replace(/[^A-Z0-9]/g, '').slice(0, 20);
     const cleanValue = value.trim().replace(/\D/g, '');
     const cleanUsageLimit = usageLimit.trim().replace(/\D/g, '');
@@ -178,7 +184,6 @@ export default function AdminDiscountScreen() {
       if (res.data?.success) {
         Alert.alert('Sukses', `${formType} berhasil ditambahkan!`);
         setIsModalOpen(false);
-        // Reset form
         setCode('');
         setValue('');
         setFormErrors({});
@@ -210,11 +215,13 @@ export default function AdminDiscountScreen() {
     const displayValue = item.type === 'PERCENTAGE' ? `${item.value}%` : formatCurrency(item.value);
 
     return (
-      <Card className={`mb-3 p-4 ${!item.isActive ? 'opacity-65' : ''}`}>
-        <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
+      <Card className={`mb-3 p-4 border rounded-md ${item.isActive ? 'border-primary' : 'border-neutral-300'} ${!item.isActive ? 'opacity-60' : ''}`}>
+        <View className="flex-row justify-between items-center pb-3 mb-3" style={{ borderBottomWidth: 1.5, borderBottomColor: theme.neutral[200] }}>
           <View className="flex-row items-center gap-2">
-            <Percent size={18} color={theme.primary} />
-            <ThemedText type="smallBold" className="text-[15px]">
+            <View className="w-8 h-8 rounded-lg items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
+              <Percent size={16} color={theme.primary} />
+            </View>
+            <ThemedText className="font-bold">
               {item.code}
             </ThemedText>
           </View>
@@ -223,47 +230,41 @@ export default function AdminDiscountScreen() {
 
         <View className="gap-2">
           <View className="flex-row justify-between items-center">
-            <ThemedText className="text-[13px]" themeColor="textSecondary">
-              Potongan Diskon:
-            </ThemedText>
-            <ThemedText type="smallBold" className="text-[14px]">
-              {displayValue} ({item.type})
+            <ThemedText>Potongan Diskon</ThemedText>
+            <ThemedText className="font-bold text-primary">
+              {displayValue}
             </ThemedText>
           </View>
 
-          <View className="flex-row justify-between items-center">
-            <View className="flex-row items-center gap-2">
-              <Calendar size={14} color={theme.textSecondary} />
-              <ThemedText className="text-[13px]" themeColor="textSecondary">
-                Kadaluarsa: {formattedDate}
-              </ThemedText>
-            </View>
+          <View className="flex-row items-center gap-2">
+            <Calendar size={14} color={theme.neutral[500]} />
+            <ThemedText>
+              Kadaluarsa: {formattedDate}
+            </ThemedText>
           </View>
 
           {activeTab === 'VOUCHER' && (
-            <View className="flex-row justify-between items-center">
-              <View className="flex-row items-center gap-2">
-                <UserCheck size={14} color={theme.textSecondary} />
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
-                  Pemakaian: {item.usedCount ?? 0} / {item.usageLimit}
-                </ThemedText>
-              </View>
+            <View className="flex-row items-center gap-2">
+              <UserCheck size={14} color={theme.neutral[500]} />
+              <ThemedText>
+                Pemakaian: {item.usedCount ?? 0} / {item.usageLimit}
+              </ThemedText>
             </View>
           )}
 
-          <View className="h-[1px] my-1" style={{ backgroundColor: theme.border }} />
+          <View className="h-[1.5px] my-1" style={{ backgroundColor: theme.neutral[200] }} />
 
           <Pressable
             onPress={() => handleToggleStatus(item)}
-            className="flex-row justify-between items-center pt-1"
+            className="flex-row justify-between items-center pt-1 active:opacity-60"
           >
-            <ThemedText className="text-[13.5px] font-semibold">
+            <ThemedText className="font-semibold">
               Status Aktif
             </ThemedText>
             {item.isActive ? (
               <ToggleRight size={36} color={theme.primary} />
             ) : (
-              <ToggleLeft size={36} color={theme.placeholder} />
+              <ToggleLeft size={36} color={theme.neutral[400]} />
             )}
           </Pressable>
         </View>
@@ -274,52 +275,67 @@ export default function AdminDiscountScreen() {
   const renderEmpty = () => {
     if (loading) return null;
     return (
-      <View className="items-center justify-center py-6 px-5">
-        <Percent size={52} color={theme.placeholder} />
-        <ThemedText className="text-center mt-3" themeColor="textSecondary">
-          Belum ada {activeTab === 'VOUCHER' ? 'voucher belanja' : 'promo global aplikasi'} yang terdaftar.
+      <View className="items-center justify-center py-10 px-5 mt-8">
+        <View className="w-24 h-24 rounded-full items-center justify-center mb-5" style={{ backgroundColor: theme.neutral[100] }}>
+          <Percent size={44} color={theme.neutral[400]} />
+        </View>
+        <ThemedText className="font-bold text-center mb-2" style={{ color: theme.neutral[900] }}>
+          Belum Ada Data
+        </ThemedText>
+        <ThemedText className="text-center px-4 leading-5" style={{ color: theme.neutral[500] }}>
+          Belum ada {activeTab === 'VOUCHER' ? 'voucher belanja' : 'promo global aplikasi'} yang terdaftar. Tekan tombol + untuk menambah.
         </ThemedText>
       </View>
     );
   };
 
+  const renderSkeleton = () => (
+    <ThemedView className="flex-1">
+      <View className="flex-row h-12 border-b" style={{ borderBottomColor: theme.neutral[200] }}>
+        <View className="flex-1 items-center justify-center">
+          <View className="h-4 w-28 rounded" style={{ backgroundColor: theme.neutral[200] }} />
+        </View>
+        <View className="flex-1 items-center justify-center">
+          <View className="h-4 w-28 rounded" style={{ backgroundColor: theme.neutral[200] }} />
+        </View>
+      </View>
+      <Animated.View style={{ opacity: pulseAnim }} className="p-4">
+        {[1, 2, 3, 4].map((i) => (
+          <View key={i} className="h-40 rounded-xl mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+        ))}
+      </Animated.View>
+    </ThemedView>
+  );
+
   if (loading && !refreshing) {
-    return (
-      <ThemedView className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
-          Mengambil data potongan diskon...
-        </ThemedText>
-      </ThemedView>
-    );
+    return renderSkeleton();
   }
 
   const activeData = activeTab === 'VOUCHER' ? vouchers : promos;
 
   return (
     <ThemedView className="flex-1">
-      {/* Tab Vouchers vs Promos */}
-      <View className="flex-row border-b h-12" style={{ borderBottomColor: theme.border }}>
+      <View className="flex-row h-12" style={{ backgroundColor: theme.neutral[50], borderBottomWidth: 1.5, borderBottomColor: theme.neutral[200] }}>
         <Pressable
-          className={`flex-1 items-center justify-center border-b-[2.5px] ${activeTab === 'VOUCHER' ? '' : 'border-transparent'}`}
-          style={activeTab === 'VOUCHER' ? { borderBottomColor: theme.primary } : {}}
+          className="flex-1 items-center justify-center"
+          style={{ borderBottomWidth: 2.5, borderBottomColor: activeTab === 'VOUCHER' ? theme.primary : 'transparent' }}
           onPress={() => setActiveTab('VOUCHER')}
         >
           <ThemedText
-            className={`text-[13.5px] font-medium ${activeTab === 'VOUCHER' ? 'font-bold' : ''}`}
-            style={{ color: activeTab === 'VOUCHER' ? theme.primary : theme.textSecondary }}
+            className="font-semibold"
+            style={{ color: activeTab === 'VOUCHER' ? theme.primary : theme.neutral[500] }}
           >
             Voucher Belanja
           </ThemedText>
         </Pressable>
         <Pressable
-          className={`flex-1 items-center justify-center border-b-[2.5px] ${activeTab === 'PROMO' ? '' : 'border-transparent'}`}
-          style={activeTab === 'PROMO' ? { borderBottomColor: theme.primary } : {}}
+          className="flex-1 items-center justify-center"
+          style={{ borderBottomWidth: 2.5, borderBottomColor: activeTab === 'PROMO' ? theme.primary : 'transparent' }}
           onPress={() => setActiveTab('PROMO')}
         >
           <ThemedText
-            className={`text-[13.5px] font-medium ${activeTab === 'PROMO' ? 'font-bold' : ''}`}
-            style={{ color: activeTab === 'PROMO' ? theme.primary : theme.textSecondary }}
+            className="font-semibold"
+            style={{ color: activeTab === 'PROMO' ? theme.primary : theme.neutral[500] }}
           >
             Promo Aplikasi
           </ThemedText>
@@ -343,7 +359,6 @@ export default function AdminDiscountScreen() {
         }
       />
 
-      {/* Floating Action Button (FAB) to Add Voucher/Promo */}
       <Pressable
         onPress={() => {
           setFormType(activeTab);
@@ -352,37 +367,30 @@ export default function AdminDiscountScreen() {
         className="absolute w-14 h-14 rounded-full items-center justify-center right-4"
         style={{
           backgroundColor: theme.primary,
-          bottom: 68 + insets.bottom,
-          elevation: 6,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 3 },
-          shadowOpacity: 0.2,
-          shadowRadius: 6,
+          bottom: 20,
         }}
       >
         <Plus size={24} color="#FFFFFF" />
       </Pressable>
 
-      {/* Creation Modal Form */}
       <Modal
         visible={isModalOpen}
         animationType="slide"
         transparent={true}
         onRequestClose={() => setIsModalOpen(false)}
       >
-        <View className="flex-1 justify-end" style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}>
-          <ThemedView className="rounded-t-3xl max-h-[85%] p-4" style={{ backgroundColor: theme.background }}>
-            <View className="flex-row justify-between items-center border-b-[1.5px] border-black/5 dark:border-white/5 pb-3 mb-3">
-              <ThemedText type="smallBold" className="text-[16px]">
-                Tambah {formType === 'VOUCHER' ? 'Voucher Belanja' : 'Promo Aplikasi'} Baru
+        <View className="flex-1 justify-end bg-black/40">
+          <View className="rounded-t-3xl max-h-[85%] p-5" style={{ backgroundColor: theme.neutral[50] }}>
+            <View className="flex-row justify-between items-center pb-4 mb-4" style={{ borderBottomWidth: 1.5, borderBottomColor: theme.neutral[200] }}>
+              <ThemedText className="font-bold" style={{ color: theme.neutral[900] }}>
+                Tambah {formType === 'VOUCHER' ? 'Voucher Belanja' : 'Promo Aplikasi'}
               </ThemedText>
-              <Pressable onPress={() => setIsModalOpen(false)} className="p-1">
-                <ThemedText className="font-bold" themeColor="textSecondary">Tutup</ThemedText>
+              <Pressable onPress={() => setIsModalOpen(false)} className="p-1 active:opacity-60">
+                <ThemedText className="font-bold" style={{ color: theme.neutral[500] }}><X size={18} color={theme.neutral[500]} /></ThemedText>
               </Pressable>
             </View>
 
             <ScrollView contentContainerClassName="pb-5">
-              {/* Form Input fields */}
               <Input
                 label="Kode Kupon Diskon"
                 placeholder="CONTOH: SEAVOUCHER20"
@@ -392,33 +400,40 @@ export default function AdminDiscountScreen() {
                 autoCapitalize="characters"
               />
 
-              {/* Type Switcher */}
-              <ThemedText type="smallBold" className="text-[12px] mb-1" themeColor="textSecondary">
+              <ThemedText className="font-semibold mb-2" style={{ color: theme.neutral[700] }}>
                 Tipe Potongan Harga
               </ThemedText>
-              <View className="flex-row gap-2 mb-3">
+              <View className="flex-row gap-2 mb-4">
                 <Pressable
                   onPress={() => setDiscountType('PERCENTAGE')}
-                  className="flex-1 h-11 rounded-lg border-[1.5px] items-center justify-center"
-                  style={[
-                    { borderColor: 'rgba(0,0,0,0.15)' },
-                    discountType === 'PERCENTAGE' && { backgroundColor: theme.primary, borderColor: theme.primary },
-                  ]}
+                  className="flex-1 h-11 rounded-lg items-center justify-center active:opacity-70"
+                  style={{
+                    backgroundColor: discountType === 'PERCENTAGE' ? theme.primary : 'transparent',
+                    borderWidth: 1.5,
+                    borderColor: discountType === 'PERCENTAGE' ? theme.primary : theme.neutral[300],
+                  }}
                 >
-                  <ThemedText className={`text-[13px] font-bold ${discountType === 'PERCENTAGE' ? 'text-white' : ''}`}>
+                  <ThemedText
+                    className="font-bold"
+                    style={{ color: discountType === 'PERCENTAGE' ? '#FFFFFF' : theme.neutral[700] }}
+                  >
                     Persentase (%)
                   </ThemedText>
                 </Pressable>
 
                 <Pressable
                   onPress={() => setDiscountType('FIXED')}
-                  className="flex-1 h-11 rounded-lg border-[1.5px] items-center justify-center"
-                  style={[
-                    { borderColor: 'rgba(0,0,0,0.15)' },
-                    discountType === 'FIXED' && { backgroundColor: theme.primary, borderColor: theme.primary },
-                  ]}
+                  className="flex-1 h-11 rounded-lg items-center justify-center active:opacity-70"
+                  style={{
+                    backgroundColor: discountType === 'FIXED' ? theme.primary : 'transparent',
+                    borderWidth: 1.5,
+                    borderColor: discountType === 'FIXED' ? theme.primary : theme.neutral[300],
+                  }}
                 >
-                  <ThemedText className={`text-[13px] font-bold ${discountType === 'FIXED' ? 'text-white' : ''}`}>
+                  <ThemedText
+                    className="font-bold"
+                    style={{ color: discountType === 'FIXED' ? '#FFFFFF' : theme.neutral[700] }}
+                  >
                     Nominal Flat (Rp)
                   </ThemedText>
                 </Pressable>
@@ -456,10 +471,11 @@ export default function AdminDiscountScreen() {
                 label={`Tambah ${formType === 'VOUCHER' ? 'Voucher' : 'Promo'}`}
                 loading={submitLoading}
                 onPress={handleCreateDiscount}
-                className="mt-4 h-[52px]"
+                className="mt-4"
+                size="large"
               />
             </ScrollView>
-          </ThemedView>
+          </View>
         </View>
       </Modal>
     </ThemedView>
