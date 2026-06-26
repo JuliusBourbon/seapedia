@@ -100,7 +100,7 @@ export default function SelectRoleScreen() {
     return (
       <Pressable key={role} onPress={() => setSelectedRole(role)}>
         <Card
-          className={`flex-row items-center p-4 border-[1.5px] rounded-2xl ${isSelected ? 'border-primary bg-primary' : 'border-border'}`}
+          className={`flex-row items-center p-4 border rounded-lg ${isSelected ? 'border-primary bg-primary' : 'border-neutral-400'}`}
         >
           <View
             className="w-[52px] h-[52px] rounded-xl items-center justify-center"
@@ -110,13 +110,12 @@ export default function SelectRoleScreen() {
           </View>
           <View className="flex-1 ml-4 pr-1">
             <ThemedText
-              type="smallBold"
-              className={`text-base font-bold ${isSelected ? 'text-white' : 'text-text'}`}
+              className={`font-bold ${isSelected ? 'text-white' : 'text-neutral-800'}`}
             >
               {details.title}
             </ThemedText>
-            <ThemedText
-              className={`text-xs mt-[2px] ${isSelected ? 'text-white/80' : 'text-textSecondary'}`}
+            <ThemedText type='small'
+              className={`mt-[2px] ${isSelected ? 'text-neutral-100' : 'text-neutral-800'}`}
             >
               {details.description}
             </ThemedText>
@@ -131,10 +130,10 @@ export default function SelectRoleScreen() {
     <ThemedView className="flex-1 justify-center">
       <View className="px-8">
         <View className="items-center mb-8">
-          <ThemedText type="subtitle" className="text-[26px] font-extrabold text-center">
-            Pilih Peran Aktif
+          <ThemedText type="subtitle" className="text-center">
+            Pilih Peran
           </ThemedText>
-          <ThemedText className="text-sm text-center mt-1" themeColor="textSecondary">
+          <ThemedText className="text-center mt-1 text-neutral-800">
             Akun Anda terdaftar dengan beberapa peran. Silakan pilih satu untuk masuk ke panel kerja Anda.
           </ThemedText>
         </View>
@@ -159,7 +158,7 @@ export default function SelectRoleScreen() {
             }}
             className="p-4 mt-2"
           >
-            <ThemedText className="text-textSecondary font-semibold">
+            <ThemedText className="text-danger font-semibold">
               Batalkan & Keluar
             </ThemedText>
           </Pressable>
