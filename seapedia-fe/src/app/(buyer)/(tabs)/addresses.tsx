@@ -230,15 +230,15 @@ export default function AddressManagementScreen() {
       <Card className={`mb-3 p-4 border-[1.5px] ${item.isDefault ? 'border-primary' : 'border-transparent'}`}>
         <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
           <View className="flex-row items-center flex-1">
-            <MapPin size={18} color={item.isDefault ? theme.primary : theme.textSecondary} />
-            <ThemedText type="smallBold" className="text-[15px] font-extrabold ml-2">
+            <MapPin size={18} color={item.isDefault ? theme.primary : theme.neutral[500]} />
+            <ThemedText type="smallBold" className=" font-extrabold ml-2">
               {item.label}
             </ThemedText>
             {item.isDefault && <Badge label="Default" variant="primary" className="ml-2" />}
           </View>
           <View className="flex-row gap-3">
             <Pressable onPress={() => openEditModal(item)} className="p-1">
-              <Edit2 size={16} color={theme.text} />
+              <Edit2 size={16} color={theme.neutral[800]} />
             </Pressable>
             <Pressable
               onPress={() => handleDeleteAddress(item.id, item.isDefault)}
@@ -253,7 +253,7 @@ export default function AddressManagementScreen() {
           <ThemedText type="smallBold" className="text-sm font-bold">
             {item.recipientName}
           </ThemedText>
-          <ThemedText className="text-[13px]" themeColor="textSecondary">
+          <ThemedText className="" themeColor="textSecondary">
             {item.phoneNumber}
           </ThemedText>
           <ThemedText className="text-sm leading-5 mt-1">
@@ -268,7 +268,7 @@ export default function AddressManagementScreen() {
     if (loading) return null;
     return (
       <View className="items-center justify-center py-6 px-5">
-        <MapPin size={48} color={theme.placeholder} />
+        <MapPin size={48} color={theme.neutral[600]} />
         <ThemedText className="text-center mt-3" themeColor="textSecondary">
           Belum ada alamat pengiriman. Silakan tambah alamat untuk memudahkan checkout.
         </ThemedText>
@@ -325,38 +325,38 @@ export default function AddressManagementScreen() {
         <View className="flex-1 bg-black/50 justify-end">
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            style={{ width: '100%' }}
+            style={{ width: '100%', height: '80%' }}
           >
-            <ThemedView type="backgroundElement" className="rounded-t-[24px]">
+            <ThemedView className="rounded-t-[24px]">
               <View className="flex-row justify-between items-center p-4 border-b border-black/5 dark:border-white/5">
-                <ThemedText type="smallBold" className="text-[18px]">
+                <ThemedText className="font-semibold">
                   {editingAddress ? 'Ubah Alamat' : 'Tambah Alamat Baru'}
                 </ThemedText>
                 <Pressable onPress={() => setModalVisible(false)} className="p-1">
-                  <X size={20} color={theme.text} />
+                  <X size={20} color={theme.neutral[800]} />
                 </Pressable>
               </View>
 
-              <ScrollView contentContainerClassName="p-4 pb-6">
+              <ScrollView contentContainerClassName="p-4 pb-20">
                 <View className="mb-4">
-                  <ThemedText className="text-[13px] font-semibold mb-[6px]">Label Alamat</ThemedText>
+                  <ThemedText className=" font-semibold mb-[6px]">Label Alamat</ThemedText>
                   <Pressable
                     onPress={() => setIsLabelDropdownOpen(!isLabelDropdownOpen)}
                     className="flex-row items-center justify-between px-4 rounded-xl border border-black/10 dark:border-white/10"
-                    style={{ backgroundColor: `${theme.text}05`, height: 48 }}
+                    style={{ backgroundColor: `${theme.neutral[800]}05`, height: 48 }}
                   >
-                    <ThemedText style={{ color: label ? theme.text : theme.textSecondary }}>
+                    <ThemedText style={{ color: label ? theme.neutral[800] : theme.neutral[500] }}>
                       {label || 'Pilih Label Alamat'}
                     </ThemedText>
-                    <ChevronDown size={20} color={theme.textSecondary} />
+                    <ChevronDown size={20} color={theme.neutral[500]} />
                   </Pressable>
                   {errors.label && (
-                    <ThemedText className="text-[12px] mt-1" themeColor="danger">
+                    <ThemedText className=" mt-1 text-danger">
                       {errors.label}
                     </ThemedText>
                   )}
                   {isLabelDropdownOpen && (
-                    <View className="mt-2 rounded-xl border border-black/10 dark:border-white/10 overflow-hidden" style={{ backgroundColor: theme.backgroundElement }}>
+                    <View className="mt-2 rounded-xl border border-neutra;[300] overflow-hidden">
                       {['Rumah', 'Kantor', 'Kosan', 'Apartemen', 'Toko'].map((item) => (
                         <Pressable
                           key={item}
@@ -427,14 +427,14 @@ export default function AddressManagementScreen() {
                   <View className="flex-row items-center my-2 py-2 border-t border-b border-black/5 dark:border-white/5">
                     <View className="flex-1">
                       <ThemedText type="smallBold">Jadikan Alamat Utama</ThemedText>
-                      <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
+                      <ThemedText className=" mt-[2px]" themeColor="textSecondary">
                         Gunakan alamat ini sebagai tujuan utama saat checkout.
                       </ThemedText>
                     </View>
                     <Switch
                       value={isDefault}
                       onValueChange={setIsDefault}
-                      trackColor={{ false: theme.border, true: theme.primaryMuted }}
+                      trackColor={{ false: theme.neutral[300], true: theme.primaryShades[400] }}
                       thumbColor={isDefault ? theme.primary : '#f4f3f4'}
                     />
                   </View>
