@@ -1,22 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
-  StyleSheet,
   View,
-  FlatList,
   RefreshControl,
-  ActivityIndicator,
   Alert,
   ScrollView,
-  Platform,
+  Animated,
 } from 'react-native';
-import { Clock, ShieldAlert, CheckCircle2, Play, Calendar, AlertTriangle, User, Store, RefreshCcw } from 'lucide-react-native';
+import { Clock, CheckCircle2, Play, Calendar, AlertTriangle, User, Store, RefreshCcw } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import api from '@/services/api';
 
 interface OverdueCandidate {
@@ -66,6 +62,17 @@ export default function AdminSystemScreen() {
   const [runningCheck, setRunningCheck] = useState(false);
   const [simulating, setSimulating] = useState(false);
   const [resetting, setResetting] = useState(false);
+
+  const pulseAnim = useRef(new Animated.Value(0.4)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1, duration: 800, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 0.4, duration: 800, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
 
   const fetchOverdueData = async () => {
     try {
@@ -178,15 +185,21 @@ export default function AdminSystemScreen() {
     }).format(val);
   };
 
+  const renderSkeleton = () => (
+    <ThemedView className="flex-1">
+      <Animated.View style={{ opacity: pulseAnim }} className="p-4">
+        <View className="h-44 rounded-xl mb-4" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-5 w-52 rounded mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-28 rounded-xl mb-4" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-5 w-56 rounded mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-32 rounded-xl mb-3" style={{ backgroundColor: theme.neutral[200] }} />
+        <View className="h-32 rounded-xl" style={{ backgroundColor: theme.neutral[200] }} />
+      </Animated.View>
+    </ThemedView>
+  );
+
   if (loading && !refreshing) {
-    return (
-      <ThemedView className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color={theme.primary} />
-        <ThemedText className="mt-3" themeColor="textSecondary">
-          Mengambil data parameter logistik sistem...
-        </ThemedText>
-      </ThemedView>
-    );
+    return renderSkeleton();
   }
 
   const simulatedTimeFormatted = data?.currentSimulatedTime
@@ -213,27 +226,26 @@ export default function AdminSystemScreen() {
           />
         }
       >
-        {/* Simulated Time Banner */}
-        <Card className="p-4 gap-2">
-          <View className="flex-row items-center">
+        <Card className="p-5 border bg-neutral-100 border-primary">
+          <View className="flex-row items-center gap-2 mb-3">
             <Clock size={20} color={theme.primary} />
-            <ThemedText type="smallBold" className="text-[14px] ml-2">
-              Simulasi Jam Server Seapedia
+            <ThemedText className="font-semibold text-primary">
+              Simulasi Jam Server
             </ThemedText>
           </View>
-          <ThemedText className="text-[18px] font-extrabold mt-1">
+          <ThemedText type="extraLarge" className="text-neutral[700] py-1">
             {simulatedTimeFormatted}
           </ThemedText>
 
-          <View className="flex-row gap-2 mt-2">
+          <View className="flex-row gap-2 mt-4">
             <Button
               label="Simulasikan +24 Jam"
-              variant="primary"
+              variant="outline"
               size="small"
               loading={simulating}
-              leftIcon={<Play size={16} color="#FFFFFF" />}
+              leftIcon={<Play size={16} color={theme.primary} />}
               onPress={handleSimulateNextDay}
-              className="flex-1"
+              className="flex-1 border-primary"
             />
             <Button
               label="Cek Overdue"
@@ -241,7 +253,7 @@ export default function AdminSystemScreen() {
               size="small"
               loading={runningCheck}
               onPress={handleRunOverdueCheck}
-              style={{ flex: 0.8 }}
+              className="border-neutral-700"
             />
           </View>
           <Button
@@ -255,124 +267,128 @@ export default function AdminSystemScreen() {
           />
         </Card>
 
-        {/* SLA Rules display */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Ketentuan Batas SLA Pengantaran
-        </ThemedText>
-        <Card className="p-4">
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Ketentuan Batas SLA</ThemedText>
+        </View>
+        <Card className="p-4 border border-primary rounded-md">
           <View className="flex-row justify-between items-center">
-            <ThemedText className="text-[13px] font-semibold">INSTANT</ThemedText>
-            <ThemedText type="smallBold">3 Jam</ThemedText>
+            <ThemedText className="font-semibold">INSTANT</ThemedText>
+            <ThemedText className="font-bold text-primary">3 Jam</ThemedText>
           </View>
-          <View className="h-[1px] my-2" style={{ backgroundColor: theme.border }} />
+          <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.neutral[200] }} />
           <View className="flex-row justify-between items-center">
-            <ThemedText className="text-[13px] font-semibold">NEXT DAY</ThemedText>
-            <ThemedText type="smallBold">24 Jam</ThemedText>
+            <ThemedText className="font-semibold">NEXT DAY</ThemedText>
+            <ThemedText className="font-bold text-primary">24 Jam</ThemedText>
           </View>
-          <View className="h-[1px] my-2" style={{ backgroundColor: theme.border }} />
+          <View className="h-[1.5px] my-2" style={{ backgroundColor: theme.neutral[200] }} />
           <View className="flex-row justify-between items-center">
-            <ThemedText className="text-[13px] font-semibold">REGULAR</ThemedText>
-            <ThemedText type="smallBold">72 Jam</ThemedText>
+            <ThemedText className="font-semibold">REGULAR</ThemedText>
+            <ThemedText className="font-bold text-primary">72 Jam</ThemedText>
           </View>
         </Card>
 
-        {/* Overdue Candidates list */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Pesanan Overdue Belum Diproses ({data?.overdueCandidates.length ?? 0})
-        </ThemedText>
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.danger }} />
+          <ThemedText className="font-bold">Pesanan Overdue ({data?.overdueCandidates.length ?? 0})</ThemedText>
+        </View>
         {data?.overdueCandidates.length === 0 ? (
-          <Card className="p-5 items-center justify-center gap-2">
-            <CheckCircle2 size={32} color={theme.success} />
-            <ThemedText className="text-[13.5px] text-center" themeColor="textSecondary">
+          <Card className="p-5 items-center justify-center gap-2 border border-primary rounded-md">
+            <CheckCircle2 size={32} color={theme.primary} />
+            <ThemedText className="text-center">
               Tidak ada pesanan aktif yang melewati batas SLA saat ini.
             </ThemedText>
           </Card>
         ) : (
           data?.overdueCandidates.map((item) => (
-            <Card key={item.id} className="mb-2 p-4">
-              <View className="flex-row justify-between items-center border-b border-black/5 dark:border-white/5 pb-2 mb-2">
-                <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
-                  ID: {item.id}
-                </ThemedText>
-                <Badge label="Overdue" variant="danger" />
+            <Card key={item.id} className="mb-2 p-4 border border-danger rounded-md">
+              <View className="flex-row justify-between items-start pb-3 mb-3" style={{ borderBottomWidth: 1.5, borderBottomColor: theme.neutral[200] }}>
+                <View className="flex-1">
+                  <ThemedText className="font-mono" style={{ color: theme.neutral[500] }}>
+                    {item.id}
+                  </ThemedText>
+                </View>
+                <View className="flex-shrink">
+                  <Badge label="Overdue" variant="danger" />
+                </View>
               </View>
 
-              <View className="gap-1.5">
+              <View className="gap-2">
                 <View className="flex-row items-center gap-2">
-                  <Store size={14} color={theme.textSecondary} />
-                  <ThemedText className="text-[13px]" themeColor="textSecondary">
-                    Toko: {item.store.name}
+                  <Store size={14} color={theme.neutral[500]} />
+                  <ThemedText>
+                    {item.store.name}
                   </ThemedText>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <User size={14} color={theme.textSecondary} />
-                  <ThemedText className="text-[13px]" themeColor="textSecondary">
-                    Pembeli: @{item.buyer.username}
+                  <User size={14} color={theme.neutral[500]} />
+                  <ThemedText>
+                    @{item.buyer.username}
                   </ThemedText>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <AlertTriangle size={14} color={theme.textSecondary} />
-                  <ThemedText className="text-[13px]" themeColor="textSecondary">
-                    Batas SLA: {new Date(item.slaDeadline).toLocaleString('id-ID')}
+                  <AlertTriangle size={14} color={theme.danger} />
+                  <ThemedText style={{ color: theme.danger }}>
+                    SLA: {new Date(item.slaDeadline).toLocaleString('id-ID')}
                   </ThemedText>
                 </View>
-                <View className="h-[1px] my-1" style={{ backgroundColor: theme.border }} />
+                <View className="h-[1.5px] my-1" style={{ backgroundColor: theme.neutral[200] }} />
                 <View className="flex-row justify-between items-center">
-                  <ThemedText className="text-[12px]" themeColor="textSecondary">Total Transaksi</ThemedText>
-                  <ThemedText type="smallBold" style={{ color: theme.danger }}>{formatCurrency(item.total)}</ThemedText>
+                  <ThemedText>Total Transaksi</ThemedText>
+                  <ThemedText className="font-bold" style={{ color: theme.danger }}>{formatCurrency(item.total)}</ThemedText>
                 </View>
               </View>
             </Card>
           ))
         )}
 
-        {/* Returned Orders history */}
-        <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-          Riwayat Pesanan Dikembalikan ({data?.returnedOrders.length ?? 0})
-        </ThemedText>
+        <View className="flex-row items-center gap-2">
+          <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+          <ThemedText className="font-bold">Riwayat Dikembalikan ({data?.returnedOrders.length ?? 0})</ThemedText>
+        </View>
         {data?.returnedOrders.length === 0 ? (
-          <Card className="p-5 items-center justify-center gap-2">
-            <ThemedText className="text-[13.5px] text-center" themeColor="textSecondary">
+          <Card className="p-5 items-center justify-center gap-2 border border-primary rounded-md">
+            <ThemedText className="text-center">
               Belum ada riwayat pesanan yang dikembalikan.
             </ThemedText>
           </Card>
         ) : (
           data?.returnedOrders.map((item) => (
-            <Card key={item.id} className="mb-2 p-4">
-              <View className="flex-row gap-2 justify-between items-center border-b border-black/5 pb-2 mb-2">
-                <View className='flex-1'>
-                  <ThemedText className="text-[11px] font-mono" themeColor="textSecondary">
-                    ID: {item.id}
+            <Card key={item.id} className="mb-2 p-4 border border-neutral-300 rounded-md">
+              <View className="flex-row gap-2 justify-between items-start pb-3 mb-3" style={{ borderBottomWidth: 1.5, borderBottomColor: theme.neutral[200] }}>
+                <View className="flex-1">
+                  <ThemedText className="font-mono" style={{ color: theme.neutral[500] }}>
+                    {item.id}
                   </ThemedText>
                 </View>
-                <View className='flex-shrink'>
+                <View className="flex-shrink">
                   <Badge label="Dikembalikan" variant="neutral" />
                 </View>
               </View>
 
-              <View className="gap-1.5">
+              <View className="gap-2">
                 <View className="flex-row items-center gap-2">
-                  <Store size={14} color={theme.textSecondary} />
-                  <ThemedText className="text-[13px]" themeColor="textSecondary">
-                    Toko: {item.store.name}
+                  <Store size={14} color={theme.neutral[500]} />
+                  <ThemedText>
+                    {item.store.name}
                   </ThemedText>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <User size={14} color={theme.textSecondary} />
-                  <ThemedText className="text-[13px]" themeColor="textSecondary">
-                    Pembeli: @{item.buyer.username}
+                  <User size={14} color={theme.neutral[500]} />
+                  <ThemedText>
+                    @{item.buyer.username}
                   </ThemedText>
                 </View>
                 <View className="flex-row items-center gap-2">
-                  <Calendar size={14} color={theme.textSecondary} />
-                  <ThemedText className="text-[13px]" themeColor="textSecondary">
-                    Waktu Dikembalikan: {new Date(item.returnedAt).toLocaleString('id-ID')}
+                  <Calendar size={14} color={theme.neutral[500]} />
+                  <ThemedText>
+                    {new Date(item.returnedAt).toLocaleString('id-ID')}
                   </ThemedText>
                 </View>
-                <View className="h-[1px] my-1" style={{ backgroundColor: theme.border }} />
+                <View className="h-[1.5px] my-1" style={{ backgroundColor: theme.neutral[200] }} />
                 <View className="flex-row justify-between items-center">
-                  <ThemedText className="text-[12px]" themeColor="textSecondary">Dana Direfund</ThemedText>
-                  <ThemedText type="smallBold" style={{ color: theme.primary }}>{formatCurrency(item.total)}</ThemedText>
+                  <ThemedText>Dana Direfund</ThemedText>
+                  <ThemedText className="font-bold text-primary">{formatCurrency(item.total)}</ThemedText>
                 </View>
               </View>
             </Card>
