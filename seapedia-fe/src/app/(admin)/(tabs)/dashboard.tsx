@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  StyleSheet,
   View,
   ScrollView,
   RefreshControl,
@@ -10,14 +9,13 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { BarChart3, Users, Store, Package, ClipboardList, RefreshCcw, LogOut, Info, ShieldCheck, Mail, Calendar, Truck } from 'lucide-react-native';
+import { Users, Store, Package, ClipboardList, RefreshCcw, LogOut, Info, ShieldCheck, Mail, Calendar, Truck } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Spacing } from '@/constants/theme';
 import { useAuthStore } from '@/store/useAuthStore';
 import { ROLE_LABELS } from '@/constants/config';
 import api from '@/services/api';
@@ -158,7 +156,7 @@ export default function AdminDashboardScreen() {
       case 'SELLER':
         return <Badge key={role} label={label} variant="primary" className="py-[1px] px-2" />;
       case 'DRIVER':
-        return <Badge key={role} label={label} variant="warning" className="py-[1px] px-2" />;
+        return <Badge key={role} label={label} variant="danger" className="py-[1px] px-2" />;
       case 'BUYER':
       default:
         return <Badge key={role} label={label} variant="secondary" className="py-[1px] px-2" />;
@@ -170,7 +168,7 @@ export default function AdminDashboardScreen() {
       return (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color={theme.primary} />
-          <ThemedText className="mt-3" themeColor="textSecondary">
+          <ThemedText className="mt-3">
             Memuat data...
           </ThemedText>
         </View>
@@ -181,8 +179,8 @@ export default function AdminDashboardScreen() {
       const stats = [
         { label: 'Total Pengguna', val: summary?.totalUsers ?? 0, icon: <Users size={20} color={theme.primary} />, bg: `${theme.primary}10` },
         { label: 'Total Toko', val: summary?.totalStores ?? 0, icon: <Store size={20} color={theme.secondary} />, bg: `${theme.secondary}10` },
-        { label: 'Total Produk', val: summary?.totalProducts ?? 0, icon: <Package size={20} color={theme.success} />, bg: `${theme.success}10` },
-        { label: 'Total Pesanan', val: summary?.totalOrders ?? 0, icon: <ClipboardList size={20} color={theme.warning} />, bg: `${theme.warning}10` },
+        { label: 'Total Produk', val: summary?.totalProducts ?? 0, icon: <Package size={20} color={theme.tertiary} />, bg: `${theme.tertiary}10` },
+        { label: 'Total Pesanan', val: summary?.totalOrders ?? 0, icon: <ClipboardList size={20} color={theme.primary} />, bg: `${theme.primary}10` },
         { label: 'Total Pengiriman', val: summary?.totalDeliveries ?? 0, icon: <Truck size={20} color={theme.primary} />, bg: `${theme.primary}10` },
         { label: 'Overdue Kiriman', val: summary?.returnedOrdersCount ?? 0, icon: <Info size={20} color={theme.danger} />, bg: `${theme.danger}10` },
       ];
@@ -194,18 +192,17 @@ export default function AdminDashboardScreen() {
           }
           contentContainerClassName="p-4 pb-5 gap-3"
         >
-          {/* Welcome Banner */}
-          <Card className="p-4">
+          <Card className="p-4 border border-primary rounded-md bg-primary/10">
             <View className="flex-row items-center">
-              <View className="w-[54px] h-[54px] rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.danger}15` }}>
-                <ShieldCheck size={36} color={theme.danger} />
+              <View className="w-[54px] h-[54px] rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.tertiary}30` }}>
+                <ShieldCheck size={36} color={theme.tertiary} />
               </View>
               <View className="ml-3 flex-1">
-                <ThemedText type="smallBold" className="text-[18px]">
+                <ThemedText type="smallBold" className="">
                   {user?.name}
                 </ThemedText>
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
-                  Administrator Utama (@{user?.username})
+                <ThemedText className="">
+                  (@{user?.username})
                 </ThemedText>
               </View>
             </View>
@@ -221,15 +218,14 @@ export default function AdminDashboardScreen() {
             )}
           </Card>
 
-          {/* Time simulation brief */}
-          <Card className="p-4" style={{ backgroundColor: 'rgba(13, 148, 136, 0.04)', borderColor: 'rgba(13, 148, 136, 0.1)' }}>
+          <Card className="p-4 border border-primary rounded-md bg-primary/10">
             <View className="flex-row items-center">
               <Info size={16} color={theme.primary} />
-              <ThemedText type="smallBold" className="text-[13px] ml-1">
+              <ThemedText type="smallBold" className=" ml-1">
                 Simulasi Waktu Sistem
               </ThemedText>
             </View>
-            <ThemedText className="text-[15px] font-bold mt-2">
+            <ThemedText className=" font-bold mt-2">
               {summary?.currentSimulatedTime
                 ? new Date(summary.currentSimulatedTime).toLocaleString('id-ID', {
                   weekday: 'long',
@@ -248,27 +244,28 @@ export default function AdminDashboardScreen() {
             </Pressable>
           </Card>
 
-          {/* Grid Stats */}
-          <ThemedText type="smallBold" className="text-[12px] uppercase font-bold tracking-wider mb-1 mt-2">
-            Ringkasan Statistik
-          </ThemedText>
+          <View className="flex-row items-center gap-2 my-4">
+            <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
+            <ThemedText className="font-bold" style={{ color: theme.neutral[900] }}>
+              Ringkasan Statistik
+            </ThemedText>
+          </View>
           <View className="flex-row flex-wrap gap-3">
             {stats.map((item, index) => (
-              <Card key={index} className="w-[47.5%] p-3 gap-1">
+              <Card key={index} className="w-[47.5%] p-3 gap-1 border border-neutral-300 rounded-md">
                 <View className="w-9 h-9 rounded-lg items-center justify-center mb-1" style={{ backgroundColor: item.bg }}>
                   {item.icon}
                 </View>
-                <ThemedText className="text-[12px]" themeColor="textSecondary">
+                <ThemedText className="text-neutral-700">
                   {item.label}
                 </ThemedText>
-                <ThemedText type="subtitle" className="text-[20px] font-extrabold">
+                <ThemedText type="subtitle" className="font-bold">
                   {item.val}
                 </ThemedText>
               </Card>
             ))}
           </View>
 
-          {/* Logout Button */}
           <Button
             label="Keluar Dari Akun"
             variant="danger"
@@ -291,29 +288,29 @@ export default function AdminDashboardScreen() {
           }
           contentContainerClassName="p-4 pb-5"
           ListEmptyComponent={
-            <ThemedText className="text-center mt-6" themeColor="textSecondary">
+            <ThemedText className="text-center mt-6">
               Tidak ada pengguna terdaftar.
             </ThemedText>
           }
           renderItem={({ item }) => (
-            <Card className="mb-3 p-4 gap-2">
-              <View className="border-b border-black/5 dark:border-white/5 pb-1">
-                <ThemedText type="smallBold" className="text-[15px]">
+            <Card className="mb-3 p-4 gap-2 border border-neutral-300 rounded-md">
+              <View className="border-b border-neutral-300 pb-1">
+                <ThemedText className="font-semibold">
                   {item.name}
                 </ThemedText>
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                <ThemedText className="">
                   @{item.username}
                 </ThemedText>
               </View>
               <View className="flex-row items-center gap-2">
-                <Mail size={14} color={theme.textSecondary} />
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                <Mail size={14} color={theme.neutral[500]} />
+                <ThemedText className="">
                   {item.email}
                 </ThemedText>
               </View>
               <View className="flex-row items-center gap-2">
-                <Calendar size={14} color={theme.textSecondary} />
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                <Calendar size={14} color={theme.neutral[500]} />
+                <ThemedText className="">
                   Daftar: {new Date(item.createdAt).toLocaleDateString('id-ID')}
                 </ThemedText>
               </View>
@@ -336,35 +333,35 @@ export default function AdminDashboardScreen() {
           }
           contentContainerClassName="p-4 pb-5"
           ListEmptyComponent={
-            <ThemedText className="text-center mt-6" themeColor="textSecondary">
+            <ThemedText className="text-center mt-6">
               Tidak ada toko terdaftar.
             </ThemedText>
           }
           renderItem={({ item }) => (
-            <Card className="mb-3 p-4 gap-2">
-              <View className="border-b border-black/5 dark:border-white/5 pb-1">
-                <ThemedText type="smallBold" className="text-[15px]">
+            <Card className="mb-3 p-4 gap-2 border border-neutral-300 rounded-md">
+              <View className="border-b border-neutral-300 pb-1">
+                <ThemedText className="font-semibold">
                   {item.name}
                 </ThemedText>
-                <ThemedText className="text-[12px] mt-[2px]" themeColor="textSecondary">
+                <ThemedText className=" mt-[2px]">
                   {item.description}
                 </ThemedText>
               </View>
               <View className="flex-row items-center gap-2">
-                <Users size={14} color={theme.textSecondary} />
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                <Users size={14} color={theme.neutral[500]} />
+                <ThemedText className="">
                   Pemilik: {item.seller.name} (@{item.seller.username})
                 </ThemedText>
               </View>
               <View className="flex-row items-center gap-2">
-                <Package size={14} color={theme.textSecondary} />
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                <Package size={14} color={theme.neutral[500]} />
+                <ThemedText className="">
                   Jumlah Produk: {item.totalProducts} Item
                 </ThemedText>
               </View>
               <View className="flex-row items-center gap-2">
-                <Calendar size={14} color={theme.textSecondary} />
-                <ThemedText className="text-[13px]" themeColor="textSecondary">
+                <Calendar size={14} color={theme.neutral[500]} />
+                <ThemedText className="">
                   Buka: {new Date(item.createdAt).toLocaleDateString('id-ID')}
                 </ThemedText>
               </View>
@@ -377,18 +374,17 @@ export default function AdminDashboardScreen() {
 
   return (
     <ThemedView className="flex-1">
-      {/* Sub Tabs Navigation */}
-      <View className="flex-row border-b h-12" style={{ borderBottomColor: theme.border }}>
+      <View className="flex-row border-b h-12" style={{ borderBottomColor: theme.neutral[500] }}>
         <Pressable
           className={`flex-1 items-center justify-center border-b-[2.5px] ${activeTab === 'OVERVIEW' ? '' : 'border-transparent'}`}
           style={activeTab === 'OVERVIEW' ? { borderBottomColor: theme.primary } : {}}
           onPress={() => setActiveTab('OVERVIEW')}
         >
           <ThemedText
-            className={`text-[13.5px] font-medium ${activeTab === 'OVERVIEW' ? 'font-bold' : ''}`}
-            style={{ color: activeTab === 'OVERVIEW' ? theme.primary : theme.textSecondary }}
+            className={`x] font-medium ${activeTab === 'OVERVIEW' ? 'font-bold' : ''}`}
+            style={{ color: activeTab === 'OVERVIEW' ? theme.primary : theme.neutral[500] }}
           >
-            Dashbor
+            Dasbor
           </ThemedText>
         </Pressable>
 
@@ -398,8 +394,8 @@ export default function AdminDashboardScreen() {
           onPress={() => setActiveTab('USERS')}
         >
           <ThemedText
-            className={`text-[13.5px] font-medium ${activeTab === 'USERS' ? 'font-bold' : ''}`}
-            style={{ color: activeTab === 'USERS' ? theme.primary : theme.textSecondary }}
+            className={`x] font-medium ${activeTab === 'USERS' ? 'font-bold' : ''}`}
+            style={{ color: activeTab === 'USERS' ? theme.primary : theme.neutral[500] }}
           >
             Pengguna
           </ThemedText>
@@ -411,8 +407,8 @@ export default function AdminDashboardScreen() {
           onPress={() => setActiveTab('STORES')}
         >
           <ThemedText
-            className={`text-[13.5px] font-medium ${activeTab === 'STORES' ? 'font-bold' : ''}`}
-            style={{ color: activeTab === 'STORES' ? theme.primary : theme.textSecondary }}
+            className={`x] font-medium ${activeTab === 'STORES' ? 'font-bold' : ''}`}
+            style={{ color: activeTab === 'STORES' ? theme.primary : theme.neutral[500] }}
           >
             Toko
           </ThemedText>
