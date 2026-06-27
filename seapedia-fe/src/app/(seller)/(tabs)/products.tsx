@@ -10,8 +10,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Image,
 } from 'react-native';
-import { Plus, Edit2, Trash2, X, ShoppingBag } from 'lucide-react-native';
+import { Plus, Edit2, Trash2, X, ShoppingBag, Image as ImageIcon } from 'lucide-react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -20,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import api from '@/services/api';
+import logo from '@/assets/images/icon.png';
 
 interface Product {
   id: string;
@@ -27,6 +30,7 @@ interface Product {
   description: string | null;
   price: number;
   stock: number;
+  imageUrl?: string | null;
 }
 
 export default function SellerProductsScreen() {
@@ -43,6 +47,7 @@ export default function SellerProductsScreen() {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -76,6 +81,7 @@ export default function SellerProductsScreen() {
     setDescription('');
     setPrice('');
     setStock('');
+    setImageUri(null);
     setErrors({});
     setModalVisible(true);
   };
@@ -86,8 +92,22 @@ export default function SellerProductsScreen() {
     setDescription(prod.description || '');
     setPrice(prod.price.toString());
     setStock(prod.stock.toString());
+    setImageUri(prod.imageUrl || null);
     setErrors({});
     setModalVisible(true);
+  };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
   };
 
   const validateForm = (nm: string, prc: string, stk: string) => {
@@ -129,18 +149,34 @@ export default function SellerProductsScreen() {
 
     setSubmitting(true);
     try {
-      const payload = {
-        name: cleanName,
-        description: cleanDescription || null,
-        price: Number(cleanPriceStr),
-        stock: Number(cleanStockStr),
+      const formData = new FormData();
+      formData.append('name', cleanName);
+      if (cleanDescription) formData.append('description', cleanDescription);
+      formData.append('price', cleanPriceStr);
+      formData.append('stock', cleanStockStr);
+
+      if (imageUri && !imageUri.startsWith('http')) {
+        const filename = imageUri.split('/').pop() || 'upload.jpg';
+        const match = /\.(\w+)$/.exec(filename);
+        const type = match ? `image/${match[1]}` : `image/jpeg`;
+        formData.append('image', {
+          uri: imageUri,
+          name: filename,
+          type,
+        } as any);
+      }
+
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       };
 
       let response;
       if (editingProduct) {
-        response = await api.put(`/seller/products/${editingProduct.id}`, payload);
+        response = await api.put(`/seller/products/${editingProduct.id}`, formData, config);
       } else {
-        response = await api.post('/seller/products', payload);
+        response = await api.post('/seller/products', formData, config);
       }
 
       if (response.data?.success) {
@@ -212,10 +248,16 @@ export default function SellerProductsScreen() {
       <Card className="mb-3 p-4 border border-primary rounded-md">
         <View className="flex-row justify-between items-center border-b border-neutral-500 pb-2 mb-2">
           <View className="flex-row items-center flex-1 gap-2 pr-2">
-            <ThemedText className="font-semibold flex-1" numberOfLines={1}>
-              {item.name}
-            </ThemedText>
-            {getStockBadge(item.stock)}
+            <Image
+              source={item.imageUrl ? { uri: item.imageUrl } : logo}
+              className="w-12 h-12 rounded-md bg-neutral-200"
+            />
+            <View className="flex-1">
+              <ThemedText className="font-semibold" numberOfLines={1}>
+                {item.name}
+              </ThemedText>
+              {getStockBadge(item.stock)}
+            </View>
           </View>
           <View className="flex-row gap-3">
             <Pressable onPress={() => openEditModal(item)} className="p-1">
@@ -317,6 +359,25 @@ export default function SellerProductsScreen() {
               </View>
 
               <ScrollView contentContainerClassName="p-4 pb-6">
+                <View className="items-center mb-4">
+                  <Pressable onPress={pickImage} className="items-center justify-center bg-neutral-200 rounded-xl overflow-hidden" style={{ width: 120, height: 120 }}>
+                    {imageUri ? (
+                      <Image source={{ uri: imageUri }} className="w-full h-full" />
+                    ) : (
+                      <View className="items-center justify-center">
+                        <ImageIcon size={32} color={theme.neutral[500]} />
+                        <ThemedText className="text-xs text-neutral-500 mt-2">Pilih Gambar</ThemedText>
+                      </View>
+                    )}
+                  </Pressable>
+                  {imageUri && (
+                    <Pressable onPress={pickImage} className="items-center flex-row gap-2 my-2">
+                      <Edit2 size={16} color={theme.primary} />
+                      <ThemedText className="text-primary font-semibold">Ubah Gambar Produk</ThemedText>
+                    </Pressable>
+                  )}
+                </View>
+
                 <Input
                   label="Nama Produk"
                   placeholder="Contoh: Laptop Gaming"

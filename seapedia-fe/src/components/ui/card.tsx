@@ -10,7 +10,7 @@ export function Card({ style, variant = 'default', className, ...props }: CardPr
 
   return (
     <View
-      className={`rounded-2xl p-4 ${className || ''}`}
+      className={`rounded-2xl ${className || ''}`}
       style={style}
       {...props}
     />

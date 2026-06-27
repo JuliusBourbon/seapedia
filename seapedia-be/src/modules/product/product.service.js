@@ -1,6 +1,7 @@
 const prisma = require('../../config/db');
 const { formatProduct } = require('../../utils/serialize');
 const { sanitizeText } = require('../../utils/sanitize');
+const { uploadFileToS3, deleteFileFromS3 } = require('../../utils/s3');
 
 const getStoreBySeller = async (sellerId) => {
     const store = await prisma.store.findUnique({ where: { sellerId } });
@@ -23,8 +24,17 @@ const getMyProducts = async (sellerId) => {
     return products.map(formatProduct);
 };
 
-const createProduct = async (sellerId, data) => {
+const createProduct = async (sellerId, data, file) => {
     const store = await getStoreBySeller(sellerId);
+
+    let imageUrl = null;
+    let imageKey = null;
+
+    if (file) {
+        const result = await uploadFileToS3(file.buffer, file.mimetype, file.originalname);
+        imageUrl = result.imageUrl;
+        imageKey = result.imageKey;
+    }
 
     const product = await prisma.product.create({
         data: {
@@ -32,13 +42,15 @@ const createProduct = async (sellerId, data) => {
             name: sanitizeText(data.name),
             description: data.description ? sanitizeText(data.description) : data.description,
             storeId: store.id,
+            imageUrl,
+            imageKey,
         },
     });
 
     return formatProduct(product);
 };
 
-const updateProduct = async (sellerId, productId, data) => {
+const updateProduct = async (sellerId, productId, data, file) => {
     const store = await getStoreBySeller(sellerId);
 
     const product = await prisma.product.findUnique({ where: { id: productId } });
@@ -50,13 +62,30 @@ const updateProduct = async (sellerId, productId, data) => {
         throw { statusCode: 403, message: 'You do not have permission to modify this product' };
     }
 
+    let { imageUrl, imageKey } = product;
+
+    if (file) {
+        const result = await uploadFileToS3(file.buffer, file.mimetype, file.originalname);
+        imageUrl = result.imageUrl;
+        
+        if (imageKey) {
+            await deleteFileFromS3(imageKey);
+        }
+        
+        imageKey = result.imageKey;
+    }
+
     const sanitizedData = { ...data };
     if (sanitizedData.name) sanitizedData.name = sanitizeText(sanitizedData.name);
     if (sanitizedData.description) sanitizedData.description = sanitizeText(sanitizedData.description);
 
     const updated = await prisma.product.update({
         where: { id: productId },
-        data: sanitizedData,
+        data: {
+            ...sanitizedData,
+            imageUrl,
+            imageKey,
+        },
     });
 
     return formatProduct(updated);
@@ -72,6 +101,10 @@ const deleteProduct = async (sellerId, productId) => {
 
     if (product.storeId !== store.id) {
         throw { statusCode: 403, message: 'You do not have permission to delete this product' };
+    }
+
+    if (product.imageKey) {
+        await deleteFileFromS3(product.imageKey);
     }
 
     await prisma.product.delete({ where: { id: productId } });

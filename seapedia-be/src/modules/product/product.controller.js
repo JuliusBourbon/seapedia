@@ -12,7 +12,7 @@ const getMyProducts = async (req, res, next) => {
 
 const createProduct = async (req, res, next) => {
     try {
-        const product = await productService.createProduct(req.user.userId, req.body);
+        const product = await productService.createProduct(req.user.userId, req.body, req.file);
         return success(res, 201, 'Product created successfully', product);
     } catch (err) {
         return next(err);
@@ -21,7 +21,7 @@ const createProduct = async (req, res, next) => {
 
 const updateProduct = async (req, res, next) => {
     try {
-        const product = await productService.updateProduct(req.user.userId, req.params.id, req.body);
+        const product = await productService.updateProduct(req.user.userId, req.params.id, req.body, req.file);
         return success(res, 200, 'Product updated successfully', product);
     } catch (err) {
         return next(err);
