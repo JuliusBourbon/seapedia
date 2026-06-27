@@ -4,6 +4,7 @@ const formatCartItem = (item) => ({
     id: item.id,
     productId: item.productId,
     productName: item.product.name,
+    imageUrl: item.product.imageUrl,
     price: Number(item.product.price),
     stock: item.product.stock,
     quantity: item.quantity,
