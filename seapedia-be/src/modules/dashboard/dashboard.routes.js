@@ -19,7 +19,7 @@ router.get('/buyer/summary', authenticate, requireActiveRole('BUYER'), async (re
             : [];
 
         const activeOrders = await prisma.order.count({
-            where: { buyerId: req.user.userId, status: { not: 'PESANAN_SELESAI' } },
+            where: { buyerId: req.user.userId, status: { notIn: ['PESANAN_SELESAI', 'DIKEMBALIKAN'] } },
         });
 
         return success(res, 200, 'Buyer dashboard summary', {
