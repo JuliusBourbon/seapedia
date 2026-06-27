@@ -153,7 +153,7 @@ export default function BuyerReportsScreen() {
           <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
           <ThemedText className="font-bold">Sebaran Status Pesanan</ThemedText>
         </View>
-        <Card className="p-4 gap-3">
+        <Card className="p-4 gap-3 border border-primary rounded-md">
           {statusKeys.length === 0 ? (
             <ThemedText className="text-center my-4">
               Belum ada data status pesanan tersedia.

@@ -5,6 +5,7 @@ import {
   Alert,
   ScrollView,
   Animated,
+  Pressable,
 } from 'react-native';
 import { Clock, CheckCircle2, Play, Calendar, AlertTriangle, User, Store, RefreshCcw } from 'lucide-react-native';
 import { useTheme } from '@/hooks/use-theme';
@@ -226,7 +227,7 @@ export default function AdminSystemScreen() {
           />
         }
       >
-        <Card className="p-5 border bg-neutral-100 border-primary">
+        <Card className="p-5 border bg-primary/5 border-primary">
           <View className="flex-row items-center gap-2 mb-3">
             <Clock size={20} color={theme.primary} />
             <ThemedText className="font-semibold text-primary">
@@ -238,24 +239,27 @@ export default function AdminSystemScreen() {
           </ThemedText>
 
           <View className="flex-row gap-2 mt-4">
-            <Button
-              label="Simulasikan +24 Jam"
-              variant="outline"
-              size="small"
-              loading={simulating}
-              leftIcon={<Play size={16} color={theme.primary} />}
+            <Pressable
               onPress={handleSimulateNextDay}
-              className="flex-1 border-primary"
-            />
-            <Button
-              label="Cek Overdue"
-              variant="outline"
-              size="small"
-              loading={runningCheck}
+              disabled={simulating}
+              className={`
+                flex-1 px-4 py-2 rounded-md flex-row justify-center items-center gap-2
+                ${simulating ? 'bg-gray-300' : 'bg-primary'}
+              `}
+            >
+              <Play size={16} color="#fff" />
+              <ThemedText className="text-white font-bold">Simulasikan +24 Jam</ThemedText>
+            </Pressable>
+
+            <Pressable
               onPress={handleRunOverdueCheck}
-              className="border-neutral-700"
-            />
+              disabled={runningCheck}
+              className={`rounded-md flex justify-center items-center px-2 ${runningCheck ? 'bg-gray-300' : 'bg-tertiary'}`}
+            >
+              <ThemedText className="text-white font-bold">Cek Overdue</ThemedText>
+            </Pressable>
           </View>
+
           <Button
             label="Reset Ke Waktu Nyata"
             variant="danger"

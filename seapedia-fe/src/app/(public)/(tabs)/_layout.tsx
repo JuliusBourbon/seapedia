@@ -56,8 +56,8 @@ export default function PublicTabsLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: 'Home',
-            tabBarLabel: 'Belanja',
+            title: 'Beranda',
+            tabBarLabel: 'Beranda',
             tabBarIcon: ({ color, size }) => <Home size={size} color={color} />,
           }}
         />

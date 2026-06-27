@@ -224,7 +224,7 @@ export default function CheckoutScreen() {
                   {selectedAddress.isDefault && <Badge label="Default" variant="primary" />}
                 </View>
                 <Pressable onPress={() => setAddressModalVisible(true)} className="flex-row items-center p-1">
-                  <ThemedText className="text-[13px] font-bold" themeColor="primary">
+                  <ThemedText className=" font-bold" themeColor="primary">
                     Ganti
                   </ThemedText>
                   <ChevronRight size={16} color={theme.primary} />
@@ -234,10 +234,10 @@ export default function CheckoutScreen() {
                 <ThemedText type="smallBold" className="text-sm">
                   {selectedAddress.recipientName}
                 </ThemedText>
-                <ThemedText className="text-[13px]">
+                <ThemedText className="">
                   {selectedAddress.phoneNumber}
                 </ThemedText>
-                <ThemedText className="text-[13px] leading-[18px] mt-[2px]">
+                <ThemedText className=" leading-[18px] mt-[2px]">
                   {selectedAddress.fullAddress}, {selectedAddress.city}, {selectedAddress.postalCode}
                 </ThemedText>
               </View>
@@ -245,7 +245,7 @@ export default function CheckoutScreen() {
           ) : (
             <View className="items-center justify-center py-3 gap-2">
               <AlertTriangle size={32} color={theme.danger} />
-              <ThemedText className="text-[13px] text-center">
+              <ThemedText className=" text-center">
                 Anda belum menentukan alamat pengiriman.
               </ThemedText>
               <Button
@@ -272,10 +272,10 @@ export default function CheckoutScreen() {
             <ThemedText className={`font-semibold mt-1 ${deliveryMethod === 'REGULAR' ? 'text-primary' : 'text-neutral[900]'}`}>
               Regular
             </ThemedText>
-            <ThemedText className="text-[13px] font-extrabold mt-[2px]" themeColor="primary">
+            <ThemedText className=" font-extrabold mt-[2px]" themeColor="primary">
               {formatCurrency(10000)}
             </ThemedText>
-            <ThemedText className="text-[10px] mt-[2px]">
+            <ThemedText className=" mt-[2px]">
               SLA 72 Jam
             </ThemedText>
           </Pressable>
@@ -289,10 +289,10 @@ export default function CheckoutScreen() {
             <ThemedText className={`font-semibold mt-1 ${deliveryMethod === 'NEXT_DAY' ? 'text-primary' : 'text-neutral[900]'}`}>
               Next Day
             </ThemedText>
-            <ThemedText className="text-[13px] font-extrabold mt-[2px]" themeColor="primary">
+            <ThemedText className=" font-extrabold mt-[2px]" themeColor="primary">
               {formatCurrency(15000)}
             </ThemedText>
-            <ThemedText className="text-[10px] mt-[2px]">
+            <ThemedText className=" mt-[2px]">
               SLA 24 Jam
             </ThemedText>
           </Pressable>
@@ -306,10 +306,10 @@ export default function CheckoutScreen() {
             <ThemedText className={`font-semibold mt-1 ${deliveryMethod === 'INSTANT' ? 'text-primary' : 'text-neutral[900]'}`}>
               Instant
             </ThemedText>
-            <ThemedText className="text-[13px] font-extrabold mt-[2px]" themeColor="primary">
+            <ThemedText className=" font-extrabold mt-[2px]" themeColor="primary">
               {formatCurrency(25000)}
             </ThemedText>
-            <ThemedText className="text-[10px] mt-[2px]">
+            <ThemedText className=" mt-[2px]">
               SLA 3 Jam
             </ThemedText>
           </Pressable>
@@ -320,18 +320,18 @@ export default function CheckoutScreen() {
           <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
           <ThemedText className="font-bold">Voucher & Promo Diskon</ThemedText>
         </View>
-        <Card className='border border-primary rounded-md bg-primary/10'>
+        <Card className='border border-primary rounded-md bg-primary/5'>
           {appliedCode ? (
-            <View className="flex-row justify-between items-center">
+            <View className="flex-row justify-between items-center p-4">
               <View className="flex-row items-center">
                 <Ticket size={20} color={theme.primary} />
-                <View className="ml-2">
-                  <ThemedText type="smallBold" className="uppercase">
+                <View className="ml-4">
+                  <ThemedText className="font-semibold uppercase">
                     {appliedCode}
                   </ThemedText>
                   {preview && preview.discount.amount > 0 && (
-                    <ThemedText className="text-xs">
-                      Hemat {formatCurrency(preview.discount.amount)} ({preview.discount.source})
+                    <ThemedText className='text-primary font-semibold'>
+                      Hemat {formatCurrency(preview.discount.amount)}
                     </ThemedText>
                   )}
                 </View>
@@ -343,7 +343,7 @@ export default function CheckoutScreen() {
               </Pressable>
             </View>
           ) : (
-            <View className="flex-row items-center gap-2">
+            <View className="flex-row items-center gap-2 p-4">
               <Input
                 placeholder="Masukkan kode voucher / promo"
                 value={discountCode}
@@ -366,7 +366,7 @@ export default function CheckoutScreen() {
           <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
           <ThemedText className="font-bold">Metode Pembayaran</ThemedText>
         </View>
-        <Card className={`p-4 ${isWalletInsufficient ? 'border border-danger' : ''}`}>
+        <Card className={`p-4 border rounded-md ${isWalletInsufficient ? 'border-danger' : 'border-neutral-300'}`}>
           <View className="flex-row justify-between items-center">
             <View className="flex-row items-center">
               <Wallet size={22} color={isWalletInsufficient ? theme.danger : theme.primary} />
@@ -380,14 +380,12 @@ export default function CheckoutScreen() {
           </View>
           {isWalletInsufficient && (
             <View className="flex-row mt-3 p-2 rounded-lg gap-2" style={{ backgroundColor: `${theme.danger}` }}>
-              <AlertTriangle size={18} color={theme.danger} />
-              <ThemedText className="text-[11px] font-semibold flex-1">
+              <AlertTriangle size={18} color={theme.neutral[50]} />
+              <ThemedText className="text-neutral-50 font-semibold flex-1">
                 Saldo Anda kurang {formatCurrency(preview!.total - walletBalance)}. Silakan top-up.
               </ThemedText>
               <Pressable onPress={() => router.push('/(buyer)/wallet-history')} className="p-1">
-                <ThemedText className="font-bold text-[13px]" themeColor="primary">
-                  Top Up
-                </ThemedText>
+                <ThemedText className="font-bold text-neutral-50">Top Up</ThemedText>
               </Pressable>
             </View>
           )}
@@ -410,7 +408,7 @@ export default function CheckoutScreen() {
             <View className="gap-2">
               <View className="flex-row justify-between items-center">
                 <ThemedText>Subtotal Barang</ThemedText>
-                <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.subtotal)}</ThemedText>
+                <ThemedText className=" font-semibold">{formatCurrency(preview.subtotal)}</ThemedText>
               </View>
 
               {preview.discount.amount > 0 && (
@@ -418,7 +416,7 @@ export default function CheckoutScreen() {
                   <ThemedText>
                     Diskon ({preview.discount.code})
                   </ThemedText>
-                  <ThemedText className="text-[14px] font-semibold">
+                  <ThemedText className=" font-semibold">
                     -{formatCurrency(preview.discount.amount)}
                   </ThemedText>
                 </View>
@@ -426,12 +424,12 @@ export default function CheckoutScreen() {
 
               <View className="flex-row justify-between items-center">
                 <ThemedText>Ongkos Kirim</ThemedText>
-                <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.deliveryFee)}</ThemedText>
+                <ThemedText className=" font-semibold">{formatCurrency(preview.deliveryFee)}</ThemedText>
               </View>
 
               <View className="flex-row justify-between items-center">
                 <ThemedText>PPN (12%)</ThemedText>
-                <ThemedText className="text-[14px] font-semibold">{formatCurrency(preview.ppn)}</ThemedText>
+                <ThemedText className=" font-semibold">{formatCurrency(preview.ppn)}</ThemedText>
               </View>
 
               <View className="h-[1px] my-2 bg-neutral-300" />
@@ -498,10 +496,10 @@ export default function CheckoutScreen() {
                         <ThemedText type="smallBold">{item.label}</ThemedText>
                         {item.isDefault && <Badge label="Default" variant="primary" />}
                       </View>
-                      <ThemedText className="text-[13px] font-bold mt-1">
+                      <ThemedText className=" font-bold mt-1">
                         {item.recipientName} ({item.phoneNumber})
                       </ThemedText>
-                      <ThemedText className="text-[12px] mt-[2px]">
+                      <ThemedText className=" mt-[2px]">
                         {item.fullAddress}, {item.city}, {item.postalCode}
                       </ThemedText>
                     </Card>

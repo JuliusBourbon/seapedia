@@ -238,9 +238,15 @@ export default function AdminDashboardScreen() {
                 : 'Memuat waktu...'}
             </ThemedText>
             <Pressable onPress={() => setActiveTab('OVERVIEW')} className="mt-1.5">
-              <ThemedText style={{ color: theme.primary, fontSize: 12, fontWeight: '700' }}>
-                Atur Waktu di Tab Sistem
-              </ThemedText>
+              {/* set text agar mengarah ke halaman system */}
+              <Button
+                label="Atur Waktu di Tab Sistem"
+                variant="outline"
+                size="small"
+                leftIcon={<Info size={16} color={theme.primary} />}
+                onPress={() => router.push('/(admin)/(tabs)/system')}
+                className="mt-3"
+              />
             </Pressable>
           </Card>
 
@@ -259,7 +265,7 @@ export default function AdminDashboardScreen() {
                 <ThemedText className="text-neutral-700">
                   {item.label}
                 </ThemedText>
-                <ThemedText type="subtitle" className="font-bold">
+                <ThemedText type="subtitle" className="">
                   {item.val}
                 </ThemedText>
               </Card>

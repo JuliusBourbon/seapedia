@@ -24,6 +24,9 @@ interface PromoData {
   value: number;
   expiryDate: string;
   isActive: boolean;
+  usageLimit?: number;
+  usedCount?: number;
+  isVoucher?: boolean;
 }
 
 export default function MarketplaceHomeScreen() {
@@ -57,21 +60,31 @@ export default function MarketplaceHomeScreen() {
   const fetchData = async () => {
     try {
       setError(null);
-      const [productsRes, promosRes] = await Promise.all([
+      const [productsRes, promosRes, vouchersRes] = await Promise.all([
         api.get('/products'),
         api.get('/promos').catch(() => ({ data: { success: true, data: [] } })),
+        api.get('/vouchers').catch(() => ({ data: { success: true, data: [] } })),
       ]);
       if (productsRes.data?.success) {
         setProducts(productsRes.data.data);
       } else {
         setError('Gagal memuat produk');
       }
+
+      let allPromosAndVouchers: PromoData[] = [];
       if (promosRes.data?.success) {
-        const activePromos = (promosRes.data.data || []).filter(
-          (p: PromoData) => p.isActive && new Date(p.expiryDate) > new Date()
-        );
-        setPromos(activePromos);
+        const rawPromos = promosRes.data.data || [];
+        allPromosAndVouchers = [...allPromosAndVouchers, ...rawPromos.map((p: any) => ({ ...p, isVoucher: false }))];
       }
+      if (vouchersRes.data?.success) {
+        const rawVouchers = vouchersRes.data.data || [];
+        allPromosAndVouchers = [...allPromosAndVouchers, ...rawVouchers.map((v: any) => ({ ...v, isVoucher: true }))];
+      }
+
+      const activePromos = allPromosAndVouchers.filter(
+        (p: PromoData) => p.isActive && new Date(p.expiryDate) > new Date()
+      );
+      setPromos(activePromos);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Terjadi kesalahan jaringan');
     } finally {
@@ -139,10 +152,10 @@ export default function MarketplaceHomeScreen() {
       <View className="mb-2">
         <View className="flex-row items-center justify-between px-4 mb-3">
           <View className="flex-row items-center gap-2">
-            <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.secondary }} />
+            <View className="w-1 h-5 rounded-full" style={{ backgroundColor: theme.primary }} />
             <ThemedText className="text-base font-bold">Promo Spesial</ThemedText>
           </View>
-          <Badge label={`${promos.length} aktif`} variant="secondary" />
+          <Badge label={`${promos.length} aktif`} variant="primary" />
         </View>
         <ScrollView
           horizontal
@@ -178,6 +191,7 @@ export default function MarketplaceHomeScreen() {
                 <ThemedText className="text-neutral-50 text-xs mt-1">
                   Kode: {promo.code}
                 </ThemedText>
+
               </View>
               <View
                 className="px-4 py-2 flex-row items-center justify-between"
@@ -186,6 +200,11 @@ export default function MarketplaceHomeScreen() {
                 <ThemedText className="text-neutral-50 text-xs">
                   s.d. {formatExpiryDate(promo.expiryDate)}
                 </ThemedText>
+                {promo.isVoucher && promo.usageLimit !== undefined && promo.usedCount !== undefined && (
+                  <ThemedText className="text-neutral-50 text-xs ml-2">
+                    Stok: {promo.usageLimit - promo.usedCount}
+                  </ThemedText>
+                )}
                 <Tag size={12} color={theme.secondaryShades[300]} />
               </View>
             </Pressable>
@@ -264,7 +283,7 @@ export default function MarketplaceHomeScreen() {
           Seapedia
         </ThemedText>
         <ThemedText className="text-neutral-50 text-sm leading-5">
-          Temukan Produk terbaru dan toko terpercaya.
+          Temukan Produk terbaru dari toko terpercaya.
         </ThemedText>
       </View>
 
@@ -274,7 +293,7 @@ export default function MarketplaceHomeScreen() {
         style={{ backgroundColor: theme.neutral[200] }}
       >
         <Search size={18} color={theme.neutral[400]} />
-        <ThemedText className="ml-3 text-sm" style={{ color: theme.neutral[400] }}>
+        <ThemedText className="ml-3 text-sm" style={{ color: theme.neutral[600] }}>
           Cari produk atau toko...
         </ThemedText>
         <View className="ml-auto">

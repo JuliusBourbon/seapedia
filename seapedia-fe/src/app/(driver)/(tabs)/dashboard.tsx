@@ -189,7 +189,7 @@ export default function DriverDashboardScreen() {
       >
         <Card className="p-4 mb-2 border border-primary rounded-md bg-primary/10">
           <View className="flex-row items-center">
-            <View className="w-[60px] h-[60px] rounded-[14px] items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
+            <View className="w-[60px] h-[60px] rounded-full items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
               <User size={36} color={theme.primary} />
             </View>
             <View className="ml-4 flex-1">
@@ -274,7 +274,7 @@ export default function DriverDashboardScreen() {
                 <ThemedText className="uppercase font-semibold">
                   Lokasi Pengantaran (Pembeli)
                 </ThemedText>
-                <Badge label={DELIVERY_METHODS[activeJob.order.deliveryMethod]?.label || activeJob.order.deliveryMethod} variant="neutral" />
+                <ThemedText>{DELIVERY_METHODS[activeJob.order.deliveryMethod]?.label || activeJob.order.deliveryMethod}</ThemedText>
                 <ThemedText className="font-semibold">
                   {activeJob.order.address.recipientName}
                 </ThemedText>

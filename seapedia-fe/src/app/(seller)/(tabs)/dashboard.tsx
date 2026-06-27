@@ -207,16 +207,16 @@ export default function SellerDashboardScreen() {
           />
         }
       >
-        <Card className="mb-4 p-4 border border-primary  bg-primary/10 rounded-xl">
+        <Card className="mb-4 p-4 border border-primary  bg-primary/5 rounded-xl">
           <View className="flex-row items-center">
             <View className="w-14 h-14 rounded-2xl items-center justify-center" style={{ backgroundColor: `${theme.neutral}15` }}>
               <Store size={32} color={theme.primary} />
             </View>
             <View className="ml-4 flex-1">
-              <ThemedText type="large" style={{ color: theme.neutral[900] }}>
+              <ThemedText type="large" style={{ color: theme.neutral[800] }}>
                 {summary?.storeName}
               </ThemedText>
-              <ThemedText className="text-[13px] mt-1 font-medium" style={{ color: theme.neutral[700] }}>
+              <ThemedText className=" mt-1 font-medium" style={{ color: theme.neutral[700] }}>
                 {user?.name} - @{user?.username}
               </ThemedText>
             </View>
@@ -252,10 +252,10 @@ export default function SellerDashboardScreen() {
                   <Package size={22} color={theme.primary} />
                 </View>
               </View>
-              <ThemedText className="text-[26px] font-black" style={{ color: theme.neutral[900] }}>
+              <ThemedText type='extraLarge' className="font-black" style={{ color: theme.neutral[900] }}>
                 {summary?.totalProducts ?? 0}
               </ThemedText>
-              <ThemedText className="text-[13px] font-medium mt-1" style={{ color: theme.neutral[500] }}>
+              <ThemedText className="font-medium mt-1" style={{ color: theme.neutral[500] }}>
                 Total Produk
               </ThemedText>
             </Card>
@@ -271,10 +271,10 @@ export default function SellerDashboardScreen() {
                   <ClipboardList size={22} color={theme.danger} />
                 </View>
               </View>
-              <ThemedText className="text-[26px] font-black" style={{ color: theme.neutral[900] }}>
+              <ThemedText type='extraLarge' className="font-black" style={{ color: theme.neutral[900] }}>
                 {summary?.pendingOrders ?? 0}
               </ThemedText>
-              <ThemedText className="text-[13px] font-medium mt-1" style={{ color: theme.neutral[500] }}>
+              <ThemedText className="font-medium mt-1" style={{ color: theme.neutral[500] }}>
                 Order Baru
               </ThemedText>
             </Card>
@@ -286,7 +286,7 @@ export default function SellerDashboardScreen() {
             <View className="w-10 h-10 rounded-xl items-center justify-center" style={{ backgroundColor: `${theme.primary}15` }}>
               <TrendingUp size={22} color={theme.primary} />
             </View>
-            <ThemedText className="ml-3 text-[14px] font-semibold" style={{ color: theme.neutral[500] }}>
+            <ThemedText className="ml-3  font-semibold" style={{ color: theme.neutral[500] }}>
               Pendapatan Penjualan
             </ThemedText>
           </View>

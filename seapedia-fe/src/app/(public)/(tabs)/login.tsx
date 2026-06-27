@@ -79,11 +79,11 @@ export default function LoginScreen() {
   return (
     <ThemedView className="flex-1">
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerClassName="flex-grow px-8 pb-12"
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 32, paddingBottom: 48 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

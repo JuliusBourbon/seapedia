@@ -85,7 +85,7 @@ export default function BuyerOrdersScreen() {
       case 'MENUNGGU_PENGIRIM':
         return <Badge label={label} variant="secondary" />;
       case 'SEDANG_DIKIRIM':
-        return <Badge label={label} variant="primary" />;
+        return <Badge label={label} variant="tertiary" />;
       case 'PESANAN_SELESAI':
         return <Badge label={label} variant="success" />;
       case 'DIKEMBALIKAN':

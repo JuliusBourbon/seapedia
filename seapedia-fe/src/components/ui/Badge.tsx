@@ -2,7 +2,7 @@
 import { View, ViewStyle, TextStyle } from 'react-native';
 import { ThemedText } from '../themed-text';
 
-export type BadgeVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'neutral';
+export type BadgeVariant = 'primary' | 'secondary' | 'tertiary' | 'success' | 'danger' | 'warning' | 'neutral';
 
 export interface BadgeProps {
   label: string;
@@ -17,10 +17,11 @@ export function Badge({ label, variant = 'neutral', style, textStyle, className,
   const getVariantClasses = () => {
     switch (variant) {
       case 'primary': return { container: 'bg-primary/10', text: 'text-primary' };
-      case 'secondary': return { container: 'bg-secondary/10', text: 'text-secondary' };
-      case 'success': return { container: 'bg-primary/40', text: 'text-success' };
-      case 'danger': return { container: 'bg-red-500/50', text: 'text-danger' };
-      case 'warning': return { container: 'bg-yellow-500/50', text: 'text-warning' };
+      case 'secondary': return { container: 'bg-secondary/5', text: 'text-secondary' };
+      case 'tertiary': return { container: 'bg-tertiary/5', text: 'text-tertiary' };
+      case 'success': return { container: 'bg-primary/10', text: 'text-primary' };
+      case 'danger': return { container: 'bg-danger/5', text: 'text-danger' };
+      case 'warning': return { container: 'bg-secondary/5', text: 'text-secondary' };
       case 'neutral':
       default: return { container: 'bg-textSecondary/10', text: 'text-textSecondary' };
     }

@@ -127,13 +127,13 @@ export default function BuyerDashboardScreen() {
       <Animated.View style={{ opacity: pulseAnim }} className="p-4">
         {/* Profile Card Skeleton */}
         <View className="mb-4 rounded-xl overflow-hidden" style={{ backgroundColor: theme.neutral[100], height: 200 }} />
-        
+
         {/* Quick Stats Grid Skeleton */}
         <View className="flex-row gap-3 mb-5">
           <View className="flex-1 h-20 rounded-xl" style={{ backgroundColor: theme.neutral[100] }} />
           <View className="flex-1 h-20 rounded-xl" style={{ backgroundColor: theme.neutral[100] }} />
         </View>
-        
+
         {/* Recent Transactions Skeleton */}
         <View className="mb-5">
           <View className="flex-row items-center gap-2 mb-3">
@@ -177,17 +177,17 @@ export default function BuyerDashboardScreen() {
         }
       >
         {/* Profile Section */}
-        <Card className="mb-4 overflow-hidden border-0 elevation-sm" style={{ backgroundColor: theme.neutral[50] }}>
+        <Card className="mb-4 overflow-hidden border border-primary bg-primary/5">
           <View className="p-4">
             <View className="flex-row items-center">
-              <View className="w-14 h-14 rounded-full items-center justify-center border-2" style={{ borderColor: theme.primaryShades[200], backgroundColor: theme.primaryShades[100] }}>
+              <View className="w-14 h-14 rounded-full items-center justify-center border-2" style={{ borderColor: theme.neutral[200], backgroundColor: theme.neutral[100] }}>
                 <User size={26} color={theme.primary} />
               </View>
               <View className="ml-4 flex-1">
                 <ThemedText type="smallBold" className="text-xl font-extrabold" style={{ color: theme.neutral[900] }}>
                   {user?.name}
                 </ThemedText>
-                <ThemedText className="text-[13px] mt-0.5" style={{ color: theme.neutral[500] }}>
+                <ThemedText className=" mt-0.5" style={{ color: theme.neutral[500] }}>
                   @{user?.username} • Pembeli
                 </ThemedText>
               </View>
@@ -206,16 +206,16 @@ export default function BuyerDashboardScreen() {
           </View>
 
           {/* Wallet Section (Attached to Profile Card) */}
-          <View className="p-4 border-t" style={{ backgroundColor: '#ffffff', borderTopColor: theme.neutral[200] }}>
+          <View className="p-4 border-t" style={{ borderTopColor: theme.neutral[200] }}>
             <View className="flex-row justify-between items-center">
               <View>
                 <View className="flex-row items-center mb-1">
                   <Wallet size={14} color={theme.neutral[500]} />
-                  <ThemedText className="text-[12px] font-semibold tracking-wider ml-1.5" style={{ color: theme.neutral[500] }}>
-                    SALDO DOMPET
+                  <ThemedText className="font-semibold ml-1.5" style={{ color: theme.neutral[500] }}>
+                    Saldo Dompet
                   </ThemedText>
                 </View>
-                <ThemedText className="text-3xl font-black" style={{ color: theme.primary }}>
+                <ThemedText type='extraLarge' className="font-black" style={{ color: theme.primary }}>
                   {formattedBalance}
                 </ThemedText>
               </View>
@@ -234,39 +234,20 @@ export default function BuyerDashboardScreen() {
             className="flex-1 active:opacity-70"
             onPress={() => router.push('/(buyer)/(tabs)/orders')}
           >
-            <Card className="flex-row items-center p-4 border-0 elevation-sm" style={{ backgroundColor: '#ffffff' }}>
-              <View className="w-12 h-12 rounded-2xl items-center justify-center mr-3" style={{ backgroundColor: theme.primaryShades[100] }}>
+            <Card className="flex-row items-center p-4 border border-neutral-300" style={{ backgroundColor: '#ffffff' }}>
+              <View className="w-12 h-12 rounded-2xl items-center justify-center mr-3" style={{ backgroundColor: theme.neutral[100] }}>
                 <ShoppingBag size={24} color={theme.primary} />
               </View>
-              <View className="flex-1">
-                <ThemedText type="subtitle" className="text-xl font-bold" style={{ color: theme.neutral[900] }}>
+              <View className="flex-col justify-center">
+                <ThemedText type="extraLarge" className="font-bold" style={{ color: theme.neutral[900] }}>
                   {summary?.activeOrders ?? 0}
                 </ThemedText>
-                <ThemedText className="text-xs font-medium mt-0.5" style={{ color: theme.neutral[500] }}>
+                <ThemedText className="font-medium" style={{ color: theme.neutral[500] }}>
                   Pesanan Aktif
                 </ThemedText>
               </View>
             </Card>
           </Pressable>
-
-          {/* <Pressable
-            className="flex-1 active:opacity-70"
-            onPress={() => router.push('/(buyer)/(tabs)/addresses')}
-          >
-            <Card className="flex-row items-center p-4 border-0 elevation-sm" style={{ backgroundColor: '#ffffff' }}>
-              <View className="w-12 h-12 rounded-2xl items-center justify-center mr-3" style={{ backgroundColor: theme.primaryShades[100] }}>
-                <MapPin size={24} color={theme.secondary} />
-              </View>
-              <View className="flex-1">
-                <ThemedText type="subtitle" className="text-xl font-bold" style={{ color: theme.neutral[900] }}>
-                  Alamat
-                </ThemedText>
-                <ThemedText className="text-xs font-medium mt-0.5" style={{ color: theme.neutral[500] }}>
-                  Buku Alamat
-                </ThemedText>
-              </View>
-            </Card>
-          </Pressable> */}
         </View>
 
         {/* Recent Transactions List */}
@@ -276,7 +257,7 @@ export default function BuyerDashboardScreen() {
             <ThemedText className="text-base font-bold">Transaksi Terakhir</ThemedText>
           </View>
 
-          <Card className="overflow-hidden border-0 elevation-sm mt-5" style={{ backgroundColor: '#ffffff' }}>
+          <Card className="overflow-hidden border-0 mt-5" style={{ backgroundColor: '#ffffff' }}>
             {summary && summary.recentTransactions.length > 0 ? (
               summary.recentTransactions.map((tx, index) => {
                 const txFormatted = new Intl.NumberFormat('id-ID', {
@@ -299,7 +280,7 @@ export default function BuyerDashboardScreen() {
                         <ThemedText type="smallBold" numberOfLines={1} style={{ color: theme.neutral[900] }}>
                           {tx.description || 'Transaksi Dompet'}
                         </ThemedText>
-                        <ThemedText className="text-[12px] mt-1" style={{ color: theme.neutral[500] }}>
+                        <ThemedText className=" mt-1" style={{ color: theme.neutral[500] }}>
                           {new Date(tx.createdAt).toLocaleDateString('id-ID', {
                             day: 'numeric',
                             month: 'short',
@@ -309,7 +290,7 @@ export default function BuyerDashboardScreen() {
                         </ThemedText>
                       </View>
                     </View>
-                    <ThemedText className={`text-[15px] font-black ${isPositive ? 'text-success' : 'text-danger'}`}>
+                    <ThemedText className={` font-black ${isPositive ? 'text-success' : 'text-danger'}`}>
                       {isPositive ? '+' : '-'} {txFormatted}
                     </ThemedText>
                   </View>

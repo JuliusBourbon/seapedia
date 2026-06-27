@@ -25,6 +25,7 @@ interface CartItem {
   stock: number;
   quantity: number;
   subtotal: number;
+  imageUrl?: string | null;
 }
 
 interface CartData {
@@ -147,15 +148,13 @@ export default function CartScreen() {
 
     return (
       <Card className="mb-4 p-3 border-0 elevation-sm" style={{ backgroundColor: '#ffffff' }}>
-        <View className="flex-row items-start gap-3">
+        <View className="flex-row items-start justify-center gap-3">
           <Image
-            source={require('../../../assets/images/icon.png')}
-            className="w-20 h-20 rounded-xl"
-            style={{ backgroundColor: theme.neutral[100] }}
+            source={item.imageUrl ? { uri: item.imageUrl } : require('../../../assets/images/icon.png')}
+            className="w-20 h-20 bg-neutral-200 rounded-lg"
             resizeMode="cover"
           />
-
-          <View className="flex-1 justify-between min-h-[80px]">
+          <View className="flex-1 justify-between">
             <View className="flex-row justify-between items-start">
               <ThemedText className="font-semibold flex-1 pr-2 leading-5" numberOfLines={2} style={{ color: theme.neutral[900] }}>
                 {item.productName}

@@ -26,6 +26,7 @@ interface ProductDetail {
   price: number;
   stock: number;
   description: string | null;
+  imageUrl?: string | null;
   storeId: string;
   store: {
     id: string;
@@ -166,8 +167,11 @@ export default function ProductDetailScreen() {
     <ThemedView className="flex-1 bg-neutral-50">
       <ScrollView contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}>
         <View className="p-4">
-          {/* View Dummy Image */}
-          <View className="w-full h-64 bg-neutral-200 rounded-xl mb-4" />
+          <Image
+            source={product.imageUrl ? { uri: product.imageUrl } : require('../../../../assets/images/icon.png')}
+            className="w-full h-80 bg-neutral-200 rounded-xl mb-4"
+            resizeMode="cover"
+          />
 
           <ThemedText type="subtitle">
             {product.name}
