@@ -12,6 +12,7 @@ export interface ProductData {
   price: number;
   stock: number;
   description?: string;
+  imageUrl?: string | null;
   storeId: string;
   store: {
     id: string;
@@ -52,21 +53,24 @@ export function ProductCard({ product, onAddToCart, showAddToCart = true }: Prod
   return (
     <Card className="flex-1 m-[6px] p-0 overflow-hidden bg-neutral-100 border border-neutral-200" style={{ maxWidth: Platform.OS === 'web' ? 240 : '48%' }}>
       <Pressable onPress={handlePress}>
-        <View className="p-2">
+        <View>
           <Image
-            source={require('../../assets/images/icon.png')}
-            className="w-28 h-28"
+            source={product.imageUrl ? { uri: product.imageUrl } : require('../../assets/images/icon.png')}
+            className="w-full h-40 bg-neutral-200"
+            resizeMode="cover"
           />
-          <ThemedText className="font-bold">
-            {product.name}
-          </ThemedText>
-          <ThemedText type='small' className="font-bold text-neutral-500">
-            {product.store.name}
-          </ThemedText>
-          <ThemedText className="font-extrabold mb-2">
-            {formattedPrice}
-          </ThemedText>
-          <View>{getStockBadge()}</View>
+          <View className="p-4">
+            <ThemedText className="font-bold">
+              {product.name}
+            </ThemedText>
+            <ThemedText type='small' className="font-bold text-neutral-500">
+              {product.store.name}
+            </ThemedText>
+            <ThemedText className="font-extrabold my-1">
+              {formattedPrice}
+            </ThemedText>
+            <View className="items-start">{getStockBadge()}</View>
+          </View>
         </View>
       </Pressable>
 
