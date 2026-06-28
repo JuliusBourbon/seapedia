@@ -177,7 +177,7 @@ EXPO_PUBLIC_API_URL=http://192.168.1.2:3000/api/v1
 ```
 Or using deployed Backend:
 ```env
-EXPO_PUBLIC_API_URL=https://chain-customise-improve-fitting.trycloudflare.com/api/v1/api/v1
+EXPO_PUBLIC_API_URL=https://chain-customise-improve-fitting.trycloudflare.com/api/v1/
 ```
 
 ### Run the Frontend Server
