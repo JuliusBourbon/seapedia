@@ -29,14 +29,14 @@ If you prefer not to run the frontend development server, you can use the releas
 
 <table align="center">
    <tr>
-      <td><img src="seapedia-fe/assets/demo/demo-1.png" alt="SEAPEDIA Icon" width="200"></td>
-      <td><img src="seapedia-fe/assets/demo/demo-2.png" alt="SEAPEDIA Icon" width="200"></td>
-      <td><img src="seapedia-fe/assets/demo/demo-3.png" alt="SEAPEDIA Icon" width="200"></td>
+      <td><img src="seapedia-fe/assets/demo/demo-1.jpeg" alt="SEAPEDIA Icon" width="200"></td>
+      <td><img src="seapedia-fe/assets/demo/demo-2.jpeg" alt="SEAPEDIA Icon" width="200"></td>
+      <td><img src="seapedia-fe/assets/demo/demo-3.jpeg" alt="SEAPEDIA Icon" width="200"></td>
    </tr>
    <tr>
-      <td><img src="seapedia-fe/assets/demo/demo-4.png" alt="SEAPEDIA Icon" width="200"></td>
-      <td><img src="seapedia-fe/assets/demo/demo-5.png" alt="SEAPEDIA Icon" width="200"></td>
-      <td><img src="seapedia-fe/assets/demo/demo-6.png" alt="SEAPEDIA Icon" width="200"></td>
+      <td><img src="seapedia-fe/assets/demo/demo-4.jpeg" alt="SEAPEDIA Icon" width="200"></td>
+      <td><img src="seapedia-fe/assets/demo/demo-5.jpeg" alt="SEAPEDIA Icon" width="200"></td>
+      <td><img src="seapedia-fe/assets/demo/demo-6.jpeg" alt="SEAPEDIA Icon" width="200"></td>
    </tr>
 </table>
 
