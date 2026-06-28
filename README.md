@@ -79,9 +79,15 @@ DATABASE_URL="postgresql://<USER>:<PASSWORD>@<HOST>:<PORT>/<DATABASE_NAME>?schem
 # Application Settings
 PORT=3000
 
-# Security (Replace with a strong random string in production)
-JWT_SECRET="your_super_secret_jwt_key_here"
-JWT_EXPIRES_IN="7d"
+# Security
+JWT_SECRET=""
+JWT_EXPIRES_IN=""
+PREAUTH_EXPIRES_IN=""
+
+AWS_REGION=
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_S3_BUCKET=
 ```
 
 ### Database Migration and Seeding
